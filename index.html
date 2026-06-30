@@ -1690,26 +1690,33 @@
 
                     <!-- VISIBILIDAD TAB -->
                     <div class="tab-panel" id="tab-visibilidad">
-                        <div class="section-title">👁️ Visibilidad y Condiciones Atmosféricas</div>
+                        <div class="section-title">
+                            👁️ Visibilidad y Condiciones Atmosféricas
+                            <select id="vis-city-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                                <option value="Málaga">Málaga</option>
+                                <option value="Las Palmas">Las Palmas</option>
+                            </select>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="vis-avg">—</div>
                                 <div class="kpi-label">Visibilidad promedio (km)</div>
                             </div>
-                            <div class="kpi red">
-                                <div class="kpi-value" id="vis-fog">—</div>
-                                <div class="kpi-label">Niebla detectada</div>
+                            <div class="kpi" id="vis-status-card">
+                                <div class="kpi-value" id="vis-status">—</div>
+                                <div class="kpi-label">Estado</div>
                             </div>
                         </div>
-                        <div class="kpi-row">
-                            <div class="kpi orange">
-                                <div class="kpi-value" id="vis-haze">—</div>
-                                <div class="kpi-label">Bruma (1–5 km)</div>
-                            </div>
-                            <div class="kpi">
-                                <div class="kpi-value" id="vis-calima">—</div>
-                                <div class="kpi-label">Calima (Canarias)</div>
-                            </div>
+                        <div class="kpi" id="vis-bochorno-kpi" style="grid-column: span 2; margin-bottom: 8px;">
+                            <div class="kpi-value" id="vis-bochorno">—</div>
+                            <div class="kpi-label">Temp vs Rocío (bochorno)</div>
                         </div>
                         <div class="card">
                             <div class="card-title">Visibilidad por ciudad (km)</div>
@@ -6035,6 +6042,13 @@ fetchPollen();
                 }
             });
         }
+        // Visibilidad selector event
+        const visCitySelect = document.getElementById('vis-city-select');
+        if (visCitySelect) {
+            visCitySelect.addEventListener('change', (e) => {
+                fetchVisibilidad(e.target.value);
+            });
+        }
         fetchNieve();
         fetchMar();
         fetchUV();
@@ -7483,11 +7497,16 @@ fetchPollen();
         { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
     ];
 
-    async function fetchVisibilidad() {
-        // Fetch all cities in parallel
-        const promises = VIS_CITIES.map(async (city) => {
+    async function fetchVisibilidad(selectedCity) {
+        // Filtrar ciudades si hay selección
+        const cities = (selectedCity && selectedCity !== 'all')
+            ? VIS_CITIES.filter(c => c.name === selectedCity)
+            : VIS_CITIES;
+
+        // Fetch all cities in parallel — añadimos dew_point_2m para bochorno
+        const promises = cities.map(async (city) => {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=visibility,weather_code&hourly=visibility&timezone=Europe/Madrid&forecast_days=2`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=visibility,weather_code,temperature_2m,dew_point_2m&hourly=visibility&timezone=Europe/Madrid&forecast_days=2`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -7497,38 +7516,85 @@ fetchPollen();
 
         const results = await Promise.all(promises);
 
-        // KPIs
-        let currentVis = [];
-        let fogCount = 0;
-        let hazeCount = 0;
-        let calimaDetected = false;
+        // ---- Semáforo de visibilidad ----
+        function visEstado(visKm) {
+            if (visKm < 1) return { label: 'Niebla', cls: 'badge-red', color: '#dc2626', bg: '#fef2f2', kpi: 'red' };
+            if (visKm < 5) return { label: 'Bruma', cls: 'badge-orange', color: '#f97316', bg: '#fff7ed', kpi: 'orange' };
+            if (visKm < 10) return { label: 'Moderada', cls: 'badge-blue', color: '#2563eb', bg: '#eff6ff', kpi: 'blue' };
+            return { label: 'Excelente', cls: 'badge-green', color: '#16a34a', bg: '#f0fdf4', kpi: 'green' };
+        }
 
-        results.forEach((data) => {
+        function esCanarias(name) {
+            return ['Las Palmas', 'Santa Cruz de Tenerife'].includes(name);
+        }
+
+        // ---- KPIs ----
+        let currentVis = [];
+        let bochornos = [];
+        let globalEstado = { label: 'Limpio', cls: 'badge-green', color: '#16a34a', bg: '#f0fdf4', kpi: 'green' };
+
+        results.forEach((data, idx) => {
             if (!data || !data.current) return;
             const vis = data.current.visibility ?? null;
             if (vis !== null) {
                 const visKm = vis / 1000;
-                currentVis.push(visKm);
-                if (vis < 1000) fogCount++;
-                else if (vis < 5000) hazeCount++;
+                currentVis.push({ name: VIS_CITIES[idx].name, visKm, data });
+                const est = visEstado(visKm);
+                // El peor estado gana
+                const orden = { 'Niebla': 0, 'Bruma': 1, 'Moderada': 2, 'Excelente': 3 };
+                if (orden[est.label] < orden[globalEstado.label]) {
+                    globalEstado = est;
+                }
             }
-            // Calima detection: Canary Islands + weather code 11 (dust) or very low visibility
-            const cityIdx = VIS_CITIES.findIndex(c => c.name === 'Las Palmas');
-            if (data.current.weather_code === 11 || (vis !== null && vis < 3000)) {
-                calimaDetected = true;
+            // Bochorno: diferencia temp - rocío
+            if (vis !== null && data.current.temperature_2m != null && data.current.dew_point_2m != null) {
+                const diff = data.current.temperature_2m - data.current.dew_point_2m;
+                bochornos.push(diff);
             }
         });
 
-        const avgVis = currentVis.length > 0 ? (currentVis.reduce((a, b) => a + b, 0) / currentVis.length).toFixed(1) : '—';
-        const minVis = currentVis.length > 0 ? Math.min(...currentVis).toFixed(1) : '—';
-        const maxVis = currentVis.length > 0 ? Math.max(...currentVis).toFixed(1) : '—';
+        const avgVis = currentVis.length > 0 ? (currentVis.reduce((a, b) => a + b.visKm, 0) / currentVis.length).toFixed(1) : '—';
+        const minVis = currentVis.length > 0 ? Math.min(...currentVis.map(v => v.visKm)).toFixed(1) : '—';
+        const maxVis = currentVis.length > 0 ? Math.max(...currentVis.map(v => v.visKm)).toFixed(1) : '—';
 
-        document.getElementById('vis-avg').textContent = avgVis;
-        document.getElementById('vis-fog').textContent = fogCount > 0 ? `${fogCount} ciudad${fogCount > 1 ? 'es' : ''}` : 'No';
-        document.getElementById('vis-haze').textContent = hazeCount > 0 ? `${hazeCount} ciudad${hazeCount > 1 ? 'es' : ''}` : 'No';
-        document.getElementById('vis-calima').textContent = calimaDetected ? 'Sí ⚠️' : 'No';
+        // Bochorno promedio
+        let bochornoText = '—';
+        if (bochornos.length > 0) {
+            const avgDiff = (bochornos.reduce((a, b) => a + b, 0) / bochornos.length).toFixed(1);
+            let confort = 'Cómodo';
+            if (avgDiff > 12) confort = 'Bochornoso 🔥';
+            else if (avgDiff > 8) confort = 'Húmedo';
+            else if (avgDiff < 3) confort = 'Seco';
+            bochornoText = `Δ ${avgDiff}°C — ${confort}`;
+        }
 
-        // Chart 1: visibilidad por ciudad (barras)
+        // Calima: Canarias + vis baja (<3km) o weather_code 11
+        let calimaCiudades = [];
+        results.forEach((data, idx) => {
+            if (!data || !data.current) return;
+            const vis = data.current.visibility ?? null;
+            const city = VIS_CITIES[idx];
+            if (esCanarias(city.name)) {
+                if (data.current.weather_code === 11 || (vis !== null && vis < 3000)) {
+                    calimaCiudades.push(city.name);
+                }
+            }
+        });
+
+        // Aplicar colores a KPIs
+        const avgEl = document.getElementById('vis-avg');
+        avgEl.textContent = avgVis;
+        avgEl.parentElement.className = 'kpi blue';
+
+        const statusCard = document.getElementById('vis-status-card');
+        const statusEl = document.getElementById('vis-status');
+        statusEl.textContent = globalEstado.label;
+        statusCard.className = `kpi ${globalEstado.kpi}`;
+
+        const bochornoEl = document.getElementById('vis-bochorno');
+        bochornoEl.textContent = bochornoText;
+
+        // ---- Chart 1: visibilidad por ciudad (barras) con semáforo ----
         const ctxVis = document.getElementById('chart-visibilidad');
         if (ctxVis) {
             if (window._chartVis) window._chartVis.destroy();
@@ -7537,16 +7603,15 @@ fetchPollen();
             const visValues = [];
             const visColors = [];
 
-            results.forEach((data, idx) => {
-                labels.push(VIS_CITIES[idx].name);
-                if (data && data.current && data.current.visibility) {
-                    const visKm = data.current.visibility / 1000;
-                    visValues.push(visKm);
-                    if (data.current.visibility < 1000) visColors.push('#dc2626');
-                    else if (data.current.visibility < 5000) visColors.push('#f97316');
-                    else if (data.current.visibility < 10000) visColors.push('#eab308');
-                    else visColors.push('#16a34a');
-                } else {
+            currentVis.forEach((item) => {
+                labels.push(item.name);
+                visValues.push(item.visKm);
+                visColors.push(visEstado(item.visKm).color);
+            });
+            // Ciudades sin datos (solo las filtradas)
+            cities.forEach((city, idx) => {
+                if (!currentVis.find(v => v.name === city.name)) {
+                    labels.push(city.name);
                     visValues.push(0);
                     visColors.push('#94a3b8');
                 }
@@ -7573,7 +7638,9 @@ fetchPollen();
                         tooltip: {
                             callbacks: {
                                 label: function(ctx) {
-                                    return `Visibilidad: ${ctx.parsed.y.toFixed(1)} km`;
+                                    const val = ctx.parsed.y;
+                                    const est = visEstado(val);
+                                    return `${est.label}: ${val.toFixed(1)} km`;
                                 }
                             }
                         }
@@ -7581,14 +7648,37 @@ fetchPollen();
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: { display: true, text: 'km' }
+                            title: { display: true, text: 'km' },
+                            // Bandas de color horizontales
+                            afterBuildTicks: function(chart) {
+                                const axis = chart.scales.y;
+                                if (axis && axis.top && axis.bottom) {
+                                    chart.ctx.save();
+                                    // Niebla < 1km
+                                    const y1 = axis.getPixelForValue(1);
+                                    chart.ctx.fillStyle = '#dc262622';
+                                    chart.ctx.fillRect(axis.left, axis.bottom, axis.right - axis.left, axis.top - y1);
+                                    // Bruma 1-5km
+                                    const y5 = axis.getPixelForValue(5);
+                                    chart.ctx.fillStyle = '#f9731622';
+                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y1 - y5);
+                                    // Moderada 5-10km
+                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillStyle = '#eab30822';
+                                    chart.ctx.fillRect(axis.left, y10, axis.right - axis.left, y5 - y10);
+                                    // Excelente >10km
+                                    chart.ctx.fillStyle = '#16a34a22';
+                                    chart.ctx.fillRect(axis.left, axis.top, axis.right - axis.left, y10 - axis.top);
+                                    chart.ctx.restore();
+                                }
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Chart 2: evolución 48h
+        // ---- Chart 2: evolución 48h con bandas de color ----
         const ctxVisTrend = document.getElementById('chart-vis-trend');
         if (ctxVisTrend) {
             if (window._chartVisTrend) window._chartVisTrend.destroy();
@@ -7605,7 +7695,7 @@ fetchPollen();
                 const vis = data.hourly.visibility.slice(0, 48).map(v => v / 1000);
 
                 datasets.push({
-                    label: VIS_CITIES[idx].name,
+                    label: cities[idx].name,
                     data: vis,
                     borderColor: colors[idx % colors.length],
                     backgroundColor: colors[idx % colors.length] + '22',
@@ -7643,7 +7733,9 @@ fetchPollen();
                         tooltip: {
                             callbacks: {
                                 label: function(ctx) {
-                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} km`;
+                                    const val = ctx.parsed.y;
+                                    const est = visEstado(val);
+                                    return `${ctx.dataset.label}: ${val.toFixed(1)} km (${est.label})`;
                                 }
                             }
                         }
@@ -7657,13 +7749,31 @@ fetchPollen();
                             beginAtZero: true,
                             title: { display: true, text: 'Visibilidad (km)' },
                             ticks: { font: { size: 10 } },
+                            afterBuildTicks: function(chart) {
+                                const axis = chart.scales.y;
+                                if (axis && axis.top && axis.bottom) {
+                                    chart.ctx.save();
+                                    const y1 = axis.getPixelForValue(1);
+                                    chart.ctx.fillStyle = '#dc262622';
+                                    chart.ctx.fillRect(axis.left, axis.bottom, axis.right - axis.left, axis.top - y1);
+                                    const y5 = axis.getPixelForValue(5);
+                                    chart.ctx.fillStyle = '#f9731622';
+                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y1 - y5);
+                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillStyle = '#eab30822';
+                                    chart.ctx.fillRect(axis.left, y10, axis.right - axis.left, y5 - y10);
+                                    chart.ctx.fillStyle = '#16a34a22';
+                                    chart.ctx.fillRect(axis.left, axis.top, axis.right - axis.left, y10 - axis.top);
+                                    chart.ctx.restore();
+                                }
+                            }
                         },
                     },
                 },
             });
         }
 
-        // Detalle por ciudad
+        // ---- Detalle por ciudad ----
         const citiesEl = document.getElementById('vis-cities');
         if (citiesEl) {
             let html = '';
@@ -7680,18 +7790,22 @@ fetchPollen();
                 const visKm = (vis / 1000).toFixed(1);
                 const code = data.current.weather_code ?? '—';
                 const desc = WMO_CODES[code] ?? 'Desconocido';
+                const est = visEstado(vis);
 
-                let visBadge = 'badge-green';
-                let visText = 'Buena';
-                const visVal = vis;
-                if (visVal < 1000) { visBadge = 'badge-red'; visText = 'Niebla'; }
-                else if (visVal < 5000) { visBadge = 'badge-orange'; visText = 'Bruma'; }
-                else if (visVal < 10000) { visBadge = 'badge-blue'; visText = 'Moderada'; }
+                // Indicadores adicionales
+                let extras = [];
+                if (esCanarias(city.name) && (data.current.weather_code === 11 || vis < 3000)) {
+                    extras.push('🌫️ Calima');
+                }
+                if (data.current.temperature_2m != null && data.current.dew_point_2m != null) {
+                    const diff = (data.current.temperature_2m - data.current.dew_point_2m).toFixed(1);
+                    extras.push(`🌡️ Δ${diff}°C`);
+                }
 
                 html += `<div class="list-item">
-                    <div class="list-item-header">${city.name} <span class="badge ${visBadge}">${visText} — ${visKm} km</span></div>
+                    <div class="list-item-header">${city.name} <span class="badge ${est.cls}">${est.label} — ${visKm} km</span></div>
                     <div class="list-item-sub">
-                        ☁️ ${desc} · 📊 Mín: ${minVis} km · Máx: ${maxVis} km
+                        ☁️ ${desc} · 📊 Mín: ${minVis} km · Máx: ${maxVis} km ${extras.map(e => '· ' + e).join('')}
                     </div>
                 </div>`;
             });
