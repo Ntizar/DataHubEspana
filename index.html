@@ -6438,21 +6438,92 @@ fetchPollen();
 
     // ===== GBFS BICYCLES =====
     const GBFS_FEEDS = [
-        { name: 'Madrid (BiciMAD)', url: 'https://gbfs.madrid.es/gbfs/en/station_information.json' },
-        { name: 'Barcelona (Bicing)', url: 'https://gbfs.bicing.cat/gbfs/en/station_information.json' },
-        { name: 'Valencia (Valenbisi)', url: 'https://gbfs.valenbisi.es/public/station_information.json' },
-        { name: 'Sevilla (Sevici)', url: 'https://sevici.es/gbfs/en/station_information.json' },
-        { name: 'Bilbao (BiciBilbao)', url: 'https://bici.bilboba.net/gbfs/en/station_information.json' },
-        { name: 'Málaga (BiciMálaga)', url: 'https://gbfs.malaga.eu/gbfs/en/station_information.json' },
-        { name: 'Zaragoza (BiciZaragoza)', url: 'https://gbfs.zaragoza.es/gbfs/en/station_information.json' },
-        { name: 'Valladolid (Emibi)', url: 'https://gbfs.es.emibici.com/gbfs/en/station_information.json' },
-        { name: 'Vigo (Bivio)', url: 'https://bivio.vigo.gal/gbfs/en/station_information.json' },
-        { name: 'Alicante (BiciMAD)', url: 'https://bici-alicante.es/gbfs/en/station_information.json' },
-        { name: 'Pamplona (BiciPNA)', url: 'https://bicipna.es/gbfs/en/station_information.json' },
-        { name: 'San Sebastián (Dubi)', url: 'https://dubi.eus/gbfs/en/station_information.json' },
+        { name: 'Madrid (BiciMAD)', city: 'Madrid', url: 'https://gbfs.madrid.es/gbfs/en/station_information.json', statusUrl: 'https://gbfs.madrid.es/gbfs/en/station_status.json' },
+        { name: 'Barcelona (Bicing)', city: 'Barcelona', url: 'https://gbfs.bicing.cat/gbfs/en/station_information.json', statusUrl: 'https://gbfs.bicing.cat/gbfs/en/station_status.json' },
+        { name: 'Valencia (Valenbisi)', city: 'Valencia', url: 'https://gbfs.valenbisi.es/public/station_information.json', statusUrl: 'https://gbfs.valenbisi.es/public/station_status.json' },
+        { name: 'Sevilla (Sevici)', city: 'Sevilla', url: 'https://sevici.es/gbfs/en/station_information.json', statusUrl: 'https://sevici.es/gbfs/en/station_status.json' },
+        { name: 'Málaga (BiciMálaga)', city: 'Málaga', url: 'https://gbfs.malaga.eu/gbfs/en/station_information.json', statusUrl: 'https://gbfs.malaga.eu/gbfs/en/station_status.json' },
+        { name: 'Zaragoza (BiciZaragoza)', city: 'Zaragoza', url: 'https://gbfs.zaragoza.es/gbfs/en/station_information.json', statusUrl: 'https://gbfs.zaragoza.es/gbfs/en/station_status.json' },
+        { name: 'Bilbao (BiciBilbao)', city: 'Bilbao', url: 'https://bici.bilboba.net/gbfs/en/station_information.json', statusUrl: 'https://bici.bilboba.net/gbfs/en/station_status.json' },
+        { name: 'Valladolid (Emibi)', city: 'Valladolid', url: 'https://gbfs.es.emibici.com/gbfs/en/station_information.json', statusUrl: 'https://gbfs.es.emibici.com/gbfs/en/station_status.json' },
     ];
 
-    async function fetchGBFS() {
+    // Cache global de datos GBFS
+    let _gbfsCache = [];
+
+    async function fetchGBFSData() {
+        const results = [];
+        for (const feed of GBFS_FEEDS) {
+            try {
+                const [infoResp, statusResp] = await Promise.all([
+                    fetch(feed.url, { signal: AbortSignal.timeout(8000) }),
+                    fetch(feed.statusUrl, { signal: AbortSignal.timeout(8000) }),
+                ]);
+                const info = await infoResp.json();
+                const status = await statusResp.json();
+
+                if (!info || !info.data || !info.data.stations) continue;
+                if (!status || !status.data || !status.data.stations) continue;
+
+                const stations = info.data.stations;
+                const statusMap = {};
+                for (const s of status.data.stations) {
+                    statusMap[s.station_id] = s;
+                }
+
+                let bikes = 0;
+                let docking = 0;
+                for (const s of stations) {
+                    const st = statusMap[s.station_id] || {};
+                    bikes += st.num_bikes_available ?? 0;
+                    docking += st.num_docks_available ?? 0;
+                }
+
+                results.push({
+                    name: feed.name,
+                    city: feed.city,
+                    stations: stations.length,
+                    bikes: bikes,
+                    docking: docking,
+                    error: false,
+                });
+            } catch (err) {
+                results.push({
+                    name: feed.name,
+                    city: feed.city,
+                    stations: '—',
+                    bikes: '—',
+                    docking: '—',
+                    error: true,
+                });
+            }
+        }
+        return results;
+    }
+
+    function getCityOptions(data) {
+        const cities = [...new Set(data.map(d => d.city).filter(Boolean))].sort();
+        const sel = document.getElementById('gbfs-city-select');
+        if (!sel) return cities;
+        // Mantener selección actual
+        const current = sel.value;
+        sel.innerHTML = '<option value="all">Todas las ciudades</option>';
+        for (const c of cities) {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            if (c === current) opt.selected = true;
+            sel.appendChild(opt);
+        }
+        return cities;
+    }
+
+    function filterByCity(data, city) {
+        if (city === 'all') return data;
+        return data.filter(d => d.city === city);
+    }
+
+    function renderGBFS(data, filtered) {
         const listEl = document.getElementById('gbfs-list');
         if (!listEl) return;
 
@@ -6462,40 +6533,24 @@ fetchPollen();
         let totalDocking = 0;
         let html = '';
 
-        for (const feed of GBFS_FEEDS) {
-            try {
-                const resp = await fetch(feed.url, { signal: AbortSignal.timeout(8000) });
-                const data = await resp.json();
-
-                if (data && data.data && data.data.stations) {
-                    const stations = data.data.stations;
-                    const numStations = stations.length;
-                    let bikes = 0;
-                    let docking = 0;
-
-                    for (const s of stations) {
-                        bikes += s.num_bikes_available ?? 0;
-                        docking += s.num_docks_available ?? 0;
-                    }
-
-                    totalSystems++;
-                    totalStations += numStations;
-                    totalBikes += bikes;
-                    totalDocking += docking;
-
-                    html += `<div class="list-item">
-                        <div class="list-item-header">${feed.name}</div>
-                        <div class="list-item-sub">
-                            ${numStations} estaciones · 🚲 ${bikes} bicis · 🔌 ${docking} anclajes
-                        </div>
-                    </div>`;
-                }
-            } catch (err) {
+        for (const d of filtered) {
+            if (d.error) {
                 html += `<div class="list-item">
-                    <div class="list-item-header">${feed.name}</div>
+                    <div class="list-item-header">${d.name}</div>
                     <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
                 </div>`;
+                continue;
             }
+            totalSystems++;
+            totalStations += d.stations;
+            totalBikes += d.bikes;
+            totalDocking += d.docking;
+            html += `<div class="list-item">
+                <div class="list-item-header">${d.name}</div>
+                <div class="list-item-sub">
+                    ${d.stations} estaciones · 🚲 ${d.bikes.toLocaleString('es-ES')} bicis · 🔌 ${d.docking.toLocaleString('es-ES')} anclajes
+                </div>
+            </div>`;
         }
 
         document.getElementById('gbfs-systems').textContent = totalSystems;
@@ -6503,6 +6558,90 @@ fetchPollen();
         document.getElementById('gbfs-bikes').textContent = totalBikes.toLocaleString('es-ES');
         document.getElementById('gbfs-docking').textContent = totalDocking.toLocaleString('es-ES');
         listEl.innerHTML = html || '<div style="font-size:12px;color:#64748b;">No se encontraron sistemas GBFS.</div>';
+    }
+
+    function renderGBFSChart(filtered) {
+        const ctx = document.getElementById('chart-gbfs');
+        if (!ctx) return;
+        if (window._chartGBFS) window._chartGBFS.destroy();
+
+        const labels = [];
+        const bikesData = [];
+        const dockingData = [];
+        const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2', '#dc2626', '#ea580c', '#60a5fa'];
+
+        for (const d of filtered) {
+            if (d.error) continue;
+            labels.push(d.city);
+            bikesData.push(d.bikes);
+            dockingData.push(d.docking);
+        }
+
+        window._chartGBFS = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '🚲 Bicis disponibles',
+                        data: bikesData,
+                        backgroundColor: colors.slice(0, labels.length).map(c => c + 'cc'),
+                        borderColor: colors.slice(0, labels.length),
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    },
+                    {
+                        label: '🔌 Anclajes libres',
+                        data: dockingData,
+                        backgroundColor: colors.slice(0, labels.length).map(c => c + '44'),
+                        borderColor: colors.slice(0, labels.length).map(c => c + '88'),
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('es-ES')}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Unidades' }
+                    }
+                }
+            }
+        });
+    }
+
+    async function fetchGBFS() {
+        _gbfsCache = await fetchGBFSData();
+        const sel = document.getElementById('gbfs-city-select');
+        if (!sel) return;
+
+        // Populate city options
+        getCityOptions(_gbfsCache);
+
+        // Event listener for city filter
+        sel.onchange = function() {
+            const city = this.value;
+            const filtered = filterByCity(_gbfsCache, city);
+            renderGBFS(_gbfsCache, filtered);
+            renderGBFSChart(filtered);
+        };
+
+        // Initial render (all cities)
+        renderGBFS(_gbfsCache, _gbfsCache);
+        renderGBFSChart(_gbfsCache);
     }
 
     // ===== VISIBILIDAD =====
