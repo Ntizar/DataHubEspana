@@ -642,6 +642,7 @@
                 <button class="tab-btn" data-tab="presion">📊 Presión</button>
                 <button class="tab-btn" data-tab="fuego">🔥 Índice de Fuego</button>
                 <button class="tab-btn" data-tab="evapo">💧 Evapotranspiración</button>
+                <button class="tab-btn" data-tab="cape">⚡ CAPE Tormentas</button>
             </div>
         </div>
 
@@ -1626,6 +1627,42 @@
                             <div id="evapo-map-cities" style="font-size:12px;"></div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API (et0_fao_evapotranspiration)</div>
+                    </div>
+
+                    <!-- CAPE Tormentas -->
+                    <div class="tab-panel" id="tab-cape">
+                        <div class="section-title">⚡ CAPE — Energía Convectiva y Riesgo de Tormentas</div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="cape-avg">—</div>
+                                <div class="kpi-label">CAPE promedio (J/kg)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="cape-risk">—</div>
+                                <div class="kpi-label">Nivel de riesgo</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="cape-freezing">—</div>
+                                <div class="kpi-label">Nivel congelación (m)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="cape-energy">—</div>
+                                <div class="kpi-label">Energía disponible (kJ/kg)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">CAPE 48h por ciudad</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-cape"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Mapa de riesgo de tormentas por ciudad</div>
+                            <div id="cape-city-map" style="font-size:12px;"></div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (cape)</div>
                     </div>
                 </div>
             </div>
@@ -4367,6 +4404,7 @@ fetchPollen();
         fetchPresion();
         fetchFuego();
         fetchEvapo();
+        fetchCAPE();
     }
 
     // ===== RESIZE HANDLER =====
