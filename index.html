@@ -1477,6 +1477,12 @@
                     <!-- BICICLETAS GBFS TAB -->
                     <div class="tab-panel" id="tab-gbfs">
                         <div class="section-title">🚲 Bicicletas Compartidas (GBFS)</div>
+                        <div style="margin-bottom:12px;">
+                            <label for="gbfs-city-select" style="font-size:13px;color:#64748b;margin-right:8px;">Filtrar por ciudad:</label>
+                            <select id="gbfs-city-select" style="padding:4px 10px;border-radius:8px;border:1px solid #d1d5db;background:#fff;font-size:13px;color:#1e293b;cursor:pointer;">
+                                <option value="all">Todas las ciudades</option>
+                            </select>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue"><div class="kpi-value" id="gbfs-systems">—</div><div class="kpi-label">Sistemas</div></div>
                             <div class="kpi green"><div class="kpi-value" id="gbfs-stations">—</div><div class="kpi-label">Estaciones</div></div>
@@ -1485,10 +1491,15 @@
                             <div class="kpi orange"><div class="kpi-value" id="gbfs-bikes">—</div><div class="kpi-label">Bicis disponibles</div></div>
                             <div class="kpi"><div class="kpi-value" id="gbfs-docking">—</div><div class="kpi-label">Anclajes libres</div></div>
                         </div>
+                        <div class="card"><div class="card-title">Bicis disponibles por sistema</div>
+                            <div class="chart-container" style="height:260px;">
+                                <canvas id="chart-gbfs"></canvas>
+                            </div>
+                        </div>
                         <div class="card"><div class="card-title">Sistemas GBFS por ciudad</div>
                             <div id="gbfs-list"></div>
                         </div>
-                        <div class="section-title">Fuente: Open GBFS feeds</div>
+                        <div class="section-title">Fuente: Open GBFS feeds (Madrid, Barcelona, Valencia, Sevilla…)</div>
                     </div>
 
                     <!-- NIEVE TAB -->
@@ -3251,7 +3262,7 @@
             const c = data.current;
             if (c) {
                 // KPIs
-                const coVal = c.carbon_monoxide !== undefined ? (c.carbon_monoxide / 1000 * 1e6).toFixed(0) : '—';
+                const coVal = c.carbon_monoxide !== undefined ? (c.carbon_monoxide * 1000).toFixed(0) : '—';
                 const so2Val = c.sulphur_dioxide !== undefined ? c.sulphur_dioxide : '—';
                 const nh3Val = c.ammonia !== undefined ? c.ammonia : '—';
 
@@ -3330,7 +3341,7 @@
         if (!current) return;
 
         const values = [
-            current.carbon_monoxide || 0 / 1000 * 1e6,
+            (current.carbon_monoxide || 0) * 1000,  // mg/m³ → µg/m³
             current.sulphur_dioxide || 0,
             current.ammonia || 0,
             5, // benceno estimado
@@ -5835,6 +5846,7 @@
         renderEconomyDetail();
         renderPorts();
         fetchAirQuality();
+        fetchAireExt();
         fetchDemography();
 fetchPollen();
         fetchFloods();
