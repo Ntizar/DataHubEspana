@@ -467,6 +467,40 @@
         .badge-orange { background: #fff7ed; color: #c2410c; }
         .badge-red { background: #fee2e2; color: #b91c1c; }
         .badge-purple { background: #f3e8ff; color: #7e22ce; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+
+        /* ===== MAREAS TABLE ===== */
+        .mares-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .mares-table th {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        .mares-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+        .mares-table tr:hover td {
+            background: #f8fafc;
+        }
+        .mares-table .port-name {
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+        }
+        .mares-table .badge {
+            font-size: 9px;
+            padding: 1px 6px;
+        }
 
         /* ===== UV SELECTOR & ALERTS ===== */
         .alert-banner {
@@ -2372,35 +2406,52 @@
 
                     <!-- MAREAS TAB -->
                     <div class="tab-panel" id="tab-mareas">
-                        <div class="section-title">🌊 Mareas y Corrientes Marinas — Puertos de España</div>
+                        <div class="section-title">🌊 Mareas y Corrientes Marinas — Puertos de España
+                            <select id="marea-port-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 Todos los puertos</option>
+                            </select>
+                        </div>
+
+                        <!-- KPIs globales (todos los puertos) -->
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="marea-nivel">—</div>
-                                <div class="kpi-label">Nivel agua medio (m)</div>
+                                <div class="kpi-label">Oleaje medio (m)</div>
                             </div>
                             <div class="kpi green">
                                 <div class="kpi-value" id="marea-corriente-max">—</div>
-                                <div class="kpi-label">Corriente máxima (m/s)</div>
+                                <div class="kpi-label">Corriente máx (m/s)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="marea-temp-agua">—</div>
+                                <div class="kpi-label">Temp. agua (°C)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
-                            <div class="kpi orange">
-                                <div class="kpi-value" id="marea-oleaje-prom">—</div>
-                                <div class="kpi-label">Oleaje promedio (m)</div>
-                            </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="marea-direccion">—</div>
                                 <div class="kpi-label">Dir. corriente media (°)</div>
                             </div>
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="marea-tide-state">—</div>
+                                <div class="kpi-label">Estado marea</div>
+                            </div>
                         </div>
+
+                        <!-- Tabla de puertos -->
                         <div class="card">
-                            <div class="card-title">Oleaje y corriente por puerto (48h)</div>
-                            <div class="chart-container" style="height:240px;">
+                            <div class="card-title">Datos actuales por puerto</div>
+                            <div id="marea-puertos" style="overflow-x:auto;"></div>
+                        </div>
+
+                        <!-- Chart 48h -->
+                        <div class="card">
+                            <div class="card-title">Oleaje y corriente 48h</div>
+                            <div class="chart-container" style="height:280px;">
                                 <canvas id="chart-mareas"></canvas>
                             </div>
                         </div>
-                        <div class="section-title">Puertos con datos de marea</div>
-                        <div id="marea-puertos"></div>
+
                         <div class="section-title">Fuente: Open-Meteo Marine API</div>
                     </div>
 
@@ -7615,7 +7666,16 @@ fetchPollen();
         { name: 'Barcelona', lat: 41.34, lon: 2.18 },
         { name: 'Bilbao', lat: 43.26, lon: -2.93 },
         { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
+        { name: 'Vigo', lat: 42.23, lon: -8.72 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.40 },
+        { name: 'Cádiz', lat: 36.53, lon: -6.29 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Santander', lat: 43.46, lon: -3.81 },
     ];
+
+    // Estado global para mareas
+    let mareasPortData = {};
+    let mareasTideInfo = {};
 
     // ===== ENERGÍA EÓLICA =====
     const EOLICA_CITIES = [
@@ -7779,9 +7839,22 @@ fetchPollen();
     }
 
     async function fetchMareas() {
+        // Poblar selector de puertos
+        const portSelect = document.getElementById('marea-port-select');
+        if (portSelect) {
+            MAREAS_PORTS.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.name;
+                opt.textContent = p.name;
+                portSelect.appendChild(opt);
+            });
+            portSelect.addEventListener('change', () => renderMareasTabla());
+        }
+
+        // Fetch todos los puertos
         const promises = MAREAS_PORTS.map(async (port) => {
             try {
-                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${port.lat}&longitude=${port.lon}&current=ocean_current_velocity,ocean_current_direction,wave_height,wave_period&hourly=wave_height,wave_period,ocean_current_velocity&timezone=auto&forecast_days=2`;
+                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${port.lat}&longitude=${port.lon}&current=ocean_current_velocity,ocean_current_direction,wave_height,wave_period,sea_surface_temperature&hourly=wave_height,wave_period,ocean_current_velocity,ocean_current_direction,sea_surface_temperature&timezone=auto&forecast_days=2`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -7791,58 +7864,127 @@ fetchPollen();
 
         const results = await Promise.all(promises);
 
-        // KPIs
+        // Guardar datos por puerto
+        mareasPortData = {};
+        MAREAS_PORTS.forEach((port, idx) => {
+            mareasPortData[port.name] = results[idx];
+        });
+
+        // ===== KPIs GLOBALES =====
         let currentVelocities = [];
         let currentDirections = [];
         let waveHeights = [];
+        let waterTemps = [];
         let maxCurrent = 0;
-        let avgWave = 0;
+        let validCount = 0;
 
         results.forEach((data) => {
             if (!data || !data.current) return;
+            validCount++;
             const cv = data.current.ocean_current_velocity ?? 0;
             const cd = data.current.ocean_current_direction ?? 0;
             const wh = data.current.wave_height ?? 0;
+            const st = data.current.sea_surface_temperature;
 
             currentVelocities.push(cv);
             currentDirections.push(cd);
             waveHeights.push(wh);
+            if (st !== undefined && st !== null) waterTemps.push(st);
 
             if (cv > maxCurrent) maxCurrent = cv;
         });
 
-        if (waveHeights.length > 0) {
-            avgWave = waveHeights.reduce((a, b) => a + b, 0) / waveHeights.length;
-        }
-
+        const avgWave = waveHeights.length > 0 ? waveHeights.reduce((a, b) => a + b, 0) / waveHeights.length : 0;
         const avgDir = currentDirections.length > 0
             ? Math.round(currentDirections.reduce((a, b) => a + b, 0) / currentDirections.length)
+            : null;
+        const avgTemp = waterTemps.length > 0
+            ? (waterTemps.reduce((a, b) => a + b, 0) / waterTemps.length).toFixed(1)
             : '—';
+
+        // ===== DETECCIÓN DE MAREA =====
+        // Comparamos velocidad de corriente actual vs la anterior (hora previa en hourly)
+        let tideState = '🌊 Calmada';
+        let tideBadge = 'badge-blue';
+        let tideColor = '#2563eb';
+
+        // Intentar detectar subida/bajada comparando current vs anterior
+        let risingCount = 0;
+        let fallingCount = 0;
+        let totalChecked = 0;
+
+        results.forEach((data) => {
+            if (!data || !data.current || !data.hourly) return;
+            const now = data.current.time;
+            const currentCV = data.current.ocean_current_velocity ?? 0;
+
+            // Buscar la hora anterior en hourly
+            if (data.hourly.time) {
+                const nowDate = new Date(now);
+                const prevTime = new Date(nowDate.getTime() - 3600000).toISOString().replace('T', ' ').substring(0, 13) + ':00';
+
+                const prevIdx = data.hourly.time.findIndex(t => t.startsWith(prevTime.substring(0, 13)));
+                if (prevIdx >= 0 && prevIdx + 1 < data.hourly.ocean_current_velocity.length) {
+                    const prevCV = data.hourly.ocean_current_velocity[prevIdx + 1];
+                    if (prevCV !== undefined && prevCV !== null) {
+                        totalChecked++;
+                        if (currentCV > prevCV) risingCount++;
+                        else if (currentCV < prevCV) fallingCount++;
+                    }
+                }
+            }
+        });
+
+        if (totalChecked > 0) {
+            const riseRatio = risingCount / totalChecked;
+            if (riseRatio > 0.6) {
+                tideState = '📈 Subiendo';
+                tideBadge = 'badge-green';
+                tideColor = '#16a34a';
+            } else if (riseRatio < 0.4) {
+                tideState = '📉 Bajando';
+                tideBadge = 'badge-orange';
+                tideColor = '#f97316';
+            } else {
+                tideState = '🌊 Calmada';
+                tideBadge = 'badge-blue';
+                tideColor = '#2563eb';
+            }
+        } else {
+            // Fallback: usar velocidad de corriente como indicador
+            if (maxCurrent >= 0.8) { tideState = '🌊 Corriente fuerte'; tideBadge = 'badge-red'; }
+            else if (maxCurrent >= 0.4) { tideState = '🌊 Corriente moderada'; tideBadge = 'badge-orange'; }
+            else if (maxCurrent >= 0.1) { tideState = '🌊 Corriente suave'; tideBadge = 'badge-green'; }
+        }
 
         // Actualizar KPIs
         document.getElementById('marea-nivel').textContent = avgWave.toFixed(2);
         document.getElementById('marea-corriente-max').textContent = maxCurrent.toFixed(2);
-        document.getElementById('marea-oleaje-prom').textContent = avgWave.toFixed(2);
-        document.getElementById('marea-direccion').textContent = avgDir !== '—' ? `${avgDir}°` : '—';
+        document.getElementById('marea-temp-agua').textContent = avgTemp;
+        document.getElementById('marea-direccion').textContent = avgDir !== null ? `${avgDir}°` : '—';
 
-        // Chart: oleaje + corriente por puerto (48h)
+        const tideEl = document.getElementById('marea-tide-state');
+        tideEl.textContent = tideState;
+        tideEl.style.color = tideColor;
+
+        // ===== CHART 48h =====
         const ctxMareas = document.getElementById('chart-mareas');
         if (ctxMareas) {
             if (window._chartMareas) window._chartMareas.destroy();
 
-            const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2'];
+            const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2',
+                           '#dc2626', '#0d9488', '#c026d3', '#ea580c', '#0284c7'];
             const datasets = [];
 
             results.forEach((data, idx) => {
                 if (!data || !data.hourly) return;
                 const labels = data.hourly.time.slice(0, 48).map(t => {
                     const d = new Date(t);
-                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:00`;
                 });
                 const wh = data.hourly.wave_height.slice(0, 48);
                 const cv = data.hourly.ocean_current_velocity.slice(0, 48);
 
-                // Dataset oleaje
                 datasets.push({
                     label: `${MAREAS_PORTS[idx].name} oleaje (m)`,
                     data: wh,
@@ -7855,12 +7997,11 @@ fetchPollen();
                     yAxisID: 'y',
                 });
 
-                // Dataset corriente
                 datasets.push({
                     label: `${MAREAS_PORTS[idx].name} corriente (m/s)`,
                     data: cv,
                     borderColor: colors[idx % colors.length],
-                    backgroundColor: colors[idx % colors.length] + '11',
+                    backgroundColor: 'transparent',
                     borderWidth: 1.5,
                     borderDash: [4, 4],
                     pointRadius: 0,
@@ -7875,7 +8016,7 @@ fetchPollen();
             if (firstData) {
                 chartLabels = firstData.hourly.time.slice(0, 48).map(t => {
                     const d = new Date(t);
-                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:00`;
                 });
             }
 
@@ -7914,7 +8055,7 @@ fetchPollen();
                     scales: {
                         x: {
                             title: { display: true, text: 'Tiempo' },
-                            ticks: { maxTicksLimit: 8, font: { size: 10 } },
+                            ticks: { maxTicksLimit: 8, font: { size: 9 }, maxRotation: 0 },
                         },
                         y: {
                             type: 'linear',
@@ -7938,48 +8079,97 @@ fetchPollen();
             });
         }
 
-        // Lista de puertos
+        // Render tabla de puertos
+        renderMareasTabla();
+    }
+
+    // ===== RENDER TABLA DE MAREAS =====
+    function renderMareasTabla() {
+        const portSelect = document.getElementById('marea-port-select');
+        const selectedPort = portSelect ? portSelect.value : 'all';
         const puertosEl = document.getElementById('marea-puertos');
-        if (puertosEl) {
-            let html = '';
-            results.forEach((data, idx) => {
-                const port = MAREAS_PORTS[idx];
-                if (!data || !data.current) {
-                    html += `<div class="list-item">
-                        <div class="list-item-header">${port.name}</div>
-                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
-                    </div>`;
-                    return;
-                }
-                const wh = data.current.wave_height ?? 0;
-                const wp = data.current.wave_period ?? '—';
-                const cv = data.current.ocean_current_velocity ?? 0;
-                const cd = data.current.ocean_current_direction ?? '—';
+        if (!puertosEl) return;
 
-                // Determinar estado de marea
-                let tideText = '🌊 Calmada';
-                let tideBadge = 'badge-blue';
-                if (cv >= 0.8) { tideText = '🌊 Corriente fuerte'; tideBadge = 'badge-red'; }
-                else if (cv >= 0.4) { tideText = '🌊 Corriente moderada'; tideBadge = 'badge-orange'; }
-                else if (cv >= 0.1) { tideText = '🌊 Corriente suave'; tideBadge = 'badge-green'; }
+        const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+                      'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNW'];
 
-                // Dirección en texto
-                let dirText = '—';
-                if (cd !== '—' && cd !== null) {
-                    const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNW'];
-                    dirText = dirs[Math.round(cd / 22.5) % 16];
-                }
+        let html = '<table class="mares-table"><thead><tr>';
+        html += '<th>Puerto</th><th>Oleaje (m)</th><th>Corriente (m/s)</th><th>Dir.</th><th>Temp. agua (°C)</th><th>Estado</th>';
+        html += '</tr></thead><tbody>';
 
-                html += `<div class="list-item">
-                    <div class="list-item-header">${port.name} <span class="badge ${tideBadge}">${tideText}</span></div>
-                    <div class="list-item-sub">
-                        🌊 Oleaje: ${wh.toFixed(2)} m · ⏱️ Período: ${wp} s
-                        <br>💨 Corriente: ${cv.toFixed(2)} m/s · 🧭 Dirección: ${cd}° (${dirText})
-                    </div>
-                </div>`;
-            });
-            puertosEl.innerHTML = html;
+        MAREAS_PORTS.forEach((port, idx) => {
+            if (selectedPort !== 'all' && selectedPort !== port.name) return;
+
+            const data = mareasPortData[port.name];
+            if (!data || !data.current) {
+                html += `<tr><td class="port-name">${port.name}</td><td colspan="5" style="color:#dc2626;">⚠️ No disponible</td></tr>`;
+                return;
+            }
+
+            const wh = data.current.wave_height ?? 0;
+            const wp = data.current.wave_period ?? '—';
+            const cv = data.current.ocean_current_velocity ?? 0;
+            const cd = data.current.ocean_current_direction ?? 0;
+            const st = data.current.sea_surface_temperature;
+
+            // Dirección
+            let dirText = '—';
+            if (cd !== '—' && cd !== null && cd !== 0) {
+                dirText = `${Math.round(cd)}° (${dirs[Math.round(cd / 22.5) % 16]})`;
+            } else if (cd === 0) {
+                dirText = 'N (0°)';
+            }
+
+            // Temp agua
+            const tempText = (st !== undefined && st !== null) ? `${st.toFixed(1)}°C` : '—';
+
+            // Detección de marea por puerto
+            let tideText = '🌊 Calmada';
+            let tideBadge = 'badge-blue';
+            const tideInfo = detectMareaPuerto(data, port);
+            if (tideInfo.state === 'subiendo') { tideText = '📈 Subiendo'; tideBadge = 'badge-green'; }
+            else if (tideInfo.state === 'bajando') { tideText = '📉 Bajando'; tideBadge = 'badge-orange'; }
+            else if (cv >= 0.8) { tideText = '🌊 Fuerte'; tideBadge = 'badge-red'; }
+            else if (cv >= 0.4) { tideText = '🌊 Moderada'; tideBadge = 'badge-orange'; }
+            else if (cv >= 0.1) { tideText = '🌊 Suave'; tideBadge = 'badge-green'; }
+
+            html += `<tr>
+                <td class="port-name">${port.name}</td>
+                <td>${wh.toFixed(2)}${wp !== '—' ? ` <small style="color:#94a3b8">(${wp}s)</small>` : ''}</td>
+                <td>${cv.toFixed(2)}</td>
+                <td>${dirText}</td>
+                <td>${tempText}</td>
+                <td><span class="badge ${tideBadge}">${tideText}</span></td>
+            </tr>`;
+        });
+
+        html += '</tbody></table>';
+        puertosEl.innerHTML = html;
+    }
+
+    // ===== DETECCIÓN DE MAREA POR PUERTO =====
+    function detectMareaPuerto(data, port) {
+        if (!data || !data.current || !data.hourly) return { state: 'calmada', detail: '' };
+
+        const now = data.current.time;
+        const currentCV = data.current.ocean_current_velocity ?? 0;
+
+        // Comparar con hora anterior
+        const nowDate = new Date(now);
+        const prevTime = new Date(nowDate.getTime() - 3600000).toISOString();
+        const prevHourStr = prevTime.substring(0, 13) + ':00';
+
+        const prevIdx = data.hourly.time.findIndex(t => t.startsWith(prevTime.substring(0, 13)));
+        if (prevIdx >= 0 && prevIdx + 1 < data.hourly.ocean_current_velocity.length) {
+            const prevCV = data.hourly.ocean_current_velocity[prevIdx + 1];
+            if (prevCV !== undefined && prevCV !== null) {
+                const diff = currentCV - prevCV;
+                if (diff > 0.05) return { state: 'subiendo', detail: `+${diff.toFixed(2)} m/s` };
+                if (diff < -0.05) return { state: 'bajando', detail: `${diff.toFixed(2)} m/s` };
+            }
         }
+
+        return { state: 'calmada', detail: '' };
     }
 
     // ===== UV Y RADIACIÓN SOLAR =====
