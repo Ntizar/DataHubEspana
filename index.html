@@ -635,6 +635,7 @@
                 <button class="tab-btn" data-tab="mar">🌊 Mar y Oleaje</button>
                 <button class="tab-btn" data-tab="uv">☀️ UV y Radiación</button>
                 <button class="tab-btn" data-tab="visibilidad">👁️ Visibilidad</button>
+                <button class="tab-btn" data-tab="rafagas">💨 Ráfagas</button>
             </div>
         </div>
 
@@ -1436,6 +1437,46 @@
                         </div>
                         <div class="section-title">Detalle por ciudad</div>
                         <div id="vis-cities"></div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- RAFAGAS TAB -->
+                    <div class="tab-panel" id="tab-rafagas">
+                        <div class="section-title">💨 Ráfagas de Viento — España</div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="raf-max-gust">—</div>
+                                <div class="kpi-label">Ráfaga máxima (km/h)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="raf-mean-wind">—</div>
+                                <div class="kpi-label">Viento medio (km/h)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="raf-dom-dir">—</div>
+                                <div class="kpi-label">Dirección dominante</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="raf-wind-energy">—</div>
+                                <div class="kpi-label">Energía eólica est. (MW)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Ráfagas máximas por ciudad (km/h)</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-rafagas"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Evolución ráfagas 24h — Tarifa (punto más ventoso)</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-raf-trend"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Ciudades con datos</div>
+                        <div id="raf-cities"></div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
                     </div>
                 </div>
@@ -3559,6 +3600,7 @@
         fetchMar();
         fetchUV();
         fetchVisibilidad();
+        fetchRafagas();
     }
 
     // ===== RESIZE HANDLER =====
@@ -4411,6 +4453,254 @@
                     <div class="list-item-header">${city.name} <span class="badge ${visBadge}">${visText} — ${visKm} km</span></div>
                     <div class="list-item-sub">
                         ☁️ ${desc} · 📊 Mín: ${minVis} km · Máx: ${maxVis} km
+                    </div>
+                </div>`;
+            });
+            citiesEl.innerHTML = html;
+        }
+    }
+
+    // ===== RAFAGAS DE VIENTO =====
+    const RAFAGA_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'A Coruña', lat: 43.36, lon: -8.42 },
+        { name: 'Tarifa', lat: 36.01, lon: -5.61 },
+    ];
+
+    function windDirToDeg(dir) {
+        return dir ?? 0;
+    }
+
+    function windDirToCardinal(deg) {
+        const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+                      'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNO'];
+        return dirs[Math.round(deg / 22.5) % 16];
+    }
+
+    function calcWindEnergy(maxGustKmh) {
+        // P = 0.5 * ρ * A * v³  — potencia total estimada por aerogenerador
+        // v en m/s, A = 5000 m² (eólica onshore media), ρ = 1.225 kg/m³
+        const rho = 1.225;
+        const A = 5000;
+        const v = maxGustKmh / 3.6; // km/h → m/s
+        const P = 0.5 * rho * A * Math.pow(v, 3); // watts
+        return P / 1e6; // MW
+    }
+
+    async function fetchRafagas() {
+        const promises = RAFAGA_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=wind_speed_10m,wind_gusts_10m,wind_direction_10m&hourly=wind_speed_10m,wind_gusts_10m&daily=wind_gusts_10m_max&timezone=Europe/Madrid&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // KPIs
+        let gusts = [];
+        let windSpeeds = [];
+        let windDirs = [];
+
+        results.forEach((data) => {
+            if (!data || !data.current) return;
+            if (data.current.wind_gusts_10m != null) gusts.push(data.current.wind_gusts_10m);
+            if (data.current.wind_speed_10m != null) windSpeeds.push(data.current.wind_speed_10m);
+            if (data.current.wind_direction_10m != null) windDirs.push(data.current.wind_direction_10m);
+        });
+
+        const maxGust = gusts.length > 0 ? Math.max(...gusts) : 0;
+        const meanWind = windSpeeds.length > 0 ? (windSpeeds.reduce((a, b) => a + b, 0) / windSpeeds.length).toFixed(1) : '—';
+        const domDir = windDirs.length > 0 ? windDirs.reduce((a, b) => a + b, 0) / windDirs.length : 0;
+        const domDirCardinal = windDirToCardinal(domDir);
+        const windEnergy = calcWindEnergy(maxGust);
+
+        document.getElementById('raf-max-gust').textContent = maxGust ? `${maxGust.toFixed(1)} km/h` : '—';
+        document.getElementById('raf-mean-wind').textContent = meanWind ? `${meanWind} km/h` : '—';
+        document.getElementById('raf-dom-dir').textContent = domDir ? `${domDirCardinal} (~${domDir.toFixed(0)}°)` : '—';
+        document.getElementById('raf-wind-energy').textContent = windEnergy ? `${windEnergy.toFixed(1)} MW` : '—';
+
+        // Chart 1: ráfagas máximas por ciudad (barras)
+        const ctxRaf = document.getElementById('chart-rafagas');
+        if (ctxRaf) {
+            if (window._chartRafagas) window._chartRafagas.destroy();
+
+            const labels = [];
+            const gustValues = [];
+            const gustColors = [];
+
+            results.forEach((data, idx) => {
+                labels.push(RAFAGA_CITIES[idx].name);
+                if (data && data.current && data.current.wind_gusts_10m != null) {
+                    const g = data.current.wind_gusts_10m;
+                    gustValues.push(g);
+                    if (g > 70) gustColors.push('#dc2626');
+                    else if (g > 50) gustColors.push('#f97316');
+                    else gustColors.push('#2563eb');
+                } else {
+                    gustValues.push(0);
+                    gustColors.push('#94a3b8');
+                }
+            });
+
+            window._chartRafagas = new Chart(ctxRaf, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ráfaga máxima (km/h)',
+                        data: gustValues,
+                        backgroundColor: gustColors.map(c => c + 'bb'),
+                        borderColor: gustColors,
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `Ráfaga: ${ctx.parsed.y.toFixed(1)} km/h · Eólica: ${calcWindEnergy(ctx.parsed.y).toFixed(1)} MW`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'km/h' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 2: evolución ráfagas 24h — Tarifa (índice 7 = Tarifa)
+        const ctxRafTrend = document.getElementById('chart-raf-trend');
+        if (ctxRafTrend) {
+            if (window._chartRafTrend) window._chartRafTrend.destroy();
+
+            // Find first city with hourly gust data
+            let tarifaData = results[7]; // Tarifa index
+            if (!tarifaData || !tarifaData.hourly) {
+                tarifaData = results.find(d => d && d.hourly);
+            }
+
+            let chartLabels = [];
+            let gustTimeline = [];
+            let speedTimeline = [];
+
+            if (tarifaData && tarifaData.hourly && tarifaData.hourly.time) {
+                chartLabels = tarifaData.hourly.time.slice(0, 24).map(t => {
+                    const d = new Date(t);
+                    return `${d.getDate()}/${d.getMonth() + 1} ${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+                gustTimeline = (tarifaData.hourly.wind_gusts_10m || []).slice(0, 24).map(v => v ?? 0);
+                speedTimeline = (tarifaData.hourly.wind_speed_10m || []).slice(0, 24).map(v => v ?? 0);
+            }
+
+            window._chartRafTrend = new Chart(ctxRafTrend, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Ráfagas (km/h)',
+                            data: gustTimeline,
+                            borderColor: '#f97316',
+                            backgroundColor: '#f9731633',
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            fill: true,
+                            tension: 0.3,
+                        },
+                        {
+                            label: 'Viento medio (km/h)',
+                            data: speedTimeline,
+                            borderColor: '#2563eb',
+                            backgroundColor: '#2563eb33',
+                            borderWidth: 1.5,
+                            pointRadius: 1,
+                            fill: true,
+                            tension: 0.3,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Tiempo' },
+                            ticks: { maxTicksLimit: 8, font: { size: 9 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'km/h' },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Detalle por ciudad
+        const citiesEl = document.getElementById('raf-cities');
+        if (citiesEl) {
+            let html = '';
+            results.forEach((data, idx) => {
+                const city = RAFAGA_CITIES[idx];
+                if (!data || !data.current) {
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${city.name}</div>
+                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                    </div>`;
+                    return;
+                }
+                const gust = data.current.wind_gusts_10m ?? '—';
+                const speed = data.current.wind_speed_10m ?? '—';
+                const dir = data.current.wind_direction_10m ?? 0;
+                const dirCard = windDirToCardinal(dir);
+                const energy = typeof gust === 'number' ? calcWindEnergy(gust) : '—';
+
+                let gustBadge = 'badge-green';
+                let gustText = 'Tranquilo';
+                if (typeof gust === 'number') {
+                    if (gust > 70) { gustBadge = 'badge-red'; gustText = 'Tormenta'; }
+                    else if (gust > 50) { gustBadge = 'badge-orange'; gustText = 'Fuerte'; }
+                    else if (gust > 30) { gustBadge = 'badge-blue'; gustText = 'Moderado'; }
+                }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${city.name} <span class="badge ${gustBadge}">${gustText} — ${gust} km/h</span></div>
+                    <div class="list-item-sub">
+                        💨 Viento: ${speed} km/h · 🧭 Dirección: ${dirCard} (~${typeof dir === 'number' ? dir.toFixed(0) : '—'}°) · ⚡ Eólica: ${energy} MW
                     </div>
                 </div>`;
             });
