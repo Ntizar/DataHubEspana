@@ -1,0 +1,314 @@
+{
+  "01": {
+    "nombre": "Álava",
+    "poblacion": 333600,
+    "ccaa": "16",
+    "capital": "Vitoria-Gasteiz"
+  },
+  "02": {
+    "nombre": "Albacete",
+    "poblacion": 387270,
+    "ccaa": "08",
+    "capital": "Albacete"
+  },
+  "03": {
+    "nombre": "Alicante",
+    "poblacion": 1976657,
+    "ccaa": "06",
+    "capital": "Alicante"
+  },
+  "04": {
+    "nombre": "Almería",
+    "poblacion": 753524,
+    "ccaa": "01",
+    "capital": "Almería"
+  },
+  "05": {
+    "nombre": "Ávila",
+    "poblacion": 156239,
+    "ccaa": "07",
+    "capital": "Ávila"
+  },
+  "06": {
+    "nombre": "Badajoz",
+    "poblacion": 663704,
+    "ccaa": "11",
+    "capital": "Badajoz"
+  },
+  "07": {
+    "nombre": "Baleares",
+    "poblacion": 1187802,
+    "ccaa": "04",
+    "capital": "Palma"
+  },
+  "08": {
+    "nombre": "Barcelona",
+    "poblacion": 5798605,
+    "ccaa": "09",
+    "capital": "Barcelona"
+  },
+  "09": {
+    "nombre": "Burgos",
+    "poblacion": 359999,
+    "ccaa": "07",
+    "capital": "Burgos"
+  },
+  "10": {
+    "nombre": "Cáceres",
+    "poblacion": 398362,
+    "ccaa": "11",
+    "capital": "Cáceres"
+  },
+  "11": {
+    "nombre": "Cádiz",
+    "poblacion": 1244534,
+    "ccaa": "01",
+    "capital": "Cádiz"
+  },
+  "12": {
+    "nombre": "Castellón",
+    "poblacion": 609834,
+    "ccaa": "06",
+    "capital": "Castellón"
+  },
+  "13": {
+    "nombre": "Ciudad Real",
+    "poblacion": 497263,
+    "ccaa": "08",
+    "capital": "Ciudad Real"
+  },
+  "14": {
+    "nombre": "Córdoba",
+    "poblacion": 786099,
+    "ccaa": "01",
+    "capital": "Córdoba"
+  },
+  "15": {
+    "nombre": "A Coruña",
+    "poblacion": 1123529,
+    "ccaa": "12",
+    "capital": "A Coruña"
+  },
+  "16": {
+    "nombre": "Cuenca",
+    "poblacion": 197563,
+    "ccaa": "08",
+    "capital": "Cuenca"
+  },
+  "17": {
+    "nombre": "Girona",
+    "poblacion": 804900,
+    "ccaa": "09",
+    "capital": "Girona"
+  },
+  "18": {
+    "nombre": "Granada",
+    "poblacion": 929494,
+    "ccaa": "01",
+    "capital": "Granada"
+  },
+  "19": {
+    "nombre": "Guadalajara",
+    "poblacion": 290253,
+    "ccaa": "08",
+    "capital": "Guadalajara"
+  },
+  "20": {
+    "nombre": "Gipuzkoa",
+    "poblacion": 727219,
+    "ccaa": "16",
+    "capital": "San Sebastián"
+  },
+  "21": {
+    "nombre": "Huelva",
+    "poblacion": 519909,
+    "ccaa": "01",
+    "capital": "Huelva"
+  },
+  "22": {
+    "nombre": "Huesca",
+    "poblacion": 227074,
+    "ccaa": "02",
+    "capital": "Huesca"
+  },
+  "23": {
+    "nombre": "Jaén",
+    "poblacion": 628970,
+    "ccaa": "01",
+    "capital": "Jaén"
+  },
+  "24": {
+    "nombre": "León",
+    "poblacion": 449130,
+    "ccaa": "07",
+    "capital": "León"
+  },
+  "25": {
+    "nombre": "Lleida",
+    "poblacion": 440547,
+    "ccaa": "09",
+    "capital": "Lleida"
+  },
+  "26": {
+    "nombre": "La Rioja",
+    "poblacion": 322480,
+    "ccaa": "17",
+    "capital": "Logroño"
+  },
+  "27": {
+    "nombre": "Lugo",
+    "poblacion": 322370,
+    "ccaa": "12",
+    "capital": "Lugo"
+  },
+  "28": {
+    "nombre": "Madrid",
+    "poblacion": 6841408,
+    "ccaa": "09",
+    "capital": "Madrid"
+  },
+  "29": {
+    "nombre": "Málaga",
+    "poblacion": 1760509,
+    "ccaa": "01",
+    "capital": "Málaga"
+  },
+  "30": {
+    "nombre": "Murcia",
+    "poblacion": 1551665,
+    "ccaa": "14",
+    "capital": "Murcia"
+  },
+  "31": {
+    "nombre": "Navarra",
+    "poblacion": 672155,
+    "ccaa": "15",
+    "capital": "Pamplona"
+  },
+  "32": {
+    "nombre": "Ourense",
+    "poblacion": 304489,
+    "ccaa": "12",
+    "capital": "Ourense"
+  },
+  "33": {
+    "nombre": "Asturias",
+    "poblacion": 1005214,
+    "ccaa": "03",
+    "capital": "Oviedo"
+  },
+  "34": {
+    "nombre": "Palencia",
+    "poblacion": 149399,
+    "ccaa": "07",
+    "capital": "Palencia"
+  },
+  "35": {
+    "nombre": "Las Palmas",
+    "poblacion": 1143363,
+    "ccaa": "05",
+    "capital": "Las Palmas"
+  },
+  "36": {
+    "nombre": "Pontevedra",
+    "poblacion": 946179,
+    "ccaa": "12",
+    "capital": "Pontevedra"
+  },
+  "37": {
+    "nombre": "Salamanca",
+    "poblacion": 328385,
+    "ccaa": "07",
+    "capital": "Salamanca"
+  },
+  "38": {
+    "nombre": "S.C. Tenerife",
+    "poblacion": 1076844,
+    "ccaa": "05",
+    "capital": "S.C. Tenerife"
+  },
+  "39": {
+    "nombre": "Cantabria",
+    "poblacion": 588058,
+    "ccaa": "03",
+    "capital": "Santander"
+  },
+  "40": {
+    "nombre": "Segovia",
+    "poblacion": 156099,
+    "ccaa": "07",
+    "capital": "Segovia"
+  },
+  "41": {
+    "nombre": "Sevilla",
+    "poblacion": 1958180,
+    "ccaa": "01",
+    "capital": "Sevilla"
+  },
+  "42": {
+    "nombre": "Soria",
+    "poblacion": 88593,
+    "ccaa": "07",
+    "capital": "Soria"
+  },
+  "43": {
+    "nombre": "Tarragona",
+    "poblacion": 823486,
+    "ccaa": "09",
+    "capital": "Tarragona"
+  },
+  "44": {
+    "nombre": "Teruel",
+    "poblacion": 133922,
+    "ccaa": "02",
+    "capital": "Teruel"
+  },
+  "45": {
+    "nombre": "Toledo",
+    "poblacion": 710323,
+    "ccaa": "08",
+    "capital": "Toledo"
+  },
+  "46": {
+    "nombre": "Valencia",
+    "poblacion": 2659489,
+    "ccaa": "06",
+    "capital": "Valencia"
+  },
+  "47": {
+    "nombre": "Valladolid",
+    "poblacion": 519546,
+    "ccaa": "07",
+    "capital": "Valladolid"
+  },
+  "48": {
+    "nombre": "Bizkaia",
+    "poblacion": 1159348,
+    "ccaa": "16",
+    "capital": "Bilbao"
+  },
+  "49": {
+    "nombre": "Zamora",
+    "poblacion": 166275,
+    "ccaa": "07",
+    "capital": "Zamora"
+  },
+  "50": {
+    "nombre": "Zaragoza",
+    "poblacion": 983469,
+    "ccaa": "02",
+    "capital": "Zaragoza"
+  },
+  "51": {
+    "nombre": "Ceuta",
+    "poblacion": 84202,
+    "ccaa": "18",
+    "capital": "Ceuta"
+  },
+  "52": {
+    "nombre": "Melilla",
+    "poblacion": 86125,
+    "ccaa": "19",
+    "capital": "Melilla"
+  }
+}
