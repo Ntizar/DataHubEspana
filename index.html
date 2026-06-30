@@ -755,6 +755,7 @@
                 <button class="tab-btn" data-tab="termica">🤒 Sensación Térmica</button>
                 <button class="tab-btn" data-tab="mareas">🌊 Mareas</button>
                 <button class="tab-btn" data-tab="eolica">🌬️ Energía Eólica</button>
+                <button class="tab-btn" data-tab="nubosidad">☁️ Nubosidad</button>
                 </div>
         </div>
 
@@ -1843,32 +1844,57 @@
                     <!-- PRESIÓN TAB -->
                     <div class="tab-panel" id="tab-presion">
                         <div class="section-title">📊 Presión Atmosférica — España</div>
+
+                        <!-- Selector de ciudad -->
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:12px;font-weight:600;color:#64748b;margin-right:6px;">Ciudad:</label>
+                            <select id="presion-city-select" style="padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                                <option value="Málaga">Málaga</option>
+                                <option value="A Coruña">A Coruña</option>
+                            </select>
+                        </div>
+
+                        <!-- Alertas de presión -->
+                        <div id="presion-alerts-container"></div>
+
+                        <!-- KPIs principales -->
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="presion-media">—</div>
-                                <div class="kpi-label">Presión media mar (hPa)</div>
+                                <div class="kpi-label">Presión media (hPa)</div>
                             </div>
                             <div class="kpi green">
-                                <div class="kpi-value" id="presion-superficie">—</div>
-                                <div class="kpi-label">Presión superficie (hPa)</div>
+                                <div class="kpi-value" id="presion-tendencia">—</div>
+                                <div class="kpi-label">Tendencia</div>
                             </div>
                         </div>
                         <div class="kpi-row">
                             <div class="kpi orange">
-                                <div class="kpi-value" id="presion-tendencia">—</div>
-                                <div class="kpi-label">Tendencia (últimas 6h)</div>
+                                <div class="kpi-value" id="presion-percibida">—</div>
+                                <div class="kpi-label">Temp. percibida por presión (°C)</div>
                             </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="presion-altitud">—</div>
-                                <div class="kpi-label">Altitud media (m)</div>
+                                <div class="kpi-label">Altitud barométrica (m)</div>
                             </div>
                         </div>
+
+                        <!-- Chart 7 días -->
                         <div class="card">
-                            <div class="card-title">Presión atmosférica 48h — Tendencia</div>
-                            <div class="chart-container" style="height:200px;">
+                            <div class="card-title">Presión atmosférica 7 días — Tendencia</div>
+                            <div class="chart-container" style="height:280px;">
                                 <canvas id="chart-presion"></canvas>
                             </div>
                         </div>
+
+                        <!-- Mapa isobaras -->
                         <div class="card">
                             <div class="card-title">Mapa de isobaras simplificado</div>
                             <div id="presion-map-cities" style="font-size:12px;"></div>
@@ -8596,7 +8622,7 @@ fetchPollen();
     async function fetchPresion() {
         const promises = PRESION_CITIES.map(async (city) => {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=pressure_msl,surface_pressure&hourly=pressure_msl,surface_pressure&timezone=Europe/Madrid&forecast_days=2`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=pressure_msl,surface_pressure,temperature_2m&hourly=pressure_msl,surface_pressure,temperature_2m&timezone=Europe/Madrid&forecast_days=7`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -8608,10 +8634,10 @@ fetchPollen();
 
         // KPIs globales
         let pressureSum = 0;
-        let surfaceSum = 0;
         let validCount = 0;
         let altSum = 0;
         let validAlt = 0;
+        let tempForPerception = [];
         let latestPressures = [];
         let earlierPressures = [];
         const altitudes = [667, 12, 9, 15, 34, 199, 10, 37];
@@ -8621,14 +8647,11 @@ fetchPollen();
             if (!data || !data.current) return;
 
             const pmsl = data.current.pressure_msl;
-            const psurf = data.current.surface_pressure;
+            const temp = data.current.temperature_2m;
 
             if (pmsl != null) {
                 pressureSum += pmsl;
                 validCount++;
-            }
-            if (psurf != null) {
-                surfaceSum += psurf;
             }
 
             // Altitud media aproximada por ciudad
@@ -8637,11 +8660,12 @@ fetchPollen();
                 validAlt++;
             }
 
+            // Temperatura para percepción
+            if (temp != null) tempForPerception.push(temp);
+
             // Últimas 12h de presión MSL para tendencia
             if (data.hourly && data.hourly.pressure_msl) {
                 const hours = data.hourly.pressure_msl;
-                const nowHour = new Date().getHours();
-                // Últimas 6h
                 let latestSlice = [];
                 let earlierSlice = [];
                 for (let h = 0; h < 12 && h < hours.length; h++) {
@@ -8658,16 +8682,14 @@ fetchPollen();
 
         // KPI: presión media MSL
         const avgPressure = validCount > 0 ? (pressureSum / validCount).toFixed(1) : '—';
-        const avgSurface = validCount > 0 ? (surfaceSum / validCount).toFixed(1) : '—';
         const avgAlt = validAlt > 0 ? Math.round(altSum / validAlt) : '—';
 
         document.getElementById('presion-media').textContent = avgPressure !== '—' ? `${avgPressure} hPa` : '—';
-        document.getElementById('presion-superficie').textContent = avgSurface !== '—' ? `${avgSurface} hPa` : '—';
-        document.getElementById('presion-altitud').textContent = avgAlt !== '—' ? `${avgAlt} m` : '—';
 
-        // Tendencia global: comparar media últimos 3h vs media anteriores 3h
+        // Tendencia global: comparar media últimos 3h vs media anteriores 3h (threshold 2 hPa/3h)
         let globalTrend = '→';
         let trendLabel = 'Estable';
+        let weatherPhrase = '';
         let globalAvgLatest = [];
         let globalAvgEarlier = [];
         latestPressures.forEach(lp => {
@@ -8678,9 +8700,19 @@ fetchPollen();
             const avgLatest = globalAvgLatest.reduce((a, b) => a + b, 0) / globalAvgLatest.length;
             const avgEarlier = globalAvgEarlier.reduce((a, b) => a + b, 0) / globalAvgEarlier.length;
             const diff = avgLatest - avgEarlier;
-            if (diff > 1.5) { globalTrend = '↑'; trendLabel = 'Sube'; }
-            else if (diff < -1.5) { globalTrend = '↓'; trendLabel = 'Baja'; }
-            else { globalTrend = '→'; trendLabel = 'Estable'; }
+            if (diff > 2) {
+                globalTrend = '↑';
+                trendLabel = '↑ Subiendo';
+                weatherPhrase = 'Anticiclón aproximándose ☀️';
+            } else if (diff < -2) {
+                globalTrend = '↓';
+                trendLabel = '↓ Bajando';
+                weatherPhrase = 'Borrasca aproximándose 🌧️';
+            } else {
+                globalTrend = '→';
+                trendLabel = '→ Estable';
+                weatherPhrase = 'Tiempo estable ⛅';
+            }
         }
 
         const trendEl = document.getElementById('presion-tendencia');
@@ -8689,20 +8721,62 @@ fetchPollen();
         else if (globalTrend === '↓') trendEl.style.color = '#dc2626';
         else trendEl.style.color = '#64748b';
 
-        // Chart: presión 48h con banda 1013 hPa
+        // Temp. percibida por presión: ajustar temp media según desviación de 1013 hPa
+        // Regla empírica: cada 10 hPa por encima de 1013 → +0.3°C percibida
+        let percibidaText = '—';
+        if (avgPressure !== '—') {
+            const avgP = parseFloat(avgPressure);
+            const avgTemp = tempForPerception.length > 0 ? tempForPerception.reduce((a, b) => a + b, 0) / tempForPerception.length : 15;
+            const deviation = avgP - 1013;
+            const correction = (deviation / 10) * 0.3;
+            const perceived = avgTemp + correction;
+            percibidaText = `${perceived.toFixed(1)}°C`;
+        }
+        document.getElementById('presion-percibida').textContent = percibidaText;
+
+        // Altitud barométrica: fórmula aproximada
+        // H ≈ (1013.25 - P) * 8.5 * T / 288 (en metros, T en Kelvin)
+        let altBaroText = '—';
+        if (avgPressure !== '—') {
+            const avgP = parseFloat(avgPressure);
+            const avgTempK = tempForPerception.length > 0 ? (tempForPerception.reduce((a, b) => a + b, 0) / tempForPerception.length + 273.15) : 288;
+            const altBaro = (1013.25 - avgP) * 8.5 * avgTempK / 288;
+            altBaroText = `${Math.round(altBaro)} m`;
+        }
+        document.getElementById('presion-altitud').textContent = altBaroText;
+
+        // Alertas de presión
+        const alertsContainer = document.getElementById('presion-alerts-container');
+        if (alertsContainer) {
+            let alertsHtml = '';
+            if (avgPressure !== '—') {
+                const p = parseFloat(avgPressure);
+                if (p < 1000) {
+                    alertsHtml += `<div class="alert-banner alert-critical">⚠️ Presión baja (${avgPressure} hPa) — posible tormenta</div>`;
+                }
+                if (p > 1030) {
+                    alertsHtml += `<div class="alert-banner alert-warning">☀️ Presión alta (${avgPressure} hPa) — anticiclón</div>`;
+                }
+                if (weatherPhrase) {
+                    alertsHtml += `<div class="alert-banner" style="background:linear-gradient(135deg,#e0f2fe 0%,#f0f9ff 100%);border:1px solid #38bdf8;color:#0c4a6e;">🌤️ ${weatherPhrase}</div>`;
+                }
+            }
+            alertsContainer.innerHTML = alertsHtml;
+        }
+
+        // Chart: presión 7 días con línea de tendencia
         const ctxPresion = document.getElementById('chart-presion');
         if (ctxPresion) {
             if (charts._chartPresion) charts._chartPresion.destroy();
 
-            // Construir series horarias para las 3 ciudades principales
             const mainCities = [0, 1, 2]; // Madrid, Barcelona, Sevilla
             const labels = [];
             const datasets = [];
             const cityColors = ['#2563eb', '#f97316', '#16a34a'];
             const cityLabels = ['Madrid', 'Barcelona', 'Sevilla'];
 
-            // Aplanar todos los datos horarios MSL para el rango 0-47h
-            for (let h = 0; h < 48; h++) {
+            // Construir labels de 7 días (puntos cada 6h = 28 puntos)
+            for (let h = 0; h < 168; h++) {
                 if (results[0] && results[0].hourly && results[0].hourly.time && results[0].hourly.time[h]) {
                     const t = new Date(results[0].hourly.time[h]);
                     labels.push(`${t.getDate()}/${t.getMonth() + 1} ${t.getHours().toString().padStart(2, '0')}h`);
@@ -8729,14 +8803,44 @@ fetchPollen();
                 });
             });
 
-            // Banda 1013 hPa ± 5
-            const baselineData = labels.map(() => 1013);
-            const upperData = labels.map(() => 1018);
-            const lowerData = labels.map(() => 1008);
+            // Línea de tendencia (regresión lineal sobre la primera ciudad)
+            const trendData = [];
+            if (results[0] && results[0].hourly && results[0].hourly.pressure_msl) {
+                const raw = results[0].hourly.pressure_msl.filter(v => v != null);
+                if (raw.length >= 2) {
+                    const n = raw.length;
+                    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+                    for (let i = 0; i < n; i++) {
+                        sumX += i;
+                        sumY += raw[i];
+                        sumXY += i * raw[i];
+                        sumX2 += i * i;
+                    }
+                    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                    const intercept = (sumY - slope * sumX) / n;
+                    for (let i = 0; i < labels.length; i++) {
+                        trendData.push(slope * i + intercept);
+                    }
+                }
+            }
 
+            if (trendData.length === labels.length) {
+                datasets.push({
+                    label: 'Tendencia (regresión)',
+                    data: trendData,
+                    borderColor: '#8b5cf6',
+                    backgroundColor: '#8b5cf611',
+                    borderWidth: 2,
+                    borderDash: [8, 4],
+                    pointRadius: 0,
+                    fill: false,
+                });
+            }
+
+            // Referencia 1013 hPa
             datasets.push({
                 label: 'Referencia 1013 hPa',
-                data: baselineData,
+                data: labels.map(() => 1013),
                 borderColor: '#64748b',
                 borderWidth: 1,
                 borderDash: [5, 5],
@@ -8755,7 +8859,7 @@ fetchPollen();
                         legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
                     },
                     scales: {
-                        x: { display: true, ticks: { maxTicksLimit: 12, font: { size: 9 } } },
+                        x: { display: true, ticks: { maxTicksLimit: 14, font: { size: 9 } } },
                         y: { display: true, min: 990, max: 1040, ticks: { callback: v => v + ' hPa' } },
                     },
                 },
@@ -8773,7 +8877,7 @@ fetchPollen();
                     return;
                 }
                 const pmsl = data.current.pressure_msl != null ? data.current.pressure_msl.toFixed(1) : '—';
-                const psurf = data.current.surface_pressure != null ? data.current.surface_pressure.toFixed(1) : '—';
+                const temp = data.current.temperature_2m != null ? data.current.temperature_2m.toFixed(1) : '—';
                 const alt = altitudes ? [667, 12, 9, 15, 34, 199, 10, 37][idx] : '—';
 
                 let statusColor = '#64748b';
@@ -8783,7 +8887,7 @@ fetchPollen();
                 else if (parseFloat(pmsl) > 1010) { statusColor = '#2563eb'; statusText = 'Alta'; }
                 else if (parseFloat(pmsl) < 1010) { statusColor = '#f97316'; statusText = 'Baja'; }
 
-                html += `<div class="list-item"><div class="list-item-header">${city.name} <span style="color:${statusColor};font-weight:700;">${pmsl} hPa</span></div><div class="list-item-sub">Superficie: ${psurf} hPa · Alt: ${alt} m · <strong>${statusText}</strong></div></div>`;
+                html += `<div class="list-item"><div class="list-item-header">${city.name} <span style="color:${statusColor};font-weight:700;">${pmsl} hPa</span></div><div class="list-item-sub">Temp: ${temp}°C · Alt: ${alt} m · <strong>${statusText}</strong></div></div>`;
             });
             html += '</div>';
             mapEl.innerHTML = html;
