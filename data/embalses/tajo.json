@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Bolarque",
+    "confederacion": "tajo",
+    "nivel_porcentaje": 66.3,
+    "volumen_hm3": 243.2,
+    "caudal_entrada": 30.6,
+    "caudal_salida": 10.0
+  },
+  {
+    "nombre": "Entrepeñas",
+    "confederacion": "tajo",
+    "nivel_porcentaje": 25.2,
+    "volumen_hm3": 435.4,
+    "caudal_entrada": 15.1,
+    "caudal_salida": 16.0
+  },
+  {
+    "nombre": "Buendía",
+    "confederacion": "tajo",
+    "nivel_porcentaje": 68.8,
+    "volumen_hm3": 172.1,
+    "caudal_entrada": 32.8,
+    "caudal_salida": 23.8
+  }
+]

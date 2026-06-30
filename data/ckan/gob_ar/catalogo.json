@@ -1,0 +1,4204 @@
+[
+  {
+    "id": "produccion-precios-claros---base-sepa",
+    "titulo": "Precios Claros - Base SEPA",
+    "descripcion": "SEPA (Sistema Electrónico de Publicidad de Precios Argentinos) reúne los precios de comercios minoristas (grandes establecimientos) de más de 70 mil productos en todo el país, lo que de forma agregada genera una base diaria de aproximadamente 12 millones de registros.\r\nhttps://www.preciosclaros.gob.ar/terminos_y_condiciones.html\r\n\r\nContactanos por cualquier tipo consulta, sugerencia y/o reclamo (ej: datos provistos por comercios no fidedignos) al e-mail soportesepa@comercio.gob.ar  ",
+    "organizacion": "Secretaría de Industria y Comercio",
+    "etiquetas": [
+      "Alimentos",
+      "Bebidas",
+      "Comercio Interior",
+      "Defensa del Consumidor",
+      "Precios",
+      "SEPA",
+      "Supermercados"
+    ],
+    "fecha_creacion": "2024-09-03T14:34:03.360602",
+    "fecha_modificacion": "2026-06-30T04:50:26.414829",
+    "recursos": [
+      {
+        "nombre": "Viernes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/91bc072a-4726-44a1-85ec-4a8467aad27e/download/sepa_viernes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Jueves",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/d076720f-a7f0-4af8-b1d6-1b99d5a90c14/download/sepa_jueves.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Miércoles",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/1e92cd42-4f94-4071-a165-62c4cb2ce23c/download/sepa_miercoles.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Martes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/9dc06241-cc83-44f4-8e25-c9b1636b8bc8/download/sepa_martes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lunes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/0a9069a9-06e8-4f98-874d-da5578693290/download/sepa_lunes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Domingo",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/f8e75128-515a-436e-bf8d-5c63a62f2005/download/sepa_domingo.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Sábado",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/b3c3da5d-213d-41e7-8d74-f23fda0a3c30/download/sepa_sabado.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Traductor de código provinciales",
+        "formato": "XLSX",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/e12edfc0-b0bc-4208-879a-b31b9573324b/download/maestro-provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metadata (con detalle de los campos)",
+        "formato": "PDF",
+        "url": "https://datos.produccion.gob.ar/dataset/6f47ec76-d1ce-4e34-a7e1-621fe9b1d0b5/resource/ace44eb9-c995-463f-bf8a-6f529d196a27/download/anexo_6201340_2.pdf",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 9
+  },
+  {
+    "id": "energia-precios-surtidor---resolucion-3142016",
+    "titulo": "Precios en Surtidor - Resolución 314/2016",
+    "descripcion": "Datos del Sistema en línea de información de precios de combustibles en surtidor, a través del cual los titulares de bocas de expendio de combustibles líquidos inscriptos en el registro creado por la resolución n° 1.102/2004 presentan la información relativa a precios de comercialización minorista dentro de las 8 (ocho) horas de producida una modificación en el precio en surtidor.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Combustibles",
+      "Comercialización de Hidrocarburos Líquidos",
+      "Estaciones de servicio",
+      "Precios",
+      "Resolución 314"
+    ],
+    "fecha_creacion": "2019-11-26T14:58:55.640661",
+    "fecha_modificacion": "2026-06-30T04:48:46.688906",
+    "recursos": [
+      {
+        "nombre": "Precios vigentes en surtidor - Resolución 314/2016",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/1c181390-5045-475e-94dc-410429be4b17/resource/80ac25de-a44a-4445-9215-090cf55cfda5/download/precios-en-surtidor-resolucin-3142016.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios históricos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/1c181390-5045-475e-94dc-410429be4b17/resource/f8dda0d5-2a9f-4d34-b79b-4e63de3995df/download/precios-historicos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Aplicaciones",
+        "formato": "HTML",
+        "url": "https://preciosensurtidor.energia.gob.ar/",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 3
+  },
+  {
+    "id": "energia-datos-fractura-pozos-hidrocarburos-adjunto-iv",
+    "titulo": "Datos de fractura de pozos de hidrocarburos (Adjunto IV)",
+    "descripcion": "Detalle por pozo, formación, tipo de reservorio, yacimiento, concesión y provincia de: longitud de rama horizontal (m), cantidad de etapas de fractura, tipo de terminación, toneladas de arena bombeada nacional e importada (t), agua inyectada (m3), CO2 inyectado (m3), presión máxima (psi), potencia de equipos de fractura (hp), fechas de inicio y fin de fractura, y empresa informante.\r\n\r\nDatos preliminares sujetos a revisión.\r\n",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Capítulo IV",
+      "Exploración y Producción de Hidrocarburos",
+      "Gas",
+      "Hidrocarburos",
+      "Petróleo",
+      "Pozos",
+      "Producción",
+      "Resolución 319"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:02.847281",
+    "fecha_modificacion": "2026-06-30T04:48:46.159808",
+    "recursos": [
+      {
+        "nombre": "Datos de fractura de pozos de hidrocarburos (Adjunto IV) - Actualización diaria",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/71fa2e84-0316-4a1b-af68-7f35e41f58d7/resource/2280ad92-6ed3-403e-a095-50139863ab0d/download/datos-de-fractura-de-pozos-de-hidrocarburos-adjunto-iv-actualizacin-diaria.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Infografía Hidrocarburos No Convencionales",
+        "formato": "PDF",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/planeamiento/infografias/lamina_dneype_C_01.pdf",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "produccion-precios-claros---sepa-mayorista",
+    "titulo": "Precios Claros - SEPA Mayorista",
+    "descripcion": "SEPA (Sistema Electrónico de Publicidad de Precios Argentinos) reúne los precios de comercios mayoristas (productos de consumo masivo) que cuenten con salón de ventas.\r\n https://www.preciosclaros.gob.ar/terminos_y_condiciones.html Contactanos por cualquier tipo consulta, sugerencia y/o reclamo (ej: datos provistos por comercios no fidedignos) al e-mail soportesepa@comercio.gob.ar",
+    "organizacion": "Secretaría de Industria y Comercio",
+    "etiquetas": [
+      "Alimentos",
+      "Bebidas",
+      "Defensa del consumidor",
+      "Mayoristas",
+      "Precios",
+      "Sepa",
+      "Supermercados"
+    ],
+    "fecha_creacion": "2025-07-07T17:55:55.060683",
+    "fecha_modificacion": "2026-06-29T20:09:33.941090",
+    "recursos": [
+      {
+        "nombre": "Domingo",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/64feff09-3166-4cd6-a79d-86bf0629b1e5/download/sepa_domingo.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lunes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/14694559-88b5-4e4a-af83-a57527267828/download/sepa_lunes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Martes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/92af1942-0135-45b4-a2da-e2c378156b8a/download/sepa_martes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Miércoles",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/b32aca87-3089-40b1-ac27-f1923edb2169/download/sepa_miercoles.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Jueves",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/28087a16-f71f-4b67-bddc-a64a988a4753/download/sepa_jueves.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Viernes",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/2cb1942b-418b-4450-b8aa-d110b52167d6/download/sepa_viernes.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Sábado",
+        "formato": "ZIP",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/3b61177e-79cf-4aac-b298-5ff468763445/download/sepa_sabado.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Traductor de Códigos provinciales",
+        "formato": "XLSX",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/8db9c572-4bb4-47cf-90f8-df90fba88fa9/download/maestro-provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metadata (con detalle de los campos)",
+        "formato": "PDF",
+        "url": "https://datos.produccion.gob.ar/dataset/e9ffbef0-c8a3-4d7d-9c50-ae55a2a8f98e/resource/f72a1124-e2ea-4ff7-ab95-ba5af5acba89/download/res448-2.pdf",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 9
+  },
+  {
+    "id": "energia-produccion-petroleo-gas-sesco",
+    "titulo": "Producción de Petróleo y Gas (SESCO)",
+    "descripcion": "Producción de Petróleo y Gas (SESCO).",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Exploración y Producción de Hidrocarburos",
+      "Gas",
+      "Petróleo",
+      "Producción",
+      "Resolución 319",
+      "SESCO",
+      "Upstream"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:12.902037",
+    "fecha_modificacion": "2026-06-29T20:07:37.270894",
+    "recursos": [
+      {
+        "nombre": "Producción de Petróleo y Gas - desde 2019 - Sesco Web  (Tablas Dinámicas)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/upstream/sescoweb_produccion.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Balances de Gas - desde 2009 - Sesco Web (Tablas Dinámicas)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/upstream/sescoweb_gas.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Petróleo y Gas - 2009 a 2018 - (Tablas Dinámicas)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/upstream/sescoweb_produccion_2009-2018.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Petróleo y Gas - hasta 2008 -  (Tablas Dinámicas)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/upstream/ProduccionYPozos.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Disponibilidad de petróleo a fin de mes ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/99386094-7986-42db-8a9b-a55e37c0553e/download/disponibilidad-de-petrleo-a-fin-de-mes-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Dist. de condensado y existencias a fin de mes ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/9cd9a075-5a6b-4e0a-9f7a-11511601deb3/download/dist-de-condensado-y-existencias-a-fin-de-mes-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribucion de gasolina y existencias a fin de mes ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/9bcc12ab-4a6e-477e-9e86-0a384cc5bb6a/download/distribucion-de-gasolina-y-existencias-a-fin-de-mes-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribución de petróleo y existencias a fin de mes ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/9885c716-ae48-4d97-8ce4-297b071381cf/download/distribucin-de-petrleo-y-existencias-a-fin-de-mes-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de GLP Condensado y Gasolina Estabilizada - Entradas y Mermas",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/73510ba0-ea2b-488a-8056-f9c5f80cbf50/download/produccin-de-glp-condensado-y-gasolina-estabilizada-entradas-y-mermas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo anterior al 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/e163d708-3355-4eac-8ae8-b6162ceb75d0/download/produccin-de-petrleo-anterior-al-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo por yacimiento",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/745facdc-73dc-46d8-83d5-d027bdaa3210/download/produccin-de-petrleo-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Gas entregado por plantas",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/6526a900-170a-4b33-855f-f114b4cf593d/download/gas-entregado-por-plantas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Gas recibido retenido aventado por plantas",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/a4fafdd4-5fa4-4603-8126-62e27dc38972/download/gas-recibido-retenido-aventado-por-plantas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Gas retenido, recibido y aventado ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/820f5634-9096-42d9-9b4c-adc11b48b008/download/gas-retenido-recibido-y-aventado-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas anterior al 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/8ac9bbe0-0ec0-45e2-b102-c50391dee7f8/download/produccin-de-gas-anterior-al-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas por yacimiento",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/ce479c85-2e8b-441e-9c68-9681597b3694/download/produccin-de-gas-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de producción de Gas Natural por cuenca (SESCO Upstream)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/0d1af33c-2791-4114-a276-51fe70478a09/download/serie-produccion-gas-natural-sesco.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de producción de petróleo por cuenca (SESCO Upstream)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/d198fbff-2e2b-4d47-834b-356765b1fa08/download/serie-produccion-petroleo-sesco.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Balance de gas desde 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/11614a62-9713-4b8f-8b8c-2a8050780140/download/balance-de-gas-desde-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción petróleo sesco + Tight y Shale capítulo IV por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/aa524d41-f6b7-42dc-ae24-3b4a895002ab/download/produccin-petrleo-sesco-tight-y-shale-captulo-iv-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción petróleo sesco + Tight y Shale capítulo IV por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/86270da2-6292-4719-b7c1-20671ff9ae40/download/produccin-petrleo-sesco-tight-y-shale-captulo-iv-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción petróleo sesco + Tight y Shale capítulo IV por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/4cc61040-aa44-440d-a912-91bd6c26b8a7/download/produccin-petrleo-sesco-tight-y-shale-captulo-iv-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción gas sesco + Tight y Shale capítulo IV por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/f44d3962-08ce-48e8-b2e3-88f65e1dcb77/download/produccin-gas-sesco-tight-y-shale-captulo-iv-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción gas sesco + Tight y Shale capítulo IV por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/ad1b9472-a370-47e7-8de3-b742495ec7f1/download/produccin-gas-sesco-tight-y-shale-captulo-iv-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción gas sesco + Tight y Shale capítulo IV por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/63129e00-6a96-4d6e-9ce1-9e6c60287e16/download/produccin-gas-sesco-tight-y-shale-captulo-iv-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas promedio diaria por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/419094dd-2905-4ac3-9398-e81513013e5e/download/produccin-de-gas-promedio-diaria-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas promedio diaria por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/6a7866a1-723f-420c-898f-c482613646c5/download/produccin-de-gas-promedio-diaria-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas promedio diaria por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/3d37d4f3-9b65-488e-9e64-bcd7483719fa/download/produccin-de-gas-promedio-diaria-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo promedio diaria por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/a512fef1-e98e-44af-b940-76168a4bc523/download/produccin-de-petrleo-promedio-diaria-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo promedio diaria por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/570015c9-fa8b-44a4-9bb6-02bd1b2c6c90/download/produccin-de-petrleo-promedio-diaria-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo promedio diaria por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/2c1f455e-0103-4d51-8f94-a49c939ac0a1/download/produccin-de-petrleo-promedio-diaria-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción petróleo sesco + Tight y Shale capítulo IV",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/83a2b597-b087-4815-b17d-cd70990d6a79/download/produccin-petrleo-sesco-tight-y-shale-captulo-iv-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción gas sesco + Tight y Shale capítulo IV",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/931cfb07-37b7-414a-ae8b-528dff6f9f14/download/produccin-gas-sesco-tight-y-shale-captulo-iv-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo promedio diaria por yacimiento",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/e7102ae1-9e9d-45f0-a439-ca450ad8813c/download/produccin-de-petrleo-promedio-diaria-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas promedio diaria por yacimiento",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/2f939eee-0b3c-4176-8eb9-c4a1abd1bc37/download/produccin-de-gas-promedio-diaria-por-yacimiento.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas promedio diaria total pais",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/553340f5-6e0b-422f-b13f-4f8ad9e3dfae/download/produccin-de-gas-promedio-diaria-total-pais.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo promedio diaria total pais",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/b3329802-9bb7-4478-8aad-423763ca7623/download/produccin-de-petrleo-promedio-diaria-total-pais.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción petróleo sesco + Tight y Shale capítulo IV total pais",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/f640943b-c049-4124-925c-6463c67b2e9a/download/produccin-petrleo-sesco-tight-y-shale-captulo-iv-total-pais.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción gas sesco + Tight y Shale capítulo IV total pais",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/39eff4aa-dac1-4df0-bd0a-7e6d2853d169/download/produccin-gas-sesco-tight-y-shale-captulo-iv-total-pais.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de gas por area y conformación de consorcio",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/d5dde488-fdfd-44a8-862a-b98298007674/download/produccin-de-gas-por-area-y-conformacin-de-consorcio.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de petróleo por area y conformación de consorcio",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/590d1284-fd6d-4686-afd8-b3da5d90a6e9/resource/68c3975f-564d-4c26-bbc9-164a3536578f/download/produccin-de-petrleo-por-area-y-conformacin-de-consorcio.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 41
+  },
+  {
+    "id": "energia-perforacion-pozos-petroleo-gas",
+    "titulo": "Perforación de pozos de petróleo y gas",
+    "descripcion": "Detalle mensual de trabajos Geofísicos realizados y perforación de Pozos",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Exploración",
+      "Exploración y Producción de Hidrocarburos",
+      "Explotación",
+      "Gas",
+      "Geofísica",
+      "Hidrocarburos",
+      "Petróleo",
+      "Pozos",
+      "Resolución 319",
+      "SESCO",
+      "Upstream"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:07.272385",
+    "fecha_modificacion": "2026-06-29T20:07:31.286074",
+    "recursos": [
+      {
+        "nombre": "Pozos y Metros Perforados (Tablas Dinámicas)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/upstream/sescoweb_mtsperforados.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos en perforación ant. a 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/7946dc4a-8421-4e06-b8f7-7a9c7dc37c60/download/pozos-en-perforacin-ant-a-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metros Perforados anterior al 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/7be8ac99-ad69-496e-9684-4bdc99e82a94/download/metros-perforados-anterior-al-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metros Perforados desde 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/712805f3-35d4-4825-93c6-98d03aeca203/download/metros-perforados.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/a2ce14af-5c56-45c2-9b9c-c7a1e5156dff/download/pozos-terminados.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados anterior al 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/7d1948c6-6944-4563-bab7-4e2a30fd22b7/download/pozos-terminados-anterior-al-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Trabajos geofisicos y perforación de pozos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/1b71a662-caf4-484b-82d8-54b05defaf34/download/trabajos-geofisicos-y-perforacin-de-pozos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Trabajos geofisicos y perforación de pozos ant. 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/bd88b491-ac7b-4c19-acf7-c528e1a849bb/download/trabajos-geofisicos-y-perforacin-de-pozos-ant-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metros perforados por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/aadbd15a-324c-4cfc-a223-d5ac3f9dfbf2/download/metros-perforados-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metros perforados por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/30aeeccd-97cf-45ef-9713-2045cc3786d2/download/metros-perforados-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metros perforados por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/3b6b2a2d-7917-4772-a433-216aa07cb86b/download/metros-perforados-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por concepto y provincia desde 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/dcdae9c2-c233-46e5-a1fc-19bdfca7d99c/download/pozos-terminados-por-concepto-y-provincia-desde-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por tipo de pozo y provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/66b0266a-b028-4812-b95f-1da31835b0aa/download/pozos-terminados-por-tipo-de-pozo-y-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por concepto y cuenca desde 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/552a48f5-dfc6-40af-9049-977905688941/download/pozos-terminados-por-concepto-y-cuenca-desde-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por tipo de pozo y cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/ad7e33d3-0d2d-405d-b9f3-08f8e30f9a86/download/pozos-terminados-por-tipo-de-pozo-y-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por concepto y empresa desde 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/42c4eafa-4d36-479d-9d54-eae52a5b2f87/download/pozos-terminados-por-concepto-y-empresa-desde-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos terminados por tipo de pozo y empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/284e9bee-1302-4767-a95e-13da87a87726/download/pozos-terminados-por-tipo-de-pozo-y-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos en perforación por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/7fcd6c41-9358-4e16-96f1-0380444bff26/download/pozos-en-perforacin-por-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos en perforación por cuenca",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/552dc252-bc8f-4ece-b377-2e85d436ac75/download/pozos-en-perforacin-por-cuenca.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos en perforación por provincia",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/dfc143e7-6dbb-4cb0-90a1-a710e77e6072/download/pozos-en-perforacin-por-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Pozos en Perforación",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21/resource/af6838ef-f675-4409-ac6a-e7c391a5dbab/download/pozos-en-perforacin.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 21
+  },
+  {
+    "id": "sspm-producto-interno-bruto-1950-1964",
+    "titulo": "Producto Interno Bruto 1950-1964",
+    "descripcion": "PIB a precios de mercado y a costo de factores a precios corrientes y constantes de 1960. Anual",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1960",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos",
+      "pib"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:41.052718",
+    "fecha_modificacion": "2026-06-29T20:06:49.080359",
+    "recursos": [
+      {
+        "nombre": "Producto Interno Bruto a precios de mercado y a costo de factores.  Precios constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/386/distribution/386.1/download/pib-precios-mercado-costo-factores-precios-constantes-1960-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a precios de mercado y a costo de factores.  Precios corrientes. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/386/distribution/386.2/download/pib-precios-mercado-costo-factores-precios-corrientes-anual.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "sspm-volumen-fisico-exportaciones-e-importaciones-1935-1954",
+    "titulo": "Volumen Físico de Exportaciones e Importaciones 1935-1954",
+    "descripcion": "Volumen Físico de Exportaciones e Importaciones a precios constantes de 1950",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1950",
+      "datos historicos",
+      "exportaciones",
+      "externo",
+      "importaciones"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:40.533118",
+    "fecha_modificacion": "2026-06-29T20:06:42.933254",
+    "recursos": [
+      {
+        "nombre": "Volumen Físico de importaciones. Precios constantes. Base 1950. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/385/distribution/385.1/download/volumen-fisico-importaciones-precios-constantes-1950-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Volumen Físico de Exportaciones. Precios constantes. Base 1950. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/385/distribution/385.2/download/volumen-fisico-exportaciones-precios-constantes-1950-anual.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "sspm-cuentas-nacionales-1980-1990",
+    "titulo": "Cuentas Nacionales 1980-1990",
+    "descripcion": "Cuentas Nacionales 1980-1990 a Precios de 1970",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1970",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:41.708853",
+    "fecha_modificacion": "2026-06-29T20:06:35.885113",
+    "recursos": [
+      {
+        "nombre": "Oferta y Demanda Global. Millones de australes. Precios constantes. Base 1970. Valores Trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.1/download/odg-total-millones-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Australes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.2/download/ibi-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Variación de Existencias. Australes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.3/download/ibi-variacion-existencias-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Nacional. Australes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.4/download/ibi-equipo-durable-produccion-nacional-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Oferta y Demanda Global Externa.  En australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.16/download/oferta-demanda-global-externa-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores Industria Manufacturera. Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.17/download/pib-costo-factores-industria-manufacturera-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores. Austales constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.18/download/pib-costo-factores-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Importado. Australes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.19/download/ibi-equipo-durable-produccion-importado-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna Fija. Total y desagregada. Australes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/382/distribution/382.20/download/ibif-total-desagregada-australes-precios-1970.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 9
+  },
+  {
+    "id": "sspm-activos-externos-millones-dolares",
+    "titulo": "Activos externos en millones de dólares",
+    "descripcion": "Activos externos en millones de dólares. Valores anuales",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Sector Externo",
+      "activos",
+      "datos historicos",
+      "externo"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:36.034886",
+    "fecha_modificacion": "2026-06-29T20:06:33.345866",
+    "recursos": [
+      {
+        "nombre": "Activos externos en millones de dólares. Datos anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/336/distribution/336.1/download/activos-externos-componentes-datos-historicos.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "sspm-cuentas-nacionales-1980-1996",
+    "titulo": "Cuentas Nacionales 1980-1996",
+    "descripcion": "Cuentas Nacionales 1980-1996 a Precios de 1986",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1986",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:44.052066",
+    "fecha_modificacion": "2026-06-29T20:06:31.330130",
+    "recursos": [
+      {
+        "nombre": "Oferta y Demanda Global. Millones de pesos constantes. Base 1986. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/383/distribution/383.1/download/oferta-demanda-global-millones-pesos-precios-1986-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores. Millones de pesos constantes. Base 1986. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/383/distribution/383.2/download/pib-costo-factores-millones-pesos-1986-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores, por sector.  Millones de pesos constantes. Base 1986. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/383/distribution/383.3/download/pib-costo-factores-desagregado-por-sector-millones-pesos-1986-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 3
+  },
+  {
+    "id": "sspm-producto-interno-bruto-sectorial-1970-1980",
+    "titulo": "Producto Interno Bruto Sectorial 1970-1980",
+    "descripcion": "Producto Interno Bruto Sectorial 1970-1980 a precios de 1960",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1960",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos",
+      "pib"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:44.815577",
+    "fecha_modificacion": "2026-06-29T20:06:28.088200",
+    "recursos": [
+      {
+        "nombre": "Producto Interno Bruto Agrícola. Subtotal Agrícola.  Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.1/download/pib-agricola-subtotal-agricola-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Agricultura, Caza, Silvicultura y Pesca. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.2/download/pib-agricultura-caza-silvicultura-pesca-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Comercio al por Mayor, Menor, Restaurantes y Hoteles. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.3/download/pib-comercio-al-por-mayor-menor-restaurantes-hoteles-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Construcciones.  Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.4/download/pib-construcciones-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Electricidad, Gas y Agua. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.5/download/pib-electricidad-gas-agua-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Establecimientos Financieros, Seguros y Bienes Inmuebles. Pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.6/download/pib-establecimientos-financieros-seguros-bienes-inmuebles-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Servicios Comunales, Sociales y Personales Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.7/download/pib-servicios-comunales-sociales-personales-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Subtotal Pecuario Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.8/download/pib-subtotal-pecuario-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Transporte, Almacenamiento y Comunicaciones Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.9/download/pib-transporte-almacenamiento-comunicaciones-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Mercaderías y Servicios Disponibles. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.10/download/pib-mercaderias-servicios-disponibles-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Explotación Minas y Canteras Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.11/download/pib-explotacion-minas-canteras-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Industria Manufacturera. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.12/download/pib-industria-manufacturera-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Comercio Mayorista, Minorista, Restaurantes y Hoteles. Pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/388/distribution/388.13/download/pib-comercio-mayorista-minorista-restaurantes-hoteles-pesos-1960-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 13
+  },
+  {
+    "id": "sspm-cuentas-nacionales-1935-1962",
+    "titulo": "Cuentas Nacionales 1935-1962",
+    "descripcion": "Cuentas Nacionales 1935-1962, a precios corrientes y de 1950",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1950",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:36.452968",
+    "fecha_modificacion": "2026-06-29T20:06:26.962091",
+    "recursos": [
+      {
+        "nombre": "Precios Implícitos Oferta y Demanda Global. Base 1950. Valores anuales.",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.1/download/precios-implicitos-oferta-demanda-global-base-1950100-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios Implícitos Producto Interno Bruto a costo de factores. Base 1950. Valores anuales.",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.2/download/precios-implicitos-pib-costo-factores-base-1950100-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Oferta y Demanda Global.  Precios constantes. Base 1950. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.3/download/oferta-demanda-global-precios-constantes-1950-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta Interna por Tipo de Bien. Precios corrientes. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.4/download/inversion-bruta-interna-por-tipo-bien-precios-corrientes-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Oferta y Demanda Global. Precios corrientes. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.5/download/oferta-demanda-global-total-precios-corrientes-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribución del Ingreso Neto Nacional. Millones de pesos corrientes. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.6/download/distribucion-ingreso-neto-nacional-millones-pesos-corrientes-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ingreso Bruto Nacional y Producto Bruto Interno a costo de factores. Precios constantes. Base 1950. Valores anuales.",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.7/download/ingreso-bruto-nacional-producto-bruto-interno-costo-factores-precios-constantes-1950-anual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta Interna por Sector.  Precios constantes. Base 1950. Valores anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/384/distribution/384.8/download/inversion-bruta-interna-por-sector-precios-constantes-1950-anual.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 8
+  },
+  {
+    "id": "sspm-pib-subtotal-agricola-millones-pesos-1960",
+    "titulo": "PIB Subtotal Agrícola en millones de pesos de 1960",
+    "descripcion": "PIB Subtotal Agrícola en millones de pesos de 1960. Por componente",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "agropecuario",
+      "base 1960",
+      "datos historicos",
+      "pib"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:43.627488",
+    "fecha_modificacion": "2026-06-29T20:06:18.202666",
+    "recursos": [
+      {
+        "nombre": "PIB Subtotal Agrícola en millones de pesos de 1960. 1970-1980",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/192/distribution/192.1/download/pib-agricola-subtotal-agricola-millones-pesos-1970-1980-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "sspm-cuentas-nacionales-1970-1980-base-1970",
+    "titulo": "Cuentas Nacionales 1970-1980. Base 1970",
+    "descripcion": "Cuentas Nacionales 1970-1980 a Precios de 1970",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1970",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:37.843010",
+    "fecha_modificacion": "2026-06-29T20:06:13.403062",
+    "recursos": [
+      {
+        "nombre": "Oferta y Demanda Global. Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.1/download/odg-total-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Construcciones.  Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.2/download/pib-construcciones-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Electricidad, Gas y Agua. Millones de pesos constantes. Bsae 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.3/download/pib-electricidad-gas-agua-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Oferta y Demanda Global Externa.  Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.4/download/oferta-demanda-global-externa-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Servicios Comunales, Sociales y Personales Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.5/download/pib-servicios-comunales-sociales-personales-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Establecimientos Financieros, Seguros y Bienes Inmuebles. Pesos constantes. Base 1967. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.6/download/pib-establecimientos-financieros-seguros-bienes-inmuebles-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Transporte, Almacenamiento y Comunicaciones Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.7/download/pib-transporte-almacenamiento-comunicaciones-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Subtotal Pecuario Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.8/download/pib-subtotal-pecuario-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Mercaderías y Servicios Disponibles. Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.9/download/pib-mercaderias-servicios-disponibles-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Explotación Minas y Canteras Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.10/download/pib-explotacion-minas-canteras-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Subtotal Agrícola Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.11/download/pib-subtotal-agricola-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Agricultura, Caza, Silvicutura y Pesca. Millones de pesos constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.12/download/pib-agricultura-caza-silvicutura-pesca-millones-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Industria Manufacturera Precios constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.13/download/pib-industria-manufacturera-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Comercio Mayorista, Minorista, Restaurantes y Hoteles. Pesos consatntes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.14/download/pib-comercio-mayorista-minorista-restaurantes-hoteles-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Importado. Pesos. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.15/download/ibi-equipo-durable-produccion-importado-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Nacional. Pesos. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.16/download/ibi-equipo-durable-produccion-nacional-pesos-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna Fija. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.17/download/ibif-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Total. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.18/download/ibi-total-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Construcciones. Precios constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.19/download/pib-construcciones-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores. Precios constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/371/distribution/371.20/download/pib-costo-factores-precios-1970-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 20
+  },
+  {
+    "id": "sspm-cuentas-nacionales-1970-1980-base-1960",
+    "titulo": "Cuentas Nacionales 1970-1980. Base 1960",
+    "descripcion": "Cuentas Nacionales 1970-1980 a Precios de 1960",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1960",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:46.676810",
+    "fecha_modificacion": "2026-06-29T20:06:09.278783",
+    "recursos": [
+      {
+        "nombre": "Oferta y Demanda Global. Millones de pesos constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.1/download/odg-total-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Millones de Pesos. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.2/download/ibi-total-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Importado. Pesos. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.3/download/ibi-equipo-durable-produccion-importado-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Equipo Durable de Producción Nacional. Pesos. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.4/download/ibi-equipo-durable-produccion-nacional-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversión Bruta interna. Variación de Existencias. Pesos. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.16/download/ibi-variacion-existencias-millones-pesos-1960-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto a costo de factores, Precios constantes. Base 1960. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/381/distribution/381.19/download/pib-costo-factores-pesos-1960-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 6
+  },
+  {
+    "id": "sspm-producto-interno-bruto-sectorial-1980-1990",
+    "titulo": "Producto Interno Bruto Sectorial 1980-1990",
+    "descripcion": "Producto Interno Bruto Sectorial 1980-1990 a precios de 1970",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Actividad",
+      "actividad",
+      "base 1970",
+      "ccnn",
+      "cuentas nacionales",
+      "datos historicos",
+      "pib"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:47.758591",
+    "fecha_modificacion": "2026-06-29T20:06:00.326878",
+    "recursos": [
+      {
+        "nombre": "Producto Interno Bruto Agricultura, Caza, Silvicultura y Pesca. Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.1/download/pib-agricultura-caza-silvicultura-pesca-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Comercio al por Mayor, Menor, Restaurantes y Hoteles. Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.2/download/pib-comercio-al-por-mayor-menor-restaurantes-hoteles-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Construcciones.  Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.3/download/pib-construcciones-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Electricidad, Gas y Agua.  Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.4/download/pib-electricidad-gas-agua-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Establecimientos Financieros, Seguros y Bienes Inmuebles. Australes constantes. Base 1970. Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.5/download/pib-establecimientos-financieros-seguros-bienes-inmuebles-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Explotación Minas y Canteras, Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.6/download/pib-explotacion-minas-canteras-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Mercaderías y Servicios Disponibles. Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.7/download/pib-mercaderias-servicios-disponibles-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Servicios Comunales, Sociales y Personales, Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.8/download/pib-servicios-comunales-sociales-personales-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Subtotal Agrícola Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.9/download/pib-subtotal-agricola-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Subtotal Pecuario Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.10/download/pib-subtotal-pecuario-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producto Interno Bruto Transporte, Almacenamiento y Comunicaciones, Australes constantes. Base 1970.Valores trimestrales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/387/distribution/387.11/download/pib-transporte-almacenamiento-comunicaciones-australes-precios-1970-trimestral.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 11
+  },
+  {
+    "id": "sspm-balance-pagos-millones-dolares",
+    "titulo": "Balance de pagos en millones de dólares",
+    "descripcion": "Componentes del balance de pagos en millones de dólares. Valores anuales",
+    "organizacion": "Subsecretaría de Programación Macroeconómica",
+    "etiquetas": [
+      "Sector Externo",
+      "balanza de pagos",
+      "datos historicos",
+      "externo"
+    ],
+    "fecha_creacion": "2019-11-26T15:03:43.208673",
+    "fecha_modificacion": "2026-06-29T20:05:54.515377",
+    "recursos": [
+      {
+        "nombre": "Balance de pagos en millones de dólares. Datos anuales",
+        "formato": "CSV",
+        "url": "https://infra.datos.gob.ar/catalog/sspm/dataset/335/distribution/335.1/download/balance-pagos-datos-historicos.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "energia-operadores-glp",
+    "titulo": "Operadores de GLP",
+    "descripcion": "Registro Nacional de la Industria del GLP - Res. SE 800/2004.\r\nUbicación de operadores de Gas Licuado de Petróleo (GLP). ISO 19126: PowerSupplies.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Comercialización",
+      "Comercialización de Hidrocarburos Líquidos",
+      "GLP",
+      "Hidrocarburos",
+      "Información Geográfica",
+      "Información geográfica",
+      "Mapas temáticos"
+    ],
+    "fecha_creacion": "2019-11-26T15:00:29.458669",
+    "fecha_modificacion": "2026-06-29T10:28:54.710414",
+    "recursos": [
+      {
+        "nombre": "Plantas Fraccionadoras de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/f43f691f-8564-416d-ab89-8a40248241ae/download/comercializacin-hidrocarburos-glp-plantas-fraccionadoras.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Plantas Fraccionadoras de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/e9064ba2-1fcf-44e8-aa0a-54a1a770586a/download/comercializacin-hidrocarburos-glp-plantas-fraccionadoras.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Aerosoleras del mercado de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/39299661-7f4a-4714-b7fc-a2a90f1a5c55/download/aerosoleras-del-mercado-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Aerosoleras del mercado de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/9d2999fe-3f8d-4018-9137-e01cbc9e2e5f/download/aerosoleras-del-mercado-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Almacenadoras de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/818a9bdc-edfe-4ad1-a4ad-6257d28da965/download/almacenadoras-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Almacenadoras de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/80871473-f1a6-425b-9cd4-a4c0e7d1fead/download/almacenadoras-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Centros de Canje de envases de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/0dbb48c1-d826-464c-abdd-471d21ddbf26/download/centros-de-canje-de-envases-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Centros de Canje de envases de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/0a1cbf99-a626-411d-86ff-76249e00d6b3/download/centros-de-canje-de-envases-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Fabricantes  de envases de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/8c1e158f-ac9d-4462-82eb-c1d32899d77a/download/fabricantes-de-envases-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Fabricantes de envases de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/ae89fb12-ee64-4f19-8bbf-74258fe93647/download/fabricantes-de-envases-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "GLPA",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/360eabde-9ed2-4110-8ba6-d23802a99b37/download/glpa.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "GLPA",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/d05e4485-1cfa-4321-85bf-cd031da67c74/download/glpa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Grandes Consumidores de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/6a8d54d2-b060-4ca9-8d4c-651ecf649dda/download/grandes-consumidores-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Grandes Consumidores de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/bfd22b80-6c4b-4b5c-a2d3-eabfa56b66f2/download/grandes-consumidores-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Petroquímicas del mercado de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/3a838665-5522-485b-a89e-0826e026808d/download/petroqumicas-del-mercado-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Petroquímicas del mercado de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/c92c57f2-bb73-48ec-b39f-05def3c87121/download/petroqumicas-del-mercado-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Procesadoras de GLP\r ",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/76a7da79-696c-462c-8c3b-9146f47b10e7/download/procesadoras-de-glp-.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Procesadoras de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/7877bac9-7474-401e-ac40-6f8e1c47596e/download/procesadoras-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Talleres de envases de GLP\r ",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/aef4c80d-11a6-41d4-bf15-f77730496aad/download/talleres-de-envases-de-glp-.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Talleres de envases de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/263eba29-d0a2-46a9-bb89-3b14b3cb5e68/download/talleres-de-envases-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Productores de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/7128388a-cd00-443f-87d5-8a3926db026f/download/productores-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Productores de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/7c0901e0-2ec5-42b9-82c4-102016cec4dd/download/productores-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribuidoras de GLP",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/7f0464ef-9067-4f00-91b3-00b46fde1c39/download/distribuidoras-de-glp.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribuidoras de GLP",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/075c393d-5ad1-4cb0-a653-e953c313796d/resource/5055dad0-ed2f-4a60-855c-3a08af2151cd/download/distribuidoras-de-glp.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": " Documento descriptivo de las fuentes y datos utilizados para la elaboración del mapa de análisis del mercado de GLP",
+        "formato": "PDF",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/sig/glp/analisis_mercado_glp.pdf",
+        "tamaño": null
+      },
+      {
+        "nombre": " Mapa de análisis del mercado del GLP",
+        "formato": "PDF",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/sig/glp/mapa_mercado_glp.pdf",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 26
+  },
+  {
+    "id": "energia-produccion-petroleo-gas-por-pozo-capitulo-iv",
+    "titulo": "Producción de petróleo y gas por pozo (Capítulo IV)",
+    "descripcion": "Detalle mensual de producción por pozo, yacimiento, concesión y provincia. \r\n\r\nPetróleo [m3], gas en [Miles de m3] y agua en [m3]",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Capítulo IV",
+      "Exploración y Producción de Hidrocarburos",
+      "Gas",
+      "Hidrocarburos",
+      "Información Geográfica",
+      "Información geográfica",
+      "Petróleo",
+      "Pozos",
+      "Producción",
+      "Resolución 319"
+    ],
+    "fecha_creacion": "2019-11-26T14:58:56.774648",
+    "fecha_modificacion": "2026-06-29T10:28:53.581184",
+    "recursos": [
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo No Convencional",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/b5b58cdc-9e07-41f9-b392-fb9ec68b0725/download/produccin-de-pozos-de-gas-y-petrleo-no-convencional.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Capítulo IV - Pozos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/cb5c0f04-7835-45cd-b982-3e25ca7d7751/download/capitulo-iv-pozos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Listado de pozos cargados por empresas operadoras",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/cbfa4d79-ffb3-4096-bab5-eb0dde9a8385/download/listado-de-pozos-cargados-por-empresas-operadoras.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo – 2026",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/fb7a47a0-cba9-4667-a004-6f6c1c346c23/download/produccin-de-pozos-de-gas-y-petrleo-2026.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo – 2025",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/d774b5d7-0756-48fe-88f2-8729b57b22da/download/produccin-de-pozos-de-gas-y-petrleo-2025.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2025",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/6f9f63bd-3f7e-43ab-8743-85997ae1380c/download/produccin-de-pozos-de-gas-y-petrleo-2025.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2024",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/43a09dce-1742-44d0-bc13-f193deaab563/download/produccin-de-pozos-de-gas-y-petrleo-2024.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2024",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/94d82d18-488b-434c-806d-ee5e053ce1cd/download/produccin-de-pozos-de-gas-y-petrleo-2024.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2023",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/231c39b3-e81e-4398-af8d-b115807f2c25/download/produccin-de-pozos-de-gas-y-petrleo-2023.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2022",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/876b3746-85e2-4039-adeb-b1354436159f/download/produccin-de-pozos-de-gas-y-petrleo-2022.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2021",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/465be754-a372-4c31-b855-81dc5fe3309f/download/produccin-de-pozos-de-gas-y-petrleo-2021.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2020",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/c4a4a6a0-e75a-4e12-ae5c-54d53a70348c/download/produccin-de-pozos-de-gas-y-petrleo-2020.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2019",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/8bc0d61c-0408-43d4-a7bc-7178fcb5d37e/download/produccin-de-pozos-de-gas-y-petrleo-2019.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2018",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/333fd72a-9b83-4bc1-bc94-0f5940b52331/download/produccin-de-pozos-de-gas-y-petrleo-2018.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2017",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/df4857e1-7c3f-4980-b5b5-184fe78bfcf0/download/produccin-de-pozos-de-gas-y-petrleo-2017.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2016",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/d8539ae8-0a71-4339-a16c-139b21bd2cd0/download/produccin-de-pozos-de-gas-y-petrleo-2016.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2015",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/e375aa35-fd8d-41d6-aa0c-e6879ca567a1/download/produccin-de-pozos-de-gas-y-petrleo-2015.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2014",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/cd9813a7-1e19-4f60-a02a-7903dd81aff7/download/produccin-de-pozos-de-gas-y-petrleo-2014.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2013",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/bc7ac8fe-2cec-4dab-acdd-322ea1ccc887/download/produccin-de-pozos-de-gas-y-petrleo-2013.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2012",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/0dce0e75-1556-47ee-8615-1955fbd54ade/download/produccin-de-pozos-de-gas-y-petrleo-2012.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2011",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/4817272c-7365-4bdd-b02d-75b118218b10/download/produccin-de-pozos-de-gas-y-petrleo-2011.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2010",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/364ca28e-d069-4bd6-8771-925f0db152a8/download/produccin-de-pozos-de-gas-y-petrleo-2010.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/48585038-055a-4437-bb1d-4fe36073f453/download/produccin-de-pozos-de-gas-y-petrleo-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2006",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/4e1c55e5-1f1b-4fc8-aa37-2080d9795f29/download/produccin-de-pozos-de-gas-y-petrleo-2006.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2008",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/3430b5a8-a516-42ca-a47d-2e1ce45925fb/download/produccin-de-pozos-de-gas-y-petrleo-2008.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo 2007",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/be663a63-f020-4e28-8f31-c5f81d47554d/download/produccin-de-pozos-de-gas-y-petrleo-2007.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de producción de Gas Natural por cuenca y sub tipo de recurso (Capítulo IV)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/a3244ddd-38bc-4800-a700-360b649d2f3a/download/serie-histrica-de-produccin-de-gas-natural-por-cuenca-y-sub-tipo-de-recurso-captulo-iv-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de producción de petróleo por cuenca y sub tipo de recurso (Capítulo IV)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/af8c50bb-fde0-43b7-98eb-7cd14daf586c/download/serie-histrica-de-produccin-de-petrleo-por-cuenca-y-sub-tipo-de-recurso-captulo-iv-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de capítulo IV agrupada por yacimiento y formación productiva",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/2f2834f4-1981-448f-9a3c-1e519d8c10cd/download/produccin-de-captulo-iv-agrupada-por-yacimiento-y-formacin-productiva.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Shapefile de Pozos",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/3fcda0c5-68aa-4f33-bbe2-0180e6dbeebe/download/shapefile-de-pozos.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2006 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/532e9b21-3826-4083-9e25-27147b003696/download/produccin-de-pozos-de-gas-y-petrleo-2006-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2007  (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/9310d724-a341-4740-be18-c87f03f8a462/download/produccin-de-pozos-de-gas-y-petrleo-2007-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2008 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/feac6698-5c88-49e8-aa8a-733e7c70d644/download/produccin-de-pozos-de-gas-y-petrleo-2008-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2009 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/1cd8d21f-b420-4fba-a3c2-233ff57587f5/download/produccin-de-pozos-de-gas-y-petrleo-2009-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2010 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/8ee68ba4-2715-467c-af6f-233555520483/download/produccin-de-pozos-de-gas-y-petrleo-2010-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2011 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/da9d4417-2be6-4585-8f35-f2e8078c20e5/download/produccin-de-pozos-de-gas-y-petrleo-2011-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2012 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/a6c391c5-4b88-4702-8080-72ba7106a02b/download/produccin-de-pozos-de-gas-y-petrleo-2012-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2013 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/158e5054-0c3b-478a-bbb7-f2d91c522e49/download/produccin-de-pozos-de-gas-y-petrleo-2013-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2014 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/443d7488-1614-41bd-8dbd-82506e37e853/download/produccin-de-pozos-de-gas-y-petrleo-2014-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2015 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/36c4ca2b-8f9f-4bed-8ceb-ed9c8647f861/download/produccin-de-pozos-de-gas-y-petrleo-2015-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2016 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/8a7f0dff-5a1d-4b1e-a8df-e566a85c3c69/download/produccin-de-pozos-de-gas-y-petrleo-2016-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2017 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/97c81dbc-9db4-4a61-8e78-ee0a934fa620/download/produccin-de-pozos-de-gas-y-petrleo-2017-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2018 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/13e30415-a2ac-46fe-a8ff-9810d8323ac9/download/produccin-de-pozos-de-gas-y-petrleo-2018-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2019 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/d7dd85a5-4268-43b3-9ce5-c713cbbec2dc/download/produccin-de-pozos-de-gas-y-petrleo-2019-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2020 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/508ce39a-00d0-4164-a997-7ad25dda1c1a/download/produccin-de-pozos-de-gas-y-petrleo-2020-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2021 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/cc966108-e577-4043-b553-81173ef83816/download/produccin-de-pozos-de-gas-y-petrleo-2021-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2022 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/ae8d5a47-5181-4add-a836-ac19fb104fe1/download/produccin-de-pozos-de-gas-y-petrleo-2022-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2023 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/4b31fa79-dc2d-4228-a6ac-7e804cb36d1d/download/produccin-de-pozos-de-gas-y-petrleo-2023-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2024 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/0a352dee-8b4e-4e95-b01e-5b8082ce22ac/download/produccin-de-pozos-de-gas-y-petrleo-2024-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2025 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/561279bf-1b7c-4fb1-9d39-9f3fb27ab237/download/produccin-de-pozos-de-gas-y-petrleo-2025-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Pozos de Gas y Petróleo - 2026 (DDJJ abiertas y cerradas)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/85d6e021-a00d-4997-b74e-0b9b43c547fe/download/produccin-de-pozos-de-gas-y-petrleo-2026-ddjj-abiertas-y-cerradas-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de Petróleo y Gas (Capítulo IV) por yacimiento y antigüedad de pozo productivo",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/adf793e7-05a6-449c-bd04-7ca241dfbab5/download/produccin-de-petrleo-y-gas-captulo-iv-por-yacimiento-y-antigedad-de-pozo-productivo.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Padrón de Pozos de Capítulo IV con fecha de primera producción",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/5578dd48-d0dd-487e-8ddc-bd3ebb1afef0/download/padrn-de-pozos-de-captulo-iv-con-fecha-de-primera-produccin.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 53
+  },
+  {
+    "id": "energia-datos-compania-administradora-mercado-mayorista-electrico-sa-cammesa",
+    "titulo": "Datos de la Compañía Administradora del Mercado Mayorista Eléctrico S.A. (CAMMESA)",
+    "descripcion": "Datos correspondiente al Mercado Eléctrico Mayorista de la República Argentina publicados por CAMMESA",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "CAMMESA",
+      "Electricidad",
+      "Generación de Energía Eléctrica",
+      "Mercado Eléctrico Mayorista",
+      "Publicaciones MEMNet"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:49.571760",
+    "fecha_modificacion": "2026-06-28T11:22:21.748077",
+    "recursos": [
+      {
+        "nombre": "Publicaciones MEMnet",
+        "formato": "HTML",
+        "url": "http://portalweb.cammesa.com/Memnet1/default.aspx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Operaciones del Mercado Eléctrico Mayorista ",
+        "formato": "HTML",
+        "url": "https://cammesaweb.cammesa.com/operacion/",
+        "tamaño": null
+      },
+      {
+        "nombre": "Balance",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/863d7b10-4df9-4dad-8418-5e8a6cc730da/download/balance.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Agentes del MEM",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/ac27b401-3800-4a98-9535-3fc715228d84/download/agentes-mem.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Consumo de Combustibles",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/0bcec125-0673-41c0-8f76-9e9ddc5c8248/download/combustibles.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Demanda últimos años",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/ae008cdf-ed5d-4a85-90ee-5f4c53704e79/download/demanda-ltimos-aos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Demanda histórica",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/30e1c42d-44a7-428f-a55a-12c81dc14186/download/demanda-histrica.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Disponibilidad por central",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/42e89d50-3df4-40ec-ba3f-e995232134ed/download/disponibilidad-por-central.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Generación últimos años",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/7da95282-a903-47f0-b4bc-cd1387a62dd3/download/generacin-ltimos-aos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Generación histórica",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/6fb4550a-dc85-4246-95cc-d0fccd46b917/download/generacin-histrica.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importaciones y Exportaciones",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/905f57d9-97ad-44c6-90b6-36e17795fbc8/download/importaciones-y-exportaciones.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Potencia Instalada",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b4dfee6-6fca-4e4d-9611-a12d65cd4aa8/resource/b05fbb16-7278-463f-8895-087e2495bfee/download/potencia-instalada.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 12
+  },
+  {
+    "id": "turismo-turismo-internacional---total-pais",
+    "titulo": "Turismo Internacional - Total País",
+    "descripcion": "Estadísticas de turismo internacional referidas a los viajes de turistas no residentes (turismo receptivo), residentes (emisivos) y saldo entre receptivo y emisivo (balanza) a nivel país, por todos los medios de transporte utilizados (aéreos, terrestres, fluviales y marítimos). Datos en base a la información de la Dirección Nacional de Migraciones.",
+    "organizacion": "Subsecretaría de Turismo",
+    "etiquetas": [
+      "TURISMO INTERNACIONAL",
+      "turismo internacional",
+      "turistas",
+      "visitas"
+    ],
+    "fecha_creacion": "2022-05-19T18:01:42.007502",
+    "fecha_modificacion": "2026-06-28T04:33:59.976171",
+    "recursos": [
+      {
+        "nombre": "Turismo receptivo",
+        "formato": "CSV",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/fdfe0ae4-4acc-4421-aa48-6149a02bc615/download/turistas-no-residentes-serie.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Turismo emisivo",
+        "formato": "CSV",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/fd710cb7-1981-43ea-aba3-7a14c356446b/download/turistas-residentes-serie.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Balanza turística",
+        "formato": "CSV",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/7f96ec00-9300-4ea3-88b4-073fd4fa6d71/download/saldo-turistas-serie.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie de tiempo - Mensual",
+        "formato": "CSV",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/39455901-5488-4a01-8594-7b2b0a1e85a1/download/serie-tiempo-turismo-internacional.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ficha Técnica: Turismo Internacional - Total País",
+        "formato": "PDF",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/200bf770-d6f2-4847-af20-678fc0f13a0f/download/tur-inter-data.pdf",
+        "tamaño": null
+      },
+      {
+        "nombre": "Novedades",
+        "formato": "CSV",
+        "url": "https://datos.yvera.gob.ar/dataset/4cbf7d4a-702a-4911-8c1e-717a45214902/resource/56801eb5-12c6-4cf2-b20a-b3d48399bf1f/download/novedades.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 6
+  },
+  {
+    "id": "energia-refinacion-comercializacion-petroleo-gas-derivados-tablas-dinamicas",
+    "titulo": "Refinación y Comercialización de petróleo, gas y derivados (Tablas Dinámicas)",
+    "descripcion": "Tablas Dinámicas SESCO Downstream.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Comercialización de Hidrocarburos Líquidos",
+      "Comercio Exterior",
+      "Downstream",
+      "Gas",
+      "Petróleo",
+      "Refinación",
+      "Refinación de Hidrocarburos",
+      "Resolución 319",
+      "SESCO"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:03.532733",
+    "fecha_modificacion": "2026-06-28T04:33:03.739463",
+    "recursos": [
+      {
+        "nombre": "TD Ventas a empresas del sector, Compras, Comercio exterior",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_compraventa_entre_empresas_y_comercioexterior.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Consumo propio, existencias y otras operaciones",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_consumopropio_existencias_otrasoperaciones.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Comercio exterior",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_comercio_exterior.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Productos procesados y Subproductos obtenidos",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_cargas_y_subproductos_obtenidos.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Ventas (Excluye ventas al sector)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_ventas_mercado.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Ventas a empresas del sector, Compras, Comercio exterior 2010-2019",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_comercio_exterior_2010_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Consumo propio, existencias y otras operaciones 2010 - 2019",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_consumopropio_existencias_otrasoperaciones_2010_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Comercio exterior 2010 - 2019",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_comercio_exterior_2010_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Productos procesados y Subproductos obtenidos 2010 - 2019",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_cargas_y_subproductos_obtenidos_2010_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "TD Ventas (Excluye ventas al sector) 2010 - 2019",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/individuales/TD_ventas_mercado_2010_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Refinación y Comercialización de Petróleo, Gas y Derivados (Tablas Dinámicas) - Desde 2010 hasta Junio 2018",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/unificado/TDs_Downstream.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Compra, Venta y Transferencia entre Empresas",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/CompraVentaTransferencia.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Consumo Propio y Existencias",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/ConsumoPropioYExistencias.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Exportaciones",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/Exportaciones.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importaciones",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/Importaciones.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Petróleo Procesado",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/PetroleoProcesado.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios de Venta por Localidad",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/PreciosDeVentaPorLocalidad.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Subproductos Obtenidos",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/SubproductosObtenidos.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ventas al Mercado",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/VentasAlMercado.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ventas por Jurisdicción",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/dowstream/VentasPorJurisdiccion.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Consumo Propio",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/afec7812-9254-4d94-869a-d8313e7bf5ea/download/consumo-propio.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Existencias\r ",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/10934b1f-cae0-4687-a613-e18c62660473/download/existencias-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Productos procesados",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/23e6d79d-0cf3-4b4c-bb5a-d776bece8ffd/download/productos-procesados.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Otras operaciones",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/6514ba61-e224-46ae-9ffe-6cc63398f238/download/otras-operaciones.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ventas a empresas del sector",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/8ab9d8ac-bf09-412f-88bf-501b996a9247/download/ventas-a-empresas-del-sector.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importaciones / Exportaciones desde 2010 al 2015",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/89279fc5-0b5e-427a-934c-3f238745b403/download/importaciones-exportaciones.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importaciones / Exportaciones a partir del 2016 ",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/ea145b70-c78f-4c94-8df0-27e3acfda3fc/download/importaciones-exportaciones-a-partir-del-2016-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Subproductos Obtenidos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/78c4648c-0c26-4db8-94ca-d271ab687f9b/download/subproductos-obtenidos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Compras",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/6282dbf1-93d7-4fd3-a63a-61a8f8a95475/download/compras.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ventas, (excluye ventas a empresas del sector)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/f0e4e10a-e4b8-44e6-bd16-763a43742107/download/ventas-excluye-ventas-a-empresas-del-sector-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de ventas de aerokerosene por provincia (excluye ventas a empresas del sector)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/3da9b172-1a47-46f3-8bc5-f6d244bee8d2/download/ventas-mercado-aerokerosene-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de Ventas por provincia, (excluye ventas a empresas del sector)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/400eb2e9-2546-4343-90b4-8812604762ec/download/ventas-mercado-producto-provincia.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Serie histórica de Ventas por empresa, (excluye ventas a empresas del sector)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/fb393537-5613-4331-919c-641393924a4e/download/ventas-mercado-producto-empresa.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Petroleo Procesado por refinería (m3)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/b9eeff60-3de3-4459-be69-907a88330d78/download/petroleo-procesado-por-refinera-m3-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Petroleo Procesado por cuenca (m3)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/c1e7a903-9ad6-4aee-a57c-a0516c80e0ce/download/petroleo-procesado-por-cuenca-m3-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importaciones de Combustibles (m3)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/61af83bd-46ee-49ee-9a92-670277d328c9/download/importaciones-de-combustibles-m3-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Exportaciones de combustibles (m3)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/47e0123a-6115-484d-939c-db390d44d43e/download/exportaciones-de-combustibles-m3-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": " Ventas al mercado y bunker de principales subproductos (m3)\t",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5bdc436c-60d4-4c86-98ab-59834d047700/resource/0b4ba490-d588-4b3d-b097-6710ef73ccbe/download/-ventas-al-mercado-y-bunker-de-principales-subproductos-m3-.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 38
+  },
+  {
+    "id": "energia-comercializacion-hidrocarburos---combustibles-liquidos---aeroplantas-segun-res-110204",
+    "titulo": "Comercialización de hidrocarburos - Combustibles líquidos - Aeroplantas (según Res. 1102/04)",
+    "descripcion": "Aeroplantas para comercialización de combustibles líquidos. Datos según Resolución 1102/04.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Aeroplantas",
+      "Combustibles líquidos",
+      "Comercialización",
+      "Comercialización de Hidrocarburos Líquidos",
+      "Hidrocarburos",
+      "Información Geográfica",
+      "Información geográfica",
+      "YPF"
+    ],
+    "fecha_creacion": "2019-11-26T15:00:49.894225",
+    "fecha_modificacion": "2026-06-28T04:33:02.954673",
+    "recursos": [
+      {
+        "nombre": "Comercialización de hidrocarburos - Combustibles líquidos - Aeroplantas (según Res. 1102/04)",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/4adf2cf0-621c-49e6-8434-9d787765d9ea/resource/7b9ee6ba-07d1-4584-96d1-f7a6b5e47661/download/comercializacin-de-hidrocarburos-combustibles-lquidos-aeroplantas-segn-res-110204-.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comercialización de hidrocarburos - Combustibles líquidos - Aeroplantas (según Res. 1102/04)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/4adf2cf0-621c-49e6-8434-9d787765d9ea/resource/69389cee-0174-42de-8cfb-aec035a19816/download/comercializacin-de-hidrocarburos-combustibles-lquidos-aeroplantas-segn-res-110204-.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "ambiente-productos-sustancias-quimicas",
+    "titulo": "Productos y sustancias químicas",
+    "descripcion": "Muestra la legislación que regula los contaminantes según cada convenio o protocolo y el monitoreo de las sustancias químicas en las estaciones de monitoreo",
+    "organizacion": "Subsecretaría de Ambiente",
+    "etiquetas": [
+      "Productos y sustancias químicas",
+      "Residuos"
+    ],
+    "fecha_creacion": "2023-11-23T10:52:24.101138",
+    "fecha_modificacion": "2026-06-25T20:01:05.099183",
+    "recursos": [
+      {
+        "nombre": "Acuerdos Multilaterales Ambientales en materia de productos químicos y desechos",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=541",
+        "tamaño": null
+      },
+      {
+        "nombre": "Contaminantes regulados",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=542",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río de la Plata. Indice de integridad biótica. Año 2022",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=409",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río de la Plata. Agua. Año 2021-2022",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=411",
+        "tamaño": null
+      },
+      {
+        "nombre": "Estaciones de monitoreo de sustancias químicas en agua superficial del Río de la Plata.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=412",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río de la Plata. Sedimento. Año 2022-2023.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=368",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lagunas Chascomús, y encadenadas. Agua. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=406",
+        "tamaño": null
+      },
+      {
+        "nombre": "Laguna Chascomús. Biota. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=407",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lagunas Chascomús, y encadenadas. Sedimento. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=408",
+        "tamaño": null
+      },
+      {
+        "nombre": "Importación y exportación de fitoterápicos",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=543",
+        "tamaño": null
+      },
+      {
+        "nombre": "Producción de productos químicos básicos e intermedios",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=544",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribución de las empresas de nanotecnología en Argentina",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=545",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Reconquista. Sedimento. Año 2025",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=608",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Reconquista. Agua. Año 2025",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=609",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Sedimento. Año 2024.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=610",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Agua. Año 2024-2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=611",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Biota. Año 2024-2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=612",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Negro, Chaco. Sedimento. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=613",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Negro, Chaco. Agua. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=614",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Sedimento. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=615",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Agua. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=616",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Biota. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=617",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Sedimento. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=618",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Agua. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=619",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Biota. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=620",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 25
+  },
+  {
+    "id": "ambiente-monitoreo-calidad-agua",
+    "titulo": "Monitoreo de calidad del agua",
+    "descripcion": "Muestra los monitoreos de calidad del agua en el Río de la Plata en la Red de Intercambio de Información de los Gobiernos Locales (RIIGLO) y de de las lagunas Chascomús, Adela y Chis Chis",
+    "organizacion": "Subsecretaría de Ambiente",
+    "etiquetas": [
+      "Agua",
+      "Monitoreo de calidad del agua"
+    ],
+    "fecha_creacion": "2023-11-23T10:36:01.456022",
+    "fecha_modificacion": "2026-06-25T20:01:00.890269",
+    "recursos": [
+      {
+        "nombre": "Acuífero freático. Concentración de nitratos. Año 2021-2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=413",
+        "tamaño": null
+      },
+      {
+        "nombre": "Acuífero Puelche. Concentración de nitratos. Año 2021-2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=414",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2004",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=482",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2005",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=481",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2006",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=480",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2007",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=479",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2008",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=478",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2009",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=477",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2010",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=476",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2013",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=474",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2014",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=473",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2015",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=472",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2016",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=454",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2017",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=453",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2018",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=452",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2019",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=451",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2020",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=448",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2021",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=447",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2022",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=405",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2023",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=404",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=403",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Año 2025",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=367",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo de sustancias químicas en agua superficial del Río de la Plata. Año 2021-2022",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=411",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río de la plata. Estaciones de monitoreo",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=412",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río de la Plata. Sedimento. Año 2022-2023.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=368",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lagunas Chascomús y encadenadas. Agua. Año 2024.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=406",
+        "tamaño": null
+      },
+      {
+        "nombre": "Laguna Chascomús. Biota. Año 2024.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=406",
+        "tamaño": null
+      },
+      {
+        "nombre": "Lagunas Chascomús, y encadenadas. Sedimento. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=408",
+        "tamaño": null
+      },
+      {
+        "nombre": "Monitoreo calidad del agua en el Rio de la Plata. Sitios de monitoreo. Promedio de los ICA 2023",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=568",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Reconquista. Sedimento. Año 2025",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=608",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Reconquista. Agua. Año 2025",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=609",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Sedimento. Año 2024.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=610",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Agua. Año 2024-2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=611",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Areco. Biota. Año 2024-2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=612",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Negro, Chaco. Sedimento. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=613",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Negro, Chaco. Agua. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=614",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Sedimento. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=615",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Agua. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=616",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río Pilcomayo. Biota. Año 2024",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=617",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Sedimento. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=618",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Agua. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=619",
+        "tamaño": null
+      },
+      {
+        "nombre": "Río-arroyo EL PESCADO. Biota. Año 2025.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=620",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 42
+  },
+  {
+    "id": "energia-estadisticas-biodiesel-bioetanol",
+    "titulo": "Estadísticas de biodiesel y bioetanol",
+    "descripcion": "Detalles mensual de asignaciones, producción y ventas al mercado interno por empresa. Producción, ventas al mercado interno y exportaciones de Biodiesel. Producción y ventas de bioetanol. Resumen por provincia. Exportaciones de biodiesel por destino. \r\n",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Biocombustibles",
+      "Biodiesel",
+      "Bioetanol",
+      "Energías Renovables"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:23.212714",
+    "fecha_modificacion": "2026-06-25T19:59:24.370631",
+    "recursos": [
+      {
+        "nombre": "Estadísticas de biodiesel y bioetanol",
+        "formato": "XLS",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/bio/estadisticas_biocombustibles.xls",
+        "tamaño": null
+      },
+      {
+        "nombre": "Biodiesel: exportaciones por destino",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5ce77ad1-c729-42cd-a8b5-2407de005e5b/resource/ace44023-c58b-4407-a38e-558c75f83804/download/expo-biodiesel.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Biodiesel: detalle de cupos asignados, producción y ventas por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5ce77ad1-c729-42cd-a8b5-2407de005e5b/resource/766f9fb3-8165-4826-89da-3942d3fe6186/download/biodiesel.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Biodiesel: producción, ventas y exportaciones, total país",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5ce77ad1-c729-42cd-a8b5-2407de005e5b/resource/4e04bc74-8625-412c-acc2-48412f2509b4/download/biodiesel-produccin-ventas-y-exportaciones-total-pas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Bioetanol: detalle de cupos asignados, producción y ventas, por empresa",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5ce77ad1-c729-42cd-a8b5-2407de005e5b/resource/0df1eeda-854b-44b0-8ea6-1a537f167fa4/download/bioetanol.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Bioetanol: producción y ventas (total país)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/5ce77ad1-c729-42cd-a8b5-2407de005e5b/resource/e5478cfe-b3ff-4fc7-a564-18cbe4752ad4/download/bioetanol-produccin-y-ventas-total-pas-.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 6
+  },
+  {
+    "id": "mineria-cartera-proyectos-mineros-argentina-siacam",
+    "titulo": "Cartera de Proyectos Mineros en Argentina del SIACAM",
+    "descripcion": "Datos correspondientes al tablero de Cartera de Proyectos del Sistema de Información Abierta a la Comunidad sobre la Actividad Minera en Argentina (SIACAM). Elaborado por la Dirección Nacional de Promoción y Economía Minera (Subsecretaría de Desarrollo Minero, Secretaría de Minería, Ministerio de Economía de la Nación).",
+    "organizacion": "Secretaría de Minería",
+    "etiquetas": [
+      "Cartera de Proyectos",
+      "Minería"
+    ],
+    "fecha_creacion": "2025-03-27T19:54:21.244561",
+    "fecha_modificacion": "2026-06-25T09:48:15.806029",
+    "recursos": [
+      {
+        "nombre": "Proyectos mineros metalíferos y de litio en Argentina",
+        "formato": "XLSX",
+        "url": "https://www.mecon.gob.ar/dataset/Cartera-de-Proyectos-Mineros-Metaliferos-y-Litio-del-SIACAM.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Proyectos mineros no metalíferos y rocas de aplicación",
+        "formato": "XLSX",
+        "url": "https://www.mecon.gob.ar/dataset/Cartera-de-Proyectos-Mineros-No-Metaliferos-y-Roca-de-Aplicacion-del-SIACAM.xlsx",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "mineria-balance-cambiario-siacam",
+    "titulo": "Balance Cambiario del SIACAM",
+    "descripcion": "Datos correspondientes al tablero de Divisas del Sistema de Información Abierta a la Comunidad sobre la Actividad Minera en Argentina (SIACAM). Elaborado por la Dirección Nacional de Promoción y Economía Minera (Subsecretaría de Desarrollo Minero, Secretaría de Minería, Ministerio de Economía de la Nación) en base a los datos del Banco Central de la República Argentina.",
+    "organizacion": "Secretaría de Minería",
+    "etiquetas": [
+      "Balance cambiario",
+      "Divisas",
+      "Minería",
+      "SIACAM",
+      "Sector externo"
+    ],
+    "fecha_creacion": "2025-03-27T19:54:19.700711",
+    "fecha_modificacion": "2026-06-25T09:48:14.264755",
+    "recursos": [
+      {
+        "nombre": "Balance cambiario del SIACAM",
+        "formato": "XLSX",
+        "url": "https://www.mecon.gob.ar/dataset/Balance_cambiario_argentina.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Metodología del Balance Cambiario del SIACAM",
+        "formato": "PDF",
+        "url": "https://www.mecon.gob.ar/dataset/Metodologia-balance-cambiario.pdf",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "energia-transporte-hidrocarburos",
+    "titulo": "Transporte de Hidrocarburos",
+    "descripcion": "Datos de volúmenes de Transporte proporcionados mensualmente por las empresas transportistas.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Información Geográfica",
+      "Información geográfica",
+      "Resolución 319",
+      "Tablero",
+      "Transporte",
+      "Transporte de Hidrocarburos"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:10.683356",
+    "fecha_modificacion": "2026-06-25T09:47:58.865427",
+    "recursos": [
+      {
+        "nombre": "Volumenes de Transporte de Hidrocarburos - Planilla 20",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/f1d13dac-fca5-4464-940d-ce86c16cbff3/download/volumnenes-de-transporte-de-hidrocarburos-planilla-20.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Volumenes operados por Terminales Marítimas - Planilla 21",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/2144967c-07c5-4ec1-8659-21bd7c1ba89e/download/volumenes-de-transporte-de-hidrocarburos-planilla-21.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Midstream (Anexo 3 Reg. 385/21)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/7e58c5e3-4ee7-45d2-a896-1a772bb762ff/download/registro-del-midstream-ductos-empresas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Anexo 2A Capacidad de Transporte de Hidrocarburos a través de ductos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/2a93eec0-32a1-48f9-bcf7-614f203b1918/download/anexo-2a-capacidad-de-transporte-de-hidrocarburos-a-travs-de-ductos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Anexo 2B Capacidad de Tanques de almacenamiento de Hidrocarburos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/ac9ba2a8-06fd-4e27-a1b1-484df07dc992/download/anexo-2b-capacidad-de-tanques-de-almacenamiento-de-hidrocarburos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Anexo 2B por Plantas: Capacidad de Plantas de Almacenamiento de Hidrocarburos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/6189946b-fb12-4e0e-b6dd-a5a098d1fde9/download/anexo-2b-por-plantas-capacidad-de-plantas-de-almacenamiento-de-hidrocarburos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tramos de Integridad",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/fdbfd2ab-30d7-48fe-a1cc-74f6e379a535/download/tramos-de-integridad.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ductos información general",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/46f1101d-1f19-40fe-971e-a5b1925ef55b/download/ductos-informacin-general.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Nodos",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/40292750-9915-4bfb-9b8a-cb1b342c4c5e/download/nodos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Información georeferenciada de Nodos de Transporte de Hidrocarburos - Planillas 20/21 de la Res. 319/93",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/e328a247-fcc5-48e5-a5d6-cd15d2aff936/download/nodos-de-transporte-de-hidrocarburos-planillas-2021-de-la-res-31993.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Información georeferenciada de Nodos de Transporte de Hidrocarburos  - Planillas 20/21 de la Res. 319/93",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/71373c69-380a-416c-b4f8-c39f7c1e5605/download/nodos-de-transporte-de-hidrocarburos-planillas-2021-de-la-res-31993.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Información georeferenciada de Tramos de Ductos de Transporte de Hidrocarburos  - Planillas 20/21 de la Res. 319/93",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/47abb0b5-5bae-4ef3-b140-6d4178c35854/download/ductos-de-transporte-de-hidrocarburos-planillas-2021-de-la-res-31993.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Información georeferenciada de Tramos de Ductos de Transporte de Hidrocarburos  - Planillas 20/21 de la Res. 319/93",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/25a691da-fc1d-4ae3-bee5-ec5c5f9aa08b/resource/fe6426c5-fd29-475e-8d62-4de1a80db4d6/download/ductos-de-transporte-de-hidrocarburos-planillas-2021-de-la-res-31993.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tablero de Transporte de Hidrocarburos por Ductos - Res SE 319/93 Planilla 20 ",
+        "formato": "PHP",
+        "url": "https://estadisticasenergia.mecon.gob.ar/superset/dashboard/138/?standalone=true",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tablero de Transporte de Hidrocarburos a través de Terminales Marítimas - Res SE 319/93 Planilla 21",
+        "formato": "PHP",
+        "url": "https://estadisticasenergia.mecon.gob.ar/superset/dashboard/144/?standalone=true",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 15
+  },
+  {
+    "id": "energia-padron-medidores-petroleo-gas",
+    "titulo": "Padrón de medidores de petróleo y gas",
+    "descripcion": "Medidores Empadronados. Resolución N° 557/2022 (ex- Resol. N°318/2010)\r\n\r\n",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Exploración y Producción de Hidrocarburos",
+      "Gas",
+      "Hidrocarburos",
+      "Medición",
+      "Petróleo",
+      "Resolución 318"
+    ],
+    "fecha_creacion": "2019-11-26T15:00:27.440081",
+    "fecha_modificacion": "2026-06-25T09:47:47.911724",
+    "recursos": [
+      {
+        "nombre": "Resolución 318 - Constancias de Auditorías",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/df832dab-b67c-4952-9f37-1bd28136967a/resource/13947bf2-f68b-4b2d-a165-9cdadf08202a/download/resolucin-318-constancias-de-auditoras.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 318 -  Control de Auditorías",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/df832dab-b67c-4952-9f37-1bd28136967a/resource/51af09a5-62ff-4fcc-bc42-0120a45131ce/download/resolucin-318-control-de-auditoras.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 554- Instalaciones Empadronadas",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/df832dab-b67c-4952-9f37-1bd28136967a/resource/7ec67ff3-d0e3-46d0-98c4-24499975b596/download/resolucin-554-instalaciones-empadronadas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 554 - Medidores Empadronados",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/df832dab-b67c-4952-9f37-1bd28136967a/resource/f7c9b119-4320-4ab2-94ba-ca611ea695ce/download/resolucin-554-medidores-empadronados.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 4
+  },
+  {
+    "id": "energia-precios-mayoristas---resolucion-110404",
+    "titulo": "Precios Mayoristas - Resolución 1104/04",
+    "descripcion": "Precios del módulo mayorista de la Resolución 1104.",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Comercialización de Hidrocarburos Líquidos",
+      "Información Geográfica",
+      "Precios Mayoristas",
+      "Resolución 1104"
+    ],
+    "fecha_creacion": "2022-02-08T15:21:07.404781",
+    "fecha_modificacion": "2026-06-25T09:47:42.285046",
+    "recursos": [
+      {
+        "nombre": "Precios Mayoristas Res 1104 desde Diciembre 2024",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/78d29f4f-e81d-470f-be8d-a228afec3534/resource/1259e17f-aee6-4858-9811-ba8efb7f4b9f/download/precios-mayoristas-res-1104-desde-diciembre-2024.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios Mayoristas Res 1104",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/78d29f4f-e81d-470f-be8d-a228afec3534/resource/6872e948-43e8-42a7-820d-03f315831e35/download/precios-mayoristas-res-1104.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribuidores mayoristas de combustibles líquidos (Res. 1104/04)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/78d29f4f-e81d-470f-be8d-a228afec3534/resource/1db7f27f-c23a-4873-8da2-cfe6be72f7e2/download/distribuidores-mayoristas-de-combustibles-lquidos-res-110404-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Distribuidores mayoristas de combustibles líquidos (Res. 1104/04)",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/78d29f4f-e81d-470f-be8d-a228afec3534/resource/87da78b8-a814-4c30-93e5-25963be79864/download/distribuidores-mayoristas-de-combustibles-lquidos-res-110404-.zip",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 4
+  },
+  {
+    "id": "incaa-valor-entrada-promedio",
+    "titulo": "Valor de entrada promedio",
+    "descripcion": "Precio promedio de mercado, en las salas de exhibición comercial",
+    "organizacion": "Instituto Nacional de Cine y Artes Audiovisuales (INCAA)",
+    "etiquetas": [
+      "Cine",
+      "Entrada",
+      "Películas"
+    ],
+    "fecha_creacion": "2025-10-14T04:35:34.384569",
+    "fecha_modificacion": "2026-06-25T09:45:25.832127",
+    "recursos": [
+      {
+        "nombre": "Valor de entrada promedio",
+        "formato": "CSV",
+        "url": "https://www.incaa.gob.ar/.cvs-datos/valores_entrada.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "incaa-estrenos-cine-argentina",
+    "titulo": "Estrenos de cine en Argentina",
+    "descripcion": "Detalle de los últimos estreno de películas en el país",
+    "organizacion": "Instituto Nacional de Cine y Artes Audiovisuales (INCAA)",
+    "etiquetas": [
+      "Cine",
+      "Espectadores",
+      "Estrenos",
+      "Películas"
+    ],
+    "fecha_creacion": "2025-10-14T04:35:37.589298",
+    "fecha_modificacion": "2026-06-25T09:45:25.554631",
+    "recursos": [
+      {
+        "nombre": "Espectadores por Película",
+        "formato": "CSV",
+        "url": "https://www.incaa.gob.ar/.cvs-datos/peliculas.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "enacom-tv-por-suscripcion",
+    "titulo": "Tv por Suscripción",
+    "descripcion": "Principales Indicadores de Mercado, Tv por Suscripción",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Tv"
+    ],
+    "fecha_creacion": "2025-10-02T16:54:04.706485",
+    "fecha_modificacion": "2026-06-24T00:44:36.880932",
+    "recursos": [
+      {
+        "nombre": "Tv por Suscripción Accesos Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_accesos_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Accesos Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_accesos_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Accesos Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_accesos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Accesos Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_accesos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Ingresos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_ingresos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Ingresos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_ingresos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Penetracion Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_penetracion_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Penetracion Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_penetracion_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Penetracion Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_penetracion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Tv por Suscripción Penetracion Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/tv_penetracion.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 10
+  },
+  {
+    "id": "enacom-mercado-postal",
+    "titulo": "Mercado Postal",
+    "descripcion": "Principales Indicadores de Mercado, Mercado Postal",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Postal"
+    ],
+    "fecha_creacion": "2025-10-02T16:54:08.198525",
+    "fecha_modificacion": "2026-06-24T00:44:36.153378",
+    "recursos": [
+      {
+        "nombre": "Mercado Postal Facturacion Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_facturacion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Facturacion Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_facturacion.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Produccion Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_produccion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Produccion Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_produccion.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Facturacion Produccion Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_facturacion_produccion_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Facturacion Produccion Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_facturacion_produccion_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Personal-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_personal_ocupado.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Mercado Postal Personal-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/mercado_postal_personal_ocupado.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 8
+  },
+  {
+    "id": "enacom-comunicaciones-moviles",
+    "titulo": "Comunicaciones Móviles",
+    "descripcion": "Principales Indicadores de Mercado, Comunicaciones Moviles",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Movil"
+    ],
+    "fecha_creacion": "2025-10-02T16:53:58.947319",
+    "fecha_modificacion": "2026-06-24T00:44:34.879287",
+    "recursos": [
+      {
+        "nombre": "Comunicaciones Móviles Accesos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_accesos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Accesos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_accesos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Ingresos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_ingresos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Ingresos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_ingresos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Llamadas-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_llamadas.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Llamadas-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_llamadas.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Minutos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_minutos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Minutos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_minutos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Penetracion-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_penetracion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles Penetracion-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_penetracion.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles SMS-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_sms.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Comunicaciones Móviles SMS-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/comunicaciones_moviles_sms.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 12
+  },
+  {
+    "id": "enacom-internet-fija",
+    "titulo": "Internet Fija",
+    "descripcion": "Principales Indicadores de Mercado, Internet Fija",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Internet"
+    ],
+    "fecha_creacion": "2025-10-03T16:54:58.445476",
+    "fecha_modificacion": "2026-06-24T00:44:32.109556",
+    "recursos": [
+      {
+        "nombre": "Internet Fija Accesos BAF Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_baf_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos BAF Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_baf_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos BAF Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_baf.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos BAF Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_baf.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Localidades-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias_localidades.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Localidades-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias_localidades.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Tecnologia Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_tecnologias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Localidades-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_localidades.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Localidades-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_localidades.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Rango Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_rangos_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Rango Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_rangos_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Rango Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_rangos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Accesos Velocidad Rango Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_velocidad_rangos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Ingresos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_ingresos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Ingresos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_ingresos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Penetracion Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_penetracion_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Penetracion Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_penetracion_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Penetracion Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_penetracion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija Penetracion Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_accesos_penetracion.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija VMD Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_velocidad_media_descarga_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija VMD Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_velocidad_media_descarga_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija VMD Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_velocidad_media_descarga.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Internet Fija VMD Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/internet_velocidad_media_descarga.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 28
+  },
+  {
+    "id": "enacom-portabilidad",
+    "titulo": "Portabilidad",
+    "descripcion": "Principales Indicadores de Mercado, Portabilidad",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Portabilidad"
+    ],
+    "fecha_creacion": "2025-10-02T16:54:06.496874",
+    "fecha_modificacion": "2026-06-24T00:44:31.767068",
+    "recursos": [
+      {
+        "nombre": "Portabilidad Portaciones Móviles totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/portabilidad_movil.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Portabilidad Portaciones Móviles totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/portabilidad_movil.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "enacom-telefonia-fija",
+    "titulo": "Telefonía Fija",
+    "descripcion": "Principales Indicadores de Mercado, Telefonia Fija",
+    "organizacion": "Ente Nacional de Comunicaciones (ENACOM)",
+    "etiquetas": [
+      "Ciencia y tecnología",
+      "Telefonía Fija"
+    ],
+    "fecha_creacion": "2025-10-02T16:54:02.030716",
+    "fecha_modificacion": "2026-06-24T00:44:30.898684",
+    "recursos": [
+      {
+        "nombre": "Telefonía Fija Accesos Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_accesos_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Accesos Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_accesos_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Accesos Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_accesos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Accesos Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_accesos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Ingresos-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_ingresos.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Ingresos-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_ingresos.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Penetracion Provincias-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_penetracion_provincias.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Penetracion Provincias-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_penetracion_provincias.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Penetracion Totales-xls",
+        "formato": "XLS",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_penetracion.xlsx",
+        "tamaño": null
+      },
+      {
+        "nombre": "Telefonía Fija Penetracion Totales-csv",
+        "formato": "CSV",
+        "url": "https://indicadores.enacom.gob.ar/Files/DatosAbiertos/telefonia_fija_penetracion.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 10
+  },
+  {
+    "id": "energia-precios-volumenes-eess---resolucion-110404",
+    "titulo": "Precios y volúmenes EESS - Resolución 1104/04",
+    "descripcion": "Precios de venta de los hidrocarburos en los distintos canales de comercialización para todo el territorio nacional, según informan mensualmente los operadores inscriptos en el padrón creado por la Resolución 1104/2004.  (Volúmenes en  m3 y precios en pesos).",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Comercialización de Hidrocarburos Líquidos",
+      "EESS",
+      "Estaciones de servicio",
+      "Precios",
+      "Resolución 1104"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:19.636585",
+    "fecha_modificacion": "2026-06-23T03:57:30.792006",
+    "recursos": [
+      {
+        "nombre": "Precios EESS desde Diciembre2024",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/3cbdd364-a12c-46b7-b791-dd8e8bcfb32d/download/precios-eess-2025-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2024",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/6472fd51-2e61-4a40-aeef-acede56e5578/download/precios-eess-2024.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2023",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/517a3213-e3fd-447c-899b-6ba54fe511d7/download/precios-eess-2023.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2022",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/d3c9d1b5-fb89-4d2e-9303-f649e6a93506/download/precios-eess-2022.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2021",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/07c9d10f-fd2b-4962-b96b-6e04a5c60b67/download/precios-eess-2021.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2020",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/15067e62-47ad-4a26-a2c8-daeecb7ac043/download/precios-eess-2020.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2019",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/51bda70a-199b-4499-84ff-76ef63c01040/download/precios-eess-2019.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2018",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/b35744f0-909d-42cc-b7a5-cc0ca3ba4377/download/precios-eess-2018.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2017",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/d0d01143-fb95-4ee4-993e-0ff178e33aa8/download/precios-eess-2017.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2016",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/90a3b870-f25b-4cf3-ab0f-d3ea76a1c371/download/precios-eess-2016.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2015",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/71491e1e-0a19-402c-a93c-3e8ee776654c/download/precios-eess-2015.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2014",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/d80df148-d3fe-43c3-a72a-2bc7e209440a/download/precios-eess-2014.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2013",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/84ad5396-d1ff-4d4c-9912-17807ce76eba/download/precios-eess-2013.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2012",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/0952fcff-d7b9-4f71-8452-574aa13d8669/download/precios-eess-2012.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2011",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/ee2465fe-8e86-4a5c-96a4-74ba52bc077a/download/precios-eess-2011.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2010",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/b24ffb36-65c2-44c1-ab23-886616aa1e79/download/precios-eess-2010.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2009",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/ef921324-7cdc-48fb-98af-ebb8dc4d93ed/download/precios-eess-2009.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2005",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/9bd03aa4-d861-441f-9b2e-5bc4b64ceccc/download/precios-eess-2005.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2008",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/246d3c83-ae66-4513-906f-272b8e317437/download/precios-eess-2008.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2007",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/958f6a26-5467-4fe0-879f-07a1b9f69b78/download/precios-eess-2007.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2006",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/f173c4c8-5f36-4dff-88d7-ed586e39f202/download/precios-eess-2006.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios EESS 2004 ",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/2329af53-ecfe-4fb6-9628-34f339a83cd5/download/precios-eess-2004-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precio final con impuestos en EESS",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/d279e209-b8a3-4cfd-9fb0-09ccb54f2aae/download/precio-final-con-impuestos-en-eess.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Volumenes en EESS",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/6487545c-6256-4079-aee5-403db41ee22b/download/volumenes-en-eess.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios combustibles por período (Res. 1104) en ARS/litro",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/4affa530-e0f4-4ee2-bded-ca23976a6e43/download/precios-combustibles-por-perodo-res-1104-en-arslitro.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Ventas a vehiculos con chapa patente extranjera desde el 2015",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/0d0451dc-0091-4fa3-a93d-441145cc3ae2/download/ventas-a-vehiculos-con-chapa-patente-extranjera-desde-el-2015.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "EESS Y Operadores (Res 1104)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/57d8be8f-520e-4ac3-a59b-8458623e8385/download/eess-y-operadores-res-1104-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Shapefile de EESS Y Operadores (Res 1104)",
+        "formato": "SHP",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/88a3518a-dec4-4f55-943a-35cd8fe90eca/download/shapefile-de-eess-res-1104-.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Precios y volumenes a partir de 2018",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/708f9ab4-829b-4f02-b507-f303c5bc4800/resource/d6ecf302-049b-459d-bca2-b638ea70518b/download/precios-y-volumenes-a-partir-de-2018.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 29
+  },
+  {
+    "id": "ambiente-actividad-minera",
+    "titulo": "Actividad minera",
+    "descripcion": "Muestra las exportaciones de la actividad minera, y la participación relativa de las exportaciones mineras argentinas por tipo de mineral",
+    "organizacion": "Subsecretaría de Ambiente",
+    "etiquetas": [
+      "Actividad minera",
+      "Actividades productivas"
+    ],
+    "fecha_creacion": "2026-06-22T16:53:03.465592",
+    "fecha_modificacion": "2026-06-22T16:53:03.465597",
+    "recursos": [
+      {
+        "nombre": "Participación relativa de las exportaciones mineras por tipo de mineral",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=606",
+        "tamaño": null
+      },
+      {
+        "nombre": "Exportaciones mineras por provincia",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=607",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 2
+  },
+  {
+    "id": "energia-produccion-combustibles",
+    "titulo": "Producción de combustibles",
+    "descripcion": "Productos elaborados de petróleo",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Combustibles",
+      "Downstream",
+      "Hidrocarburos",
+      "Producción",
+      "Refinación",
+      "Refinación de Hidrocarburos",
+      "Resolución 319",
+      "SESCO"
+    ],
+    "fecha_creacion": "2019-11-26T15:01:08.824369",
+    "fecha_modificacion": "2026-06-21T09:36:39.663543",
+    "recursos": [
+      {
+        "nombre": "Productos Elaborados a partir del Petróleo",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/c1c73b3a-0811-4441-9b65-e461fdce52e8/resource/c11f1dd3-c6e2-41fe-8100-19c5d6bea239/download/productos-elaborados-a-partir-del-petrleo.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "energia-disponibilidad-petroleo-fin-mes",
+    "titulo": "Disponibilidad de petróleo a fin de mes",
+    "descripcion": "Stock de Petróleo mensual",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Exploración y Producción de Hidrocarburos",
+      "Hidrocarburos",
+      "Petróleo",
+      "Producción",
+      "Resolución 319",
+      "SESCO",
+      "Upstream"
+    ],
+    "fecha_creacion": "2019-11-26T15:00:42.619692",
+    "fecha_modificacion": "2026-06-21T04:30:07.871797",
+    "recursos": [
+      {
+        "nombre": "Disponibilidad de petróleo a fin de mes",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/65101748-c98b-47f1-bf35-c282ba7b492a/resource/899f9397-838c-43ea-8bc8-2b6ec2753b1d/download/disponibilidad-de-petrleo-a-fin-de-mes.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "energia-registro-empresas-hidrocarburos-upstream",
+    "titulo": "Registro de empresas de hidrocarburos del upstream",
+    "descripcion": "Registro de Empresas Petroleras del Upstream - Inscripciones Anuales",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Empresas",
+      "Exploración y Producción de Hidrocarburos",
+      "Hidrocarburos",
+      "Registros"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:22.630133",
+    "fecha_modificacion": "2026-06-21T04:30:00.214290",
+    "recursos": [
+      {
+        "nombre": "Registro de Empresas Petroleras del Upstream - Inscripciones Anuales",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b227214-829d-4ef5-9f3e-c9bb49fa2f4c/resource/dec5cd65-8ac7-4f76-933c-aa6ae498fd3e/download/registro-de-empresas-petroleras-del-upstream-inscripciones-anuales.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Conformación de consorcios (Listado Único)",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b227214-829d-4ef5-9f3e-c9bb49fa2f4c/resource/4f417d63-b53c-4424-8cc3-98dd276f129a/download/conformacin-de-consorcios-listado-oficial-.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Conformación de UTES concesionarias de áreas",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/2b227214-829d-4ef5-9f3e-c9bb49fa2f4c/resource/397f2409-4d70-4ff6-be78-0b33d373df08/download/conformacin-de-utes-concesionarias-de-reas.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 3
+  },
+  {
+    "id": "energia-inversiones-mercado-hidrocarburos-upstream",
+    "titulo": "Inversiones en mercado de hidrocarburos upstream",
+    "descripcion": "Resolución 2057 - Inversiones previstas año actual",
+    "organizacion": "Secretaría de Energía",
+    "etiquetas": [
+      "Exploración y Producción de Hidrocarburos",
+      "Hidrocarburos",
+      "Inversiones",
+      "Resolución 2057"
+    ],
+    "fecha_creacion": "2019-11-26T14:59:18.012975",
+    "fecha_modificacion": "2026-06-21T04:29:53.115207",
+    "recursos": [
+      {
+        "nombre": "Inversiones (2026)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2026.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2025)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2025.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2024)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/td_2057_2024.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2023)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/td_2057_2023.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2022)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/td_2057_2022.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2021)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2021.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2020)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/td_2057_2020.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2019)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2018)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2018.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2017)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2017.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2016)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2016.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2015)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2015.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2013 a 2014)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/TD_2057_2014.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Inversiones (2005 a 2012)",
+        "formato": "ZIP",
+        "url": "http://www.energia.gob.ar/contenidos/archivos/Reorganizacion/informacion_del_mercado/mercado_hidrocarburos/tablas_dinamicas/inversiones/inversionesTD.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 2057 - Inversiones realizadas fin de concesión",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/83fd2c3f-e0f5-4d56-a3ef-828eac226ba9/resource/c0bb56ec-7fcf-4dd0-aee6-0e075f756638/download/resolucin-2057-inversiones-realizadas-fin-de-concesin.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 2057 - Inversiones realizadas año anterior",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/83fd2c3f-e0f5-4d56-a3ef-828eac226ba9/resource/285d45e5-1b88-4dae-8e5c-c01843c7c8c0/download/resolucin-2057-inversiones-realizadas-ao-anterior.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 2057 - Inversiones previstas año actual",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/83fd2c3f-e0f5-4d56-a3ef-828eac226ba9/resource/8ab4098a-842b-42f7-bf1a-b7b3637d226d/download/resolucin-2057-inversiones-previstas-ao-actual.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Resolución 2057 - Inversiones realizadas mensual",
+        "formato": "CSV",
+        "url": "http://datos.energia.gob.ar/dataset/83fd2c3f-e0f5-4d56-a3ef-828eac226ba9/resource/c0a6f94a-6052-48db-9dc8-4d6ce64ecf62/download/resolucin-2057-inversiones-realizadas-mensual.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 18
+  },
+  {
+    "id": "justicia-registro-nacional-sociedades",
+    "titulo": "Registro Nacional de Sociedades",
+    "descripcion": "Datos del Registro Nacional de Sociedades.",
+    "organizacion": " Ministerio de Justicia",
+    "etiquetas": [
+      "Sistema Registral",
+      "asociaciones civiles",
+      "fundaciones",
+      "quiebras",
+      "registro nacional de sociedades",
+      "rns",
+      "sociedades",
+      "sociedades accionarias",
+      "sociedades anónimas",
+      "sociedades comerciales",
+      "sociedades extranjeras"
+    ],
+    "fecha_creacion": "2019-12-04T20:03:06.264022",
+    "fecha_modificacion": "2026-06-18T21:19:18.281040",
+    "recursos": [
+      {
+        "nombre": "Registro Nacional de Sociedades - Muestreo",
+        "formato": "CSV",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/6096331b-0511-4728-b01b-6c6b535f4c2b/download/registro-nacional-sociedades-muestreo.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - Asociaciones sin fines de lucro - 20260618",
+        "formato": "CSV",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/61987339-5160-4d95-b49c-d5c2ff4e5fe7/download/registro-nacional-sociedades-asociaciones-sin-fines-lucro-20260618.csv",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2026",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/13a1a66f-9f49-4d2d-9582-7b4540ef1b83/download/registro-nacional-sociedades-2026.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - Gráficos estadísticos",
+        "formato": "gráfico",
+        "url": "https://public.tableau.com/app/profile/justicia.abierta/viz/RegistroNacionaldeSociedades/RegistroNacionaldeSociedades",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - Asociaciones sin fines de lucro - 2026",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/a0301845-8440-4640-9435-9d975b496cac/download/registro-nacional-sociedades-asociaciones-sin-fines-lucro-2026.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2025",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/cf93b46f-ec0b-4956-bcaf-412cd4799eef/download/registro-nacional-sociedades-2025.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - Asociaciones sin fines de lucro - 2025",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/e7ef4a8d-b1bd-412d-8886-e2b1e81c5fad/download/registro-nacional-sociedades-asociaciones-sin-fines-lucro-2025.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2024",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/a3f34d54-72fc-4848-802e-d3307310b1e9/download/registro-nacional-sociedades-2024.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2023",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/fa9253b2-50c5-43c2-80db-8095e0dcbc8f/download/registro-nacional-sociedades-2023.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2022",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/1126bd77-449e-4cdd-a96c-41e8c414fa75/download/registro-nacional-sociedades-2022.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2021",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/763036e5-d6a4-4249-9e8d-dc204db63f58/download/registro-nacional-sociedades-2021.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades -  2020",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/1b5f96fa-9399-4580-b97a-cd2739cfa8cd/download/registro-nacional-sociedades-2020.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2019",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/ac42fc32-7d72-4be5-9d37-e1f796634e55/download/registro-nacional-sociedades-2019.zip",
+        "tamaño": null
+      },
+      {
+        "nombre": "Registro Nacional de Sociedades - 2026 - Semestre 1",
+        "formato": "ZIP",
+        "url": "https://datos.jus.gob.ar/dataset/ee83de85-4305-4c53-9a9f-fd3d15e42c36/resource/1c5fa113-2da8-4b0f-b842-68d9026bba66/download/registro-nacional-sociedades-2026-semestre-1.zip",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 14
+  },
+  {
+    "id": "ambiente-incendios-forestales",
+    "titulo": "Incendios forestales",
+    "descripcion": "Muestra los focos de calor e incendios forestales reportados por año y por provincias y la superficie afectada",
+    "organizacion": "Subsecretaría de Ambiente",
+    "etiquetas": [
+      "Incendios forestales",
+      "Riesgos"
+    ],
+    "fecha_creacion": "2023-11-23T09:57:04.571531",
+    "fecha_modificacion": "2026-06-18T21:18:46.421404",
+    "recursos": [
+      {
+        "nombre": "Cantidad de focos de calorregistrados por año",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=429",
+        "tamaño": null
+      },
+      {
+        "nombre": "Cantidad de focos de calor registrados por provincia y año",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=417",
+        "tamaño": null
+      },
+      {
+        "nombre": "Cantidad de focos de calor registrados por jurisdicción y por mes.",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=439",
+        "tamaño": null
+      },
+      {
+        "nombre": "Cantidad de incendios reportados por mes",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=427",
+        "tamaño": null
+      },
+      {
+        "nombre": "Cantidad de incendios reportados por provincia",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=398",
+        "tamaño": null
+      },
+      {
+        "nombre": "Cantidad de incendios reportados por región",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=399",
+        "tamaño": null
+      },
+      {
+        "nombre": "Porcentaje de la superficie quemada total y por provincia del territorio PIECAS-DP. Año 2020",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=132",
+        "tamaño": null
+      },
+      {
+        "nombre": "Superficie afectada por incendios reportados, por jurisdicción",
+        "formato": "CSV",
+        "url": "https://ciam.ambiente.gob.ar/dt_csv.php?dt_id=416",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 8
+  },
+  {
+    "id": "incaa-nominas-copia",
+    "titulo": "Nóminas Copia A",
+    "descripcion": "Nóminas Copia A entregadas",
+    "organizacion": "Instituto Nacional de Cine y Artes Audiovisuales (INCAA)",
+    "etiquetas": [
+      "Copia A",
+      "Nominas"
+    ],
+    "fecha_creacion": "2025-10-14T04:35:36.793662",
+    "fecha_modificacion": "2026-06-18T21:15:26.665224",
+    "recursos": [
+      {
+        "nombre": "Registro de copias A",
+        "formato": "CSV",
+        "url": "https://www.incaa.gob.ar/.cvs-datos/nominas.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  },
+  {
+    "id": "incaa-informe-semanal",
+    "titulo": "Informe Semanal",
+    "descripcion": "Información semanal sobre películas y espectadores, entradas vendidas y pantallas donde actualmente están exhibidos los films",
+    "organizacion": "Instituto Nacional de Cine y Artes Audiovisuales (INCAA)",
+    "etiquetas": [
+      "Informe",
+      "Películas",
+      "Semanal"
+    ],
+    "fecha_creacion": "2025-10-14T04:35:32.461940",
+    "fecha_modificacion": "2026-06-18T21:15:26.462014",
+    "recursos": [
+      {
+        "nombre": "Informe Semanal de Películas",
+        "formato": "CSV",
+        "url": "https://www.incaa.gob.ar/.cvs-datos/informe_semanal.csv",
+        "tamaño": null
+      }
+    ],
+    "total_recursos": 1
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "ceuta",
+  "nombre": "Puerto de Ceuta",
+  "ccaa": "Ceuta",
+  "coordenadas": {
+    "lat": 35.89,
+    "lng": -5.32
+  },
+  "datos": null,
+  "oleaje": null
+}

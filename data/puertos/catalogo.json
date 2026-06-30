@@ -1,0 +1,211 @@
+[
+  {
+    "id": "algeciras",
+    "nombre": "Puerto de Algeciras",
+    "ccaa": "Andalucía",
+    "coordenadas": {
+      "lat": 36.12,
+      "lng": -5.45
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "barcelona",
+    "nombre": "Puerto de Barcelona",
+    "ccaa": "Cataluña",
+    "coordenadas": {
+      "lat": 41.34,
+      "lng": 2.18
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "bilbao",
+    "nombre": "Puerto de Bilbao",
+    "ccaa": "País Vasco",
+    "coordenadas": {
+      "lat": 43.33,
+      "lng": -2.96
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "cádiz",
+    "nombre": "Puerto de Cádiz",
+    "ccaa": "Andalucía",
+    "coordenadas": {
+      "lat": 36.53,
+      "lng": -6.29
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "cartagena",
+    "nombre": "Puerto de Cartagena",
+    "ccaa": "Murcia",
+    "coordenadas": {
+      "lat": 37.56,
+      "lng": -0.98
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "celeiro",
+    "nombre": "Puerto del Celeiro",
+    "ccaa": "Galicia",
+    "coordenadas": {
+      "lat": 43.72,
+      "lng": -7.6
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "ceuta",
+    "nombre": "Puerto de Ceuta",
+    "ccaa": "Ceuta",
+    "coordenadas": {
+      "lat": 35.89,
+      "lng": -5.32
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "culleredo",
+    "nombre": "Puerto de Culleredo",
+    "ccaa": "Galicia",
+    "coordenadas": {
+      "lat": 43.35,
+      "lng": -8.38
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "gijón",
+    "nombre": "Puerto de Gijón",
+    "ccaa": "Asturias",
+    "coordenadas": {
+      "lat": 43.55,
+      "lng": -5.67
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "las palmas",
+    "nombre": "Puerto de Las Palmas",
+    "ccaa": "Canarias",
+    "coordenadas": {
+      "lat": 28.1,
+      "lng": -15.41
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "melilla",
+    "nombre": "Puerto de Melilla",
+    "ccaa": "Melilla",
+    "coordenadas": {
+      "lat": 35.29,
+      "lng": -2.93
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "palma",
+    "nombre": "Puerto de Palma",
+    "ccaa": "Baleares",
+    "coordenadas": {
+      "lat": 39.57,
+      "lng": 2.64
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "santander",
+    "nombre": "Puerto de Santander",
+    "ccaa": "Cantabria",
+    "coordenadas": {
+      "lat": 43.46,
+      "lng": -3.81
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "santiago",
+    "nombre": "Puerto de San Cibrao",
+    "ccaa": "Galicia",
+    "coordenadas": {
+      "lat": 43.68,
+      "lng": -7.77
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "sevilla",
+    "nombre": "Puerto de Sevilla",
+    "ccaa": "Andalucía",
+    "coordenadas": {
+      "lat": 37.39,
+      "lng": -5.99
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "tarragona",
+    "nombre": "Puerto de Tarragona",
+    "ccaa": "Cataluña",
+    "coordenadas": {
+      "lat": 41.12,
+      "lng": 1.18
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "valencia",
+    "nombre": "Puerto de Valencia",
+    "ccaa": "C. Valenciana",
+    "coordenadas": {
+      "lat": 39.45,
+      "lng": -0.32
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "vigo",
+    "nombre": "Puerto de Vigo",
+    "ccaa": "Galicia",
+    "coordenadas": {
+      "lat": 42.24,
+      "lng": -8.72
+    },
+    "datos": null,
+    "oleaje": null
+  },
+  {
+    "id": "vizcaya",
+    "nombre": "Puerto de Bilbao",
+    "ccaa": "País Vasco",
+    "coordenadas": {
+      "lat": 43.33,
+      "lng": -2.96
+    },
+    "datos": null,
+    "oleaje": null
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "melilla",
+  "nombre": "Puerto de Melilla",
+  "ccaa": "Melilla",
+  "coordenadas": {
+    "lat": 35.29,
+    "lng": -2.93
+  },
+  "datos": null,
+  "oleaje": null
+}

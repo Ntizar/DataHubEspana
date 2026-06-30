@@ -1,0 +1,17 @@
+{
+  "fecha": "2026-06-30",
+  "avisos": false,
+  "predicciones": 0,
+  "ciudades": [
+    "Madrid",
+    "Barcelona",
+    "Valencia",
+    "Sevilla",
+    "Bilbao",
+    "Zaragoza",
+    "Málaga",
+    "Oviedo",
+    "Santander",
+    "A Coruña"
+  ]
+}

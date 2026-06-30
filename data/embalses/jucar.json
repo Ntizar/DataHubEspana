@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Alarcón",
+    "confederacion": "jucar",
+    "nivel_porcentaje": 60.0,
+    "volumen_hm3": 387.9,
+    "caudal_entrada": 49.3,
+    "caudal_salida": 14.8
+  },
+  {
+    "nombre": "Tous",
+    "confederacion": "jucar",
+    "nivel_porcentaje": 21.1,
+    "volumen_hm3": 301.9,
+    "caudal_entrada": 1.7,
+    "caudal_salida": 8.1
+  },
+  {
+    "nombre": "Contreras",
+    "confederacion": "jucar",
+    "nivel_porcentaje": 38.3,
+    "volumen_hm3": 113.4,
+    "caudal_entrada": 27.2,
+    "caudal_salida": 15.9
+  }
+]

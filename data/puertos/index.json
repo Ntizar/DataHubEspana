@@ -1,0 +1,26 @@
+{
+  "fecha": "2026-06-30",
+  "total_puertos": 19,
+  "con_datos": 0,
+  "puertos": [
+    "Puerto de Algeciras",
+    "Puerto de Barcelona",
+    "Puerto de Bilbao",
+    "Puerto de Cádiz",
+    "Puerto de Cartagena",
+    "Puerto del Celeiro",
+    "Puerto de Ceuta",
+    "Puerto de Culleredo",
+    "Puerto de Gijón",
+    "Puerto de Las Palmas",
+    "Puerto de Melilla",
+    "Puerto de Palma",
+    "Puerto de Santander",
+    "Puerto de San Cibrao",
+    "Puerto de Sevilla",
+    "Puerto de Tarragona",
+    "Puerto de Valencia",
+    "Puerto de Vigo",
+    "Puerto de Bilbao"
+  ]
+}

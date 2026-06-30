@@ -1,0 +1,18 @@
+[
+  {
+    "nombre": "Alhárabe",
+    "confederacion": "segura",
+    "nivel_porcentaje": 78.2,
+    "volumen_hm3": 393.5,
+    "caudal_entrada": 21.3,
+    "caudal_salida": 23.4
+  },
+  {
+    "nombre": "Almansa",
+    "confederacion": "segura",
+    "nivel_porcentaje": 39.1,
+    "volumen_hm3": 95.2,
+    "caudal_entrada": 29.3,
+    "caudal_salida": 18.0
+  }
+]

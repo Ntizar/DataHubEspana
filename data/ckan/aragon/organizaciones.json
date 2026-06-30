@@ -1,0 +1,237 @@
+[
+  {
+    "id": "centro-de-investigacion-y-tecnologia-agroalimentaria-cita",
+    "nombre": "Centro de Investigación y Tecnología Agroalimentaria de Aragón (CITA)",
+    "datasets": 3
+  },
+  {
+    "id": "consorcio-de-transportes-del-area-de-zaragoza",
+    "nombre": "Consorcio de Transportes del Área de Zaragoza",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-contratacion-patrimonio-organizacion",
+    "nombre": "Dirección General Contratación, Patrimonio y Organización",
+    "datasets": 12
+  },
+  {
+    "id": "direccion-general-administracion-electronica-sociedad-informacion",
+    "nombre": "Dirección General de Administración Electrónica y Aplicaciones Corporativas",
+    "datasets": 49
+  },
+  {
+    "id": "direccion-general-administracion-local",
+    "nombre": "Dirección General de Administración Local",
+    "datasets": 31
+  },
+  {
+    "id": "direccion-general-asistencia-sanitaria",
+    "nombre": "Dirección General de Asistencia Sanitaria y Planificación",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-de-calidad-ambiental",
+    "nombre": "Dirección General de Calidad Ambiental",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-de-calidad-y-seguridad-alimentaria",
+    "nombre": "Dirección General de Calidad y Seguridad Alimentaria",
+    "datasets": 6
+  },
+  {
+    "id": "direccion-general-de-carreteras",
+    "nombre": "Dirección General de Carreteras e Infraestructuras",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-de-investigacion-e-innovacion",
+    "nombre": "Dirección General de Ciencia e Investigación",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-cultura-patrimonio",
+    "nombre": "Dirección General de Cultura y Patrimonio Cultural",
+    "datasets": 13
+  },
+  {
+    "id": "direccion-general-deporte",
+    "nombre": "Dirección General de Deporte",
+    "datasets": 9
+  },
+  {
+    "id": "direccion-general-de-energia-y-minas",
+    "nombre": "Dirección General de Energía y Minas",
+    "datasets": 6
+  },
+  {
+    "id": "direccion-general-de-justicia-e-interior",
+    "nombre": "Dirección General de Justicia",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-sostenibilidad",
+    "nombre": "Dirección General de Medio Natural",
+    "datasets": 11
+  },
+  {
+    "id": "direccion-general-de-pymes-autonomos-comercio-interior-consumo",
+    "nombre": "Dirección General de PYMES, Autónomos, Comercio Interior y Consumo",
+    "datasets": 20
+  },
+  {
+    "id": "direccion-general-personal",
+    "nombre": "Dirección General de Personal",
+    "datasets": 0
+  },
+  {
+    "id": "direccion-general-de-planificacion-logistica-ordenacion-del-territorio",
+    "nombre": "Dirección General de Planificación Logística y Ordenación del Territorio",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-de-planificacion-centros-y-formacion-profesional",
+    "nombre": "Dirección General de Planificación, Centros y Formación Profesional",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-presupuestos-financiacion-tesoreria",
+    "nombre": "Dirección General de Presupuestos",
+    "datasets": 28
+  },
+  {
+    "id": "direccion-general-produccion-agraria",
+    "nombre": "Dirección General de Producción Agraria",
+    "datasets": 34
+  },
+  {
+    "id": "direccion-general-de-relaciones-institucionales",
+    "nombre": "Dirección General de Relaciones Institucionales",
+    "datasets": 10
+  },
+  {
+    "id": "direccion-general-de-salud-publica",
+    "nombre": "Dirección General de Salud Pública",
+    "datasets": 1
+  },
+  {
+    "id": "direccion-general-trabajo",
+    "nombre": "Dirección General de Trabajo",
+    "datasets": 13
+  },
+  {
+    "id": "direccion-general-de-transparencia-participacion-ciudadana-y-accion-exterior",
+    "nombre": "Dirección General de Transparencia, Participación Ciudadana y Acción Exterior",
+    "datasets": 6
+  },
+  {
+    "id": "direccion-general-movilidad-infraestructuras",
+    "nombre": "Dirección General de Transportes",
+    "datasets": 3
+  },
+  {
+    "id": "direccion-general-turismo",
+    "nombre": "Dirección General de Turismo y Hostelería",
+    "datasets": 13
+  },
+  {
+    "id": "direccion-general-urbanismo",
+    "nombre": "Dirección General de Urbanismo",
+    "datasets": 5
+  },
+  {
+    "id": "direccion-general-vivienda-rehabilitacion",
+    "nombre": "Dirección General de Vivienda",
+    "datasets": 2
+  },
+  {
+    "id": "direccion-comunicacion",
+    "nombre": "Dirección de Comunicación",
+    "datasets": 2
+  },
+  {
+    "id": "itainnova-instituto-tecnologico-de-aragon",
+    "nombre": "ITAINNOVA Instituto Tecnológico de Aragón",
+    "datasets": 1
+  },
+  {
+    "id": "instituto-aragones-de-empleo-inaem-",
+    "nombre": "Instituto Aragonés de Empleo (INAEM) ",
+    "datasets": 2
+  },
+  {
+    "id": "instituto-aragones-estadistica",
+    "nombre": "Instituto Aragonés de Estadística",
+    "datasets": 1575
+  },
+  {
+    "id": "instituto-aragones-fomento",
+    "nombre": "Instituto Aragonés de Fomento",
+    "datasets": 1
+  },
+  {
+    "id": "instituto-aragones-gestion-ambiental",
+    "nombre": "Instituto Aragonés de Gestión Ambiental (INAGA)",
+    "datasets": 20
+  },
+  {
+    "id": "instituto-aragones-agua",
+    "nombre": "Instituto Aragonés del Agua",
+    "datasets": 3
+  },
+  {
+    "id": "instituto-geografico-aragon",
+    "nombre": "Instituto Geográfico de Aragón",
+    "datasets": 57
+  },
+  {
+    "id": "intervencion-general",
+    "nombre": "Intervención General",
+    "datasets": 20
+  },
+  {
+    "id": "junta-de-reclamaciones-economico-administrativas-de-la-comunidad-autonoma-de-aragon",
+    "nombre": "Junta de Reclamaciones Económico-Administrativas de la Comunidad Autónoma de Aragón",
+    "datasets": 1
+  },
+  {
+    "id": "prames",
+    "nombre": "PRAMES",
+    "datasets": 1
+  },
+  {
+    "id": "secretaria-general-tecnica-del-departamento-de-agricultura-ganaderia-y-medio-ambiente",
+    "nombre": "Secretaría General Técnica del Departamento de Agricultura, Ganadería y Alimentación",
+    "datasets": 1
+  },
+  {
+    "id": "secretaria-general-tecnica-de-bienestar-social-familia",
+    "nombre": "Secretaría General Técnica del Departamento de Desregulación, Bienestar Social y Familia",
+    "datasets": 1
+  },
+  {
+    "id": "secretaria-general-tecnica-educacion-ciencia-universidades",
+    "nombre": "Secretaría General Técnica del Departamento de Educación, Ciencia y Universidades",
+    "datasets": 0
+  },
+  {
+    "id": "secretaria-general-tecnica-presidencia",
+    "nombre": "Secretaría General Técnica del Departamento de Presidencia, Justicia y Cultura",
+    "datasets": 70
+  },
+  {
+    "id": "servicios-provinciales-del-departamento-de-economia-planificacion-y-empleo",
+    "nombre": "Servicios Provinciales del Departamento de Industria, Competitividad y Desarrollo Empresarial",
+    "datasets": 1
+  },
+  {
+    "id": "universidad-de-zaragoza",
+    "nombre": "Universidad de Zaragoza",
+    "datasets": 391
+  },
+  {
+    "id": "orgs-colegiados-participacion",
+    "nombre": "Órganos colegiados de participación",
+    "datasets": 0
+  }
+]

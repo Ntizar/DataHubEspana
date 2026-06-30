@@ -1,0 +1,11 @@
+{
+  "id": "tarragona",
+  "nombre": "Puerto de Tarragona",
+  "ccaa": "Cataluña",
+  "coordenadas": {
+    "lat": 41.12,
+    "lng": 1.18
+  },
+  "datos": null,
+  "oleaje": null
+}

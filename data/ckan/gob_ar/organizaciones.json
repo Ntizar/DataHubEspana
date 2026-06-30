@@ -1,0 +1,227 @@
+[
+  {
+    "id": "aaip",
+    "nombre": "Agencia de Acceso a la Información Pública",
+    "datasets": 6
+  },
+  {
+    "id": "acumar",
+    "nombre": "Autoridad de Cuenca Matanza Riachuelo",
+    "datasets": 27
+  },
+  {
+    "id": "deyen",
+    "nombre": "Dirección Nacional de Información y Estudios (DNIYES)",
+    "datasets": 6
+  },
+  {
+    "id": "dine",
+    "nombre": "Dirección Nacional Electoral",
+    "datasets": 2
+  },
+  {
+    "id": "arsat",
+    "nombre": "Empresa Argentina de Soluciones Satelitales",
+    "datasets": 10
+  },
+  {
+    "id": "enacom",
+    "nombre": "Ente Nacional de Comunicaciones (ENACOM)",
+    "datasets": 6
+  },
+  {
+    "id": "enargas",
+    "nombre": "Ente Nacional Regulador del Gas",
+    "datasets": 4
+  },
+  {
+    "id": "ign",
+    "nombre": "Instituto Geográfico Nacional",
+    "datasets": 1
+  },
+  {
+    "id": "incaa",
+    "nombre": "Instituto Nacional de Cine y Artes Audiovisuales (INCAA)",
+    "datasets": 5
+  },
+  {
+    "id": "pami",
+    "nombre": " Instituto Nacional de Servicios Sociales para Jubilados y Pensionados (PAMI)",
+    "datasets": 22
+  },
+  {
+    "id": "inti",
+    "nombre": "Instituto Nacional de Tecnología Industrial (INTI)",
+    "datasets": 3
+  },
+  {
+    "id": "jgm",
+    "nombre": " Jefatura de Gabinete de Ministros",
+    "datasets": 26
+  },
+  {
+    "id": "capital-humano",
+    "nombre": "Ministerio de Capital Humano",
+    "datasets": 0
+  },
+  {
+    "id": "defensa",
+    "nombre": " Ministerio de Defensa",
+    "datasets": 21
+  },
+  {
+    "id": "transformacion",
+    "nombre": "Ministerio de Desregulación y Transformación del Estado",
+    "datasets": 0
+  },
+  {
+    "id": "economia",
+    "nombre": " Ministerio de Economía",
+    "datasets": 0
+  },
+  {
+    "id": "justicia",
+    "nombre": " Ministerio de Justicia",
+    "datasets": 63
+  },
+  {
+    "id": "interior",
+    "nombre": "Ministerio del Interior",
+    "datasets": 14
+  },
+  {
+    "id": "exterior",
+    "nombre": "Ministerio de Relaciones Exteriores, Comercio Internacional y Culto",
+    "datasets": 6
+  },
+  {
+    "id": "salud",
+    "nombre": "Ministerio de Salud",
+    "datasets": 63
+  },
+  {
+    "id": "seguridad",
+    "nombre": " Ministerio de Seguridad",
+    "datasets": 9
+  },
+  {
+    "id": "otros",
+    "nombre": "Otros organismos",
+    "datasets": 12
+  },
+  {
+    "id": "renaper",
+    "nombre": "Registro Nacional de las Personas (RENAPER)",
+    "datasets": 8
+  },
+  {
+    "id": "agroindustria",
+    "nombre": "Secretaría de Agricultura, Ganadería y Pesca",
+    "datasets": 150
+  },
+  {
+    "id": "cultura",
+    "nombre": "Secretaría de Cultura",
+    "datasets": 19
+  },
+  {
+    "id": "educacion",
+    "nombre": "Secretaría de Educación",
+    "datasets": 24
+  },
+  {
+    "id": "energia",
+    "nombre": "Secretaría de Energía",
+    "datasets": 124
+  },
+  {
+    "id": "produccion",
+    "nombre": "Secretaría de Industria y Comercio",
+    "datasets": 82
+  },
+  {
+    "id": "mineria",
+    "nombre": "Secretaría de Minería",
+    "datasets": 21
+  },
+  {
+    "id": "obras",
+    "nombre": "Secretaría de Obras Públicas",
+    "datasets": 21
+  },
+  {
+    "id": "sedronar",
+    "nombre": "Secretaría de Políticas Integrales sobre Drogas de la Nación Argentina (SEDRONAR)",
+    "datasets": 7
+  },
+  {
+    "id": "trabajo",
+    "nombre": "Secretaría de Trabajo, Empleo y Seguridad Social",
+    "datasets": 2
+  },
+  {
+    "id": "transporte",
+    "nombre": " Secretaría de Transporte",
+    "datasets": 48
+  },
+  {
+    "id": "desarrollo-social",
+    "nombre": "Secretaría Nacional de Niñez, Adolescencia y Familia",
+    "datasets": 16
+  },
+  {
+    "id": "shn",
+    "nombre": "Servicio de Hidrografía Naval",
+    "datasets": 3
+  },
+  {
+    "id": "smn",
+    "nombre": "Servicio Meteorológico Nacional",
+    "datasets": 9
+  },
+  {
+    "id": "ambiente",
+    "nombre": "Subsecretaría de Ambiente",
+    "datasets": 50
+  },
+  {
+    "id": "mincyt",
+    "nombre": "Subsecretaría de Ciencia y Tecnología",
+    "datasets": 6
+  },
+  {
+    "id": "habitat",
+    "nombre": "Subsecretaría de Integración Socio Urbana",
+    "datasets": 5
+  },
+  {
+    "id": "sspre",
+    "nombre": "Subsecretaría de Presupuesto",
+    "datasets": 33
+  },
+  {
+    "id": "sspm",
+    "nombre": "Subsecretaría de Programación Macroeconómica",
+    "datasets": 271
+  },
+  {
+    "id": "ssprys",
+    "nombre": "Subsecretaría de Programación Microeconómica",
+    "datasets": 1
+  },
+  {
+    "id": "generos",
+    "nombre": "Subsecretaría de Protección contra la Violencia de Género",
+    "datasets": 1
+  },
+  {
+    "id": "turismo",
+    "nombre": "Subsecretaría de Turismo",
+    "datasets": 16
+  },
+  {
+    "id": "ssn",
+    "nombre": "Superintendencia de Seguros de la Nación",
+    "datasets": 13
+  }
+]

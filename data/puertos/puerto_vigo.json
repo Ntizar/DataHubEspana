@@ -1,0 +1,11 @@
+{
+  "id": "vigo",
+  "nombre": "Puerto de Vigo",
+  "ccaa": "Galicia",
+  "coordenadas": {
+    "lat": 42.24,
+    "lng": -8.72
+  },
+  "datos": null,
+  "oleaje": null
+}

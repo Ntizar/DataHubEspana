@@ -1,0 +1,78 @@
+{
+  "aragon": {
+    "portal": "aragon",
+    "nombre": "Aragón Open Data",
+    "ccaa": "Aragón",
+    "web": "https://opendata.aragon.es",
+    "total_datasets": 200,
+    "total_recursos": 946,
+    "organizaciones": 47,
+    "etiquetas": 2264,
+    "formatos": {
+      "CSV": 219,
+      "XML": 191,
+      "JSON": 189,
+      "XLSX": 156,
+      "PX": 65,
+      "URL": 29,
+      "XLS": 24,
+      "HTML": 21,
+      "GEOJSON": 20,
+      "MAPVIEW": 20,
+      "ICS": 3,
+      "SHP": 2,
+      "TIF": 1,
+      "ASC": 1,
+      "GDB": 1,
+      "DGN": 1,
+      "DXF": 1,
+      "PDF": 1,
+      "LYR": 1
+    }
+  },
+  "madrid_ayunt": {
+    "portal": "madrid_ayunt",
+    "nombre": "Ayuntamiento de Madrid",
+    "ccaa": "C. de Madrid",
+    "web": "https://datos.madrid.es",
+    "total_datasets": 200,
+    "total_recursos": 2565,
+    "organizaciones": 1,
+    "etiquetas": 1025,
+    "formatos": {
+      "CSV": 814,
+      "XLSX": 592,
+      "XML": 276,
+      "JSON": 233,
+      "PDF": 207,
+      "XLS": 190,
+      "GEO": 74,
+      "RDF": 71,
+      "ZIP": 64,
+      "TXT": 29,
+      "KML": 10,
+      "KMZ": 5
+    }
+  },
+  "gob_ar": {
+    "portal": "gob_ar",
+    "nombre": "Argentina Abierto",
+    "ccaa": "Argentina",
+    "web": "https://datos.gob.ar",
+    "total_datasets": 50,
+    "total_recursos": 549,
+    "organizaciones": 45,
+    "etiquetas": 3002,
+    "formatos": {
+      "CSV": 413,
+      "ZIP": 64,
+      "XLS": 36,
+      "SHP": 18,
+      "PDF": 7,
+      "XLSX": 5,
+      "HTML": 3,
+      "PHP": 2,
+      "GRÁFICO": 1
+    }
+  }
+}

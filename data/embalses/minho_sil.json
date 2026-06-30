@@ -1,0 +1,18 @@
+[
+  {
+    "nombre": "Belesar",
+    "confederacion": "minho_sil",
+    "nivel_porcentaje": 55.9,
+    "volumen_hm3": 361.7,
+    "caudal_entrada": 44.1,
+    "caudal_salida": 23.5
+  },
+  {
+    "nombre": "Castrelo",
+    "confederacion": "minho_sil",
+    "nivel_porcentaje": 66.8,
+    "volumen_hm3": 449.7,
+    "caudal_entrada": 47.2,
+    "caudal_salida": 29.8
+  }
+]

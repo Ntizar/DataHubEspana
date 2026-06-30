@@ -1,0 +1,11 @@
+{
+  "id": "cartagena",
+  "nombre": "Puerto de Cartagena",
+  "ccaa": "Murcia",
+  "coordenadas": {
+    "lat": 37.56,
+    "lng": -0.98
+  },
+  "datos": null,
+  "oleaje": null
+}

@@ -1,0 +1,11 @@
+{
+  "id": "santander",
+  "nombre": "Puerto de Santander",
+  "ccaa": "Cantabria",
+  "coordenadas": {
+    "lat": 43.46,
+    "lng": -3.81
+  },
+  "datos": null,
+  "oleaje": null
+}

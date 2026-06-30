@@ -1,0 +1,11 @@
+{
+  "id": "las palmas",
+  "nombre": "Puerto de Las Palmas",
+  "ccaa": "Canarias",
+  "coordenadas": {
+    "lat": 28.1,
+    "lng": -15.41
+  },
+  "datos": null,
+  "oleaje": null
+}

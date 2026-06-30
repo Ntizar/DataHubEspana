@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataHub España — Dashboard Económico</title>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --azul: #2563eb;
+            --azul-oscuro: #1d4ed8;
+            --naranja: #f97316;
+            --verde: #22c55e;
+            --rojo: #ef4444;
+            --gris: #6b7280;
+            --gris-claro: #f3f4f6;
+            --fondo: #ffffff;
+            --texto: #111827;
+            --borde: #e5e7eb;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
+            line-height: 1.5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-oscuro) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .header .fuente {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-align: right;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .kpi-card {
+            background: var(--fondo);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: box-shadow 0.2s;
+        }
+        
+        .kpi-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--gris);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--azul);
+        }
+        
+        .kpi-detail {
+            font-size: 0.8rem;
+            color: var(--gris);
+            margin-top: 0.25rem;
+        }
+        
+        .kpi-card.naranja .kpi-value { color: var(--naranja); }
+        .kpi-card.verde .kpi-value { color: var(--verde); }
+        .kpi-card.rojo .kpi-value { color: var(--rojo); }
+        
+        /* Secciones */
+        .section {
+            background: var(--fondo);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title .icon {
+            font-size: 1.2rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        
+        /* Mapa */
+        #mapa {
+            height: 400px;
+            border-radius: 8px;
+            border: 1px solid var(--borde);
+        }
+        
+        /* Tabla */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        .data-table th {
+            background: var(--gris-claro);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--borde);
+        }
+        
+        .data-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--borde);
+        }
+        
+        .data-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .badge.constitucion { background: #dcfce7; color: #166534; }
+        .badge.disolucion { background: #fee2e2; color: #991b1b; }
+        .badge.nombramiento { background: #dbeafe; color: #1e40af; }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--gris);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--borde);
+            border-top: 3px solid var(--azul);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.75rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--borde);
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gris);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover { color: var(--azul); }
+        .tab.active {
+            color: var(--azul);
+            border-bottom-color: var(--azul);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gris);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--borde);
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>📊 DataHub España — Dashboard Económico</h1>
+            <div class="subtitle">Registro Mercantil + Estadísticas INE + Catastro</div>
+        </div>
+        <div class="fuente">
+            <div>Fuentes: BOE/BORME · INE · Catastro</div>
+            <div id="fecha-actualizacion"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpis">
+            <div class="kpi-card verde">
+                <div class="kpi-label">Constituciones (mes)</div>
+                <div class="kpi-value" id="kpi-constituciones">—</div>
+                <div class="kpi-detail">Nuevas empresas registradas</div>
+            </div>
+            <div class="kpi-card rojo">
+                <div class="kpi-label">Disoluciones (mes)</div>
+                <div class="kpi-value" id="kpi-disoluciones">—</div>
+                <div class="kpi-detail">Empresas cerradas</div>
+            </div>
+            <div class="kpi-card naranja">
+                <div class="kpi-label">Tasa Paro Nacional</div>
+                <div class="kpi-value" id="kpi-paro">—</div>
+                <div class="kpi-detail">Encuesta Población Activa</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Capital Movilizado</div>
+                <div class="kpi-value" id="kpi-capital">—</div>
+                <div class="kpi-detail">Constituciones + ampliaciones</div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="section">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('borme')">📋 Registro Mercantil</div>
+                <div class="tab" onclick="showTab('paro')">📈 Mercado Laboral</div>
+                <div class="tab" onclick="showTab('mapa')">🗺️ Mapa</div>
+                <div class="tab" onclick="showTab('raw')">📦 Datos Raw</div>
+            </div>
+            
+            <!-- Tab BORME -->
+            <div class="tab-content active" id="tab-borme">
+                <div class="grid-2">
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.75rem;">Últimos registros mercantiles</h3>
+                        <div id="borme-loading" class="loading">
+                            <div class="spinner"></div>
+                            Cargando datos del BORME...
+                        </div>
+                        <table class="data-table" id="tabla-borme" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Tipo</th>
+                                    <th>Capital</th>
+                                    <th>Provincia</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-borme"></tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.75rem;">Evolución constituciones vs disoluciones</h3>
+                        <canvas id="chart-borme" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Paro -->
+            <div class="tab-content" id="tab-paro">
+                <div class="grid-2">
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.75rem;">Tasa de paro por comunidades</h3>
+                        <canvas id="chart-paro" height="300"></canvas>
+                    </div>
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.75rem;">Evolución paro nacional</h3>
+                        <canvas id="chart-paro-evo" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Mapa -->
+            <div class="tab-content" id="tab-mapa">
+                <div id="mapa"></div>
+            </div>
+            
+            <!-- Tab Raw -->
+            <div class="tab-content" id="tab-raw">
+                <h3 style="font-size:0.95rem; margin-bottom:0.75rem;">Datos JSON descargados</h3>
+                <pre id="raw-output" style="background:#f9fafb;padding:1rem;border-radius:8px;overflow-x:auto;max-height:500px;font-size:0.75rem;"></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Hecho con ❤️ por David Antizar<br>
+        Fuentes: BOE/BORME (boe.es) · INE (ine.es) · Catastro (catastro.meh.es)<br>
+        Datos de ejemplo — Conecta los scrapers para datos reales
+    </div>
+    
+    <script>
+        // === Estado global ===
+        const STATE = {
+            borme: null,
+            ine: null,
+            mapa: null,
+            charts: {}
+        };
+        
+        // === Utilidades ===
+        function $(id) { return document.getElementById(id); }
+        
+        function formatNum(n) {
+            if (n == null) return '—';
+            return new Intl.NumberFormat('es-ES').format(n);
+        }
+        
+        function formatEur(n) {
+            if (n == null) return '—';
+            return new Intl.NumberFormat('es-ES', {style:'currency', currency:'EUR', maximumFractionDigits:0}).format(n);
+        }
+        
+        // === Tabs ===
+        function showTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            $('tab-' + name).classList.add('active');
+            
+            if (name === 'mapa' && !STATE.mapa) initMap();
+        }
+        
+        // === Carga de datos ===
+        async function loadData() {
+            $('fecha-actualizacion').textContent = `Actualizado: ${new Date().toLocaleString('es-ES')}`;
+            
+            // Intentar cargar datos locales
+            try {
+                const resp = await fetch('./data/borme/borme_sample.json');
+                if (resp.ok) STATE.borme = await resp.json();
+            } catch(e) {}
+            
+            try {
+                const resp = await fetch('./data/ine/paro_sample.json');
+                if (resp.ok) STATE.ine = await resp.json();
+            } catch(e) {}
+            
+            // Si no hay datos locales, usar datos de ejemplo
+            if (!STATE.borme) STATE.borme = generateSampleBorme();
+            if (!STATE.ine) STATE.ine = generateSampleIne();
+            
+            renderKPIs();
+            renderBorme();
+            renderParo();
+            renderRaw();
+        }
+        
+        // === Datos de ejemplo ===
+        function generateSampleBorme() {
+            const provincias = ['MADRID','BARCELONA','VALENCIA','SEVILLA','BILBAO','ZARAGOZA','MÁLAGA','ASTURIAS','CANTABRIA'];
+            const tipos = ['constitucion','disolucion','nombramiento','modificacion','aumento_capital'];
+            const datos = [];
+            
+            for (let i = 0; i < 50; i++) {
+                const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+                datos.push({
+                    empresa: `EMPRESA ${String.fromCharCode(65 + Math.floor(Math.random()*26))}${String.fromCharCode(65 + Math.floor(Math.random()*26))} ${['SL','SA','SLU','SC'][Math.floor(Math.random()*4)]}`,
+                    tipo: tipo,
+                    capital: tipo === 'constitucion' ? Math.floor(Math.random() * 500000 + 3000) : 
+                             tipo === 'aumento_capital' ? Math.floor(Math.random() * 1000000 + 10000) : null,
+                    provincia: provincias[Math.floor(Math.random() * provincias.length)],
+                    fecha: `2026-06-${String(Math.floor(Math.random()*30)+1).padStart(2,'0')}`
+                });
+            }
+            return { fecha: '2026-06-30', datos: datos };
+        }
+        
+        function generateSampleIne() {
+            return {
+                paro: {
+                    nacional: 11.27,
+                    comunidades: {
+                        'Andalucía': 16.8, 'Aragón': 8.5, 'Asturias': 12.3,
+                        'Cantabria': 10.1, 'Castilla-La Mancha': 12.9, 'Castilla y León': 10.5,
+                        'Cataluña': 10.8, 'C. Valenciana': 12.7, 'Extremadura': 16.2,
+                        'Galicia': 11.4, 'Islas Baleares': 10.2, 'Islas Canarias': 14.8,
+                        'La Rioja': 7.9, 'C. de Madrid': 9.7, 'R. de Murcia': 11.5,
+                        'Navarra': 7.2, 'País Vasco': 7.8
+                    }
+                }
+            };
+        }
+        
+        // === Render KPIs ===
+        function renderKPIs() {
+            const borme = STATE.borme;
+            const ine = STATE.ine;
+            
+            const constituciones = borme.datos.filter(d => d.tipo === 'constitucion').length;
+            const disoluciones = borme.datos.filter(d => d.tipo === 'disolucion').length;
+            const capital = borme.datos
+                .filter(d => d.capital)
+                .reduce((sum, d) => sum + parseInt(d.capital || 0), 0);
+            
+            $('kpi-constituciones').textContent = formatNum(constituciones);
+            $('kpi-disoluciones').textContent = formatNum(disoluciones);
+            $('kpi-paro').textContent = ine.paro.nacional + '%';
+            $('kpi-capital').textContent = formatEur(capital);
+        }
+        
+        // === Render BORME ===
+        function renderBorme() {
+            $('borme-loading').style.display = 'none';
+            $('tabla-borme').style.display = 'table';
+            
+            const tbody = $('tbody-borme');
+            tbody.innerHTML = '';
+            
+            const sorted = [...STATE.borme.datos].sort((a,b) => (b.capital||0) - (a.capital||0));
+            
+            for (const acto of sorted.slice(0, 20)) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${acto.empresa}</strong></td>
+                    <td><span class="badge ${acto.tipo}">${acto.tipo.replace('_',' ')}</span></td>
+                    <td>${acto.capital ? formatEur(acto.capital) : '—'}</td>
+                    <td>${acto.provincia}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+            
+            // Chart BORME
+            const ctx = $('chart-borme').getContext('2d');
+            const tipos = {};
+            STATE.borme.datos.forEach(d => {
+                tipos[d.tipo] = (tipos[d.tipo] || 0) + 1;
+            });
+            
+            STATE.charts.borme = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(tipos).map(t => t.replace('_', ' ')),
+                    datasets: [{
+                        data: Object.values(tipos),
+                        backgroundColor: ['#22c55e', '#ef4444', '#2563eb', '#f97316', '#8b5cf6'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right', labels: { padding: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+        
+        // === Render Paro ===
+        function renderParo() {
+            const cc = STATE.ine.paro.comunidades;
+            const labels = Object.keys(cc).sort((a,b) => cc[a] - cc[b]);
+            const values = labels.map(l => cc[l]);
+            
+            // Chart barras horizontales
+            const ctx1 = $('chart-paro').getContext('2d');
+            STATE.charts.paro = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tasa de paro (%)',
+                        data: values,
+                        backgroundColor: values.map(v => v > 14 ? '#ef4444' : v > 10 ? '#f97316' : '#22c55e'),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            ticks: { callback: v => v + '%' }
+                        },
+                        y: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+            
+            // Chart evolución (simulada)
+            const ctx2 = $('chart-paro-evo').getContext('2d');
+            const meses = ['Ene 25','Feb 25','Mar 25','Abr 25','May 25','Jun 25','Jul 25','Ago 25','Sep 25','Oct 25','Nov 25','Dic 25','Ene 26','Feb 26','Mar 26','Abr 26','May 26','Jun 26'];
+            const evolucion = [12.1, 11.9, 11.7, 11.5, 11.3, 11.1, 11.0, 11.2, 11.4, 11.3, 11.2, 11.1, 11.3, 11.2, 11.1, 11.0, 10.9, STATE.ine.paro.nacional];
+            
+            STATE.charts.evo = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: meses,
+                    datasets: [{
+                        label: 'Tasa paro nacional (%)',
+                        data: evolucion,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37,99,235,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            ticks: { callback: v => v + '%' }
+                        },
+                        x: { ticks: { maxTicksToShow: 8, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+        
+        // === Mapa ===
+        function initMap() {
+            STATE.mapa = L.map('mapa').setView([40.0, -3.7], 6);
+            
+            L.tileLayer('https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBase-gris&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}&FORMAT=image/jpeg', {
+                attribution: '© IGN — Instituto Geográfico Nacional (CC BY 4.0)',
+                maxZoom: 19
+            }).addTo(STATE.mapa);
+            
+            // Puntos de datos
+            const puntos = [
+                { lat: 40.4168, lng: -3.7038, nombre: 'Madrid', datos: 'Capital: 250M€ · Paro: 9.7%' },
+                { lat: 41.3874, lng: 2.1686, nombre: 'Barcelona', datos: 'Capital: 180M€ · Paro: 10.8%' },
+                { lat: 39.4699, lng: -0.3763, nombre: 'Valencia', datos: 'Capital: 95M€ · Paro: 12.7%' },
+                { lat: 37.3891, lng: -5.9845, nombre: 'Sevilla', datos: 'Capital: 65M€ · Paro: 16.8%' },
+                { lat: 43.2630, lng: -2.9350, nombre: 'Bilbao', datos: 'Capital: 85M€ · Paro: 7.8%' },
+                { lat: 41.6488, lng: -0.8891, nombre: 'Zaragoza', datos: 'Capital: 55M€ · Paro: 8.5%' },
+                { lat: 36.7213, lng: -4.4214, nombre: 'Málaga', datos: 'Capital: 72M€ · Paro: 15.2%' },
+            ];
+            
+            puntos.forEach(p => {
+                L.circleMarker([p.lat, p.lng], {
+                    radius: 8,
+                    fillColor: '#2563eb',
+                    color: '#1d4ed8',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.7
+                }).addTo(STATE.mapa)
+                  .bindPopup(`<strong>${p.nombre}</strong><br>${p.datos}`);
+            });
+        }
+        
+        // === Render Raw ===
+        function renderRaw() {
+            const output = {
+                borme: STATE.borme,
+                ine: STATE.ine
+            };
+            $('raw-output').textContent = JSON.stringify(output, null, 2).substring(0, 5000) + '\n... (truncado)';
+        }
+        
+        // === Init ===
+        loadData();
+    </script>
+</body>
+</html>

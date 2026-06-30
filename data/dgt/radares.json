@@ -1,0 +1,74 @@
+[
+  {
+    "carretera": "A-1",
+    "pk": "145",
+    "lat": 40.8,
+    "lng": -3.2,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-2",
+    "pk": "210",
+    "lat": 41.1,
+    "lng": -2.5,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-3",
+    "pk": "85",
+    "lat": 39.8,
+    "lng": -3.5,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-4",
+    "pk": "320",
+    "lat": 38.5,
+    "lng": -5.1,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-5",
+    "pk": "65",
+    "lat": 40.3,
+    "lng": -4.2,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-6",
+    "pk": "45",
+    "lat": 40.5,
+    "lng": -3.9,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "A-7",
+    "pk": "890",
+    "lat": 37.9,
+    "lng": -3.7,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "AP-68",
+    "pk": "125",
+    "lat": 42.0,
+    "lng": -0.8,
+    "limite": 120,
+    "tipo": "fijo"
+  },
+  {
+    "carretera": "AP-7",
+    "pk": "560",
+    "lat": 39.5,
+    "lng": -0.4,
+    "limite": 120,
+    "tipo": "fijo"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "sevilla",
+  "nombre": "Puerto de Sevilla",
+  "ccaa": "Andalucía",
+  "coordenadas": {
+    "lat": 37.39,
+    "lng": -5.99
+  },
+  "datos": null,
+  "oleaje": null
+}

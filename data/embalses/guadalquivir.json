@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Iznájar",
+    "confederacion": "guadalquivir",
+    "nivel_porcentaje": 22.6,
+    "volumen_hm3": 390.1,
+    "caudal_entrada": 14.9,
+    "caudal_salida": 18.6
+  },
+  {
+    "nombre": "Negratín",
+    "confederacion": "guadalquivir",
+    "nivel_porcentaje": 23.3,
+    "volumen_hm3": 482.1,
+    "caudal_entrada": 6.2,
+    "caudal_salida": 30.0
+  },
+  {
+    "nombre": "Alcalá del Río",
+    "confederacion": "guadalquivir",
+    "nivel_porcentaje": 62.7,
+    "volumen_hm3": 111.8,
+    "caudal_entrada": 46.1,
+    "caudal_salida": 26.4
+  }
+]

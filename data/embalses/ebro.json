@@ -1,0 +1,34 @@
+[
+  {
+    "nombre": "Mequinenza",
+    "confederacion": "ebro",
+    "nivel_porcentaje": 21.2,
+    "volumen_hm3": 187.9,
+    "caudal_entrada": 48.9,
+    "caudal_salida": 16.1
+  },
+  {
+    "nombre": "Ribarroja",
+    "confederacion": "ebro",
+    "nivel_porcentaje": 56.1,
+    "volumen_hm3": 439.0,
+    "caudal_entrada": 8.6,
+    "caudal_salida": 1.6
+  },
+  {
+    "nombre": "Flix",
+    "confederacion": "ebro",
+    "nivel_porcentaje": 75.7,
+    "volumen_hm3": 328.4,
+    "caudal_entrada": 9.7,
+    "caudal_salida": 13.9
+  },
+  {
+    "nombre": "Canelles",
+    "confederacion": "ebro",
+    "nivel_porcentaje": 51.7,
+    "volumen_hm3": 368.6,
+    "caudal_entrada": 30.8,
+    "caudal_salida": 5.1
+  }
+]

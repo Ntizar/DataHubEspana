@@ -1,0 +1,11 @@
+{
+  "id": "palma",
+  "nombre": "Puerto de Palma",
+  "ccaa": "Baleares",
+  "coordenadas": {
+    "lat": 39.57,
+    "lng": 2.64
+  },
+  "datos": null,
+  "oleaje": null
+}

@@ -1,0 +1,15 @@
+{
+  "fecha": "2026-06-30",
+  "total_capas": 8,
+  "capas_activas": 0,
+  "capas": [
+    "administrativas",
+    "carreteras",
+    "hidrografia",
+    "toponimia",
+    "relieve",
+    "sismologia",
+    "volcanologia",
+    "ciudades"
+  ]
+}

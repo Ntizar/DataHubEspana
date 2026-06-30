@@ -1,0 +1,21 @@
+{
+  "portal": "gob_ar",
+  "nombre": "Argentina Abierto",
+  "ccaa": "Argentina",
+  "web": "https://datos.gob.ar",
+  "total_datasets": 50,
+  "total_recursos": 549,
+  "organizaciones": 45,
+  "etiquetas": 3002,
+  "formatos": {
+    "CSV": 413,
+    "ZIP": 64,
+    "XLS": 36,
+    "SHP": 18,
+    "PDF": 7,
+    "XLSX": 5,
+    "HTML": 3,
+    "PHP": 2,
+    "GRÁFICO": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "valencia",
+  "nombre": "Puerto de Valencia",
+  "ccaa": "C. Valenciana",
+  "coordenadas": {
+    "lat": 39.45,
+    "lng": -0.32
+  },
+  "datos": null,
+  "oleaje": null
+}

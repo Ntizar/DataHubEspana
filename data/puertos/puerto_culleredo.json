@@ -1,0 +1,11 @@
+{
+  "id": "culleredo",
+  "nombre": "Puerto de Culleredo",
+  "ccaa": "Galicia",
+  "coordenadas": {
+    "lat": 43.35,
+    "lng": -8.38
+  },
+  "datos": null,
+  "oleaje": null
+}

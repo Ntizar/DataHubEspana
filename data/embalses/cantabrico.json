@@ -1,0 +1,34 @@
+[
+  {
+    "nombre": "Riaño",
+    "confederacion": "cantabrico",
+    "nivel_porcentaje": 50.5,
+    "volumen_hm3": 163.9,
+    "caudal_entrada": 14.9,
+    "caudal_salida": 8.0
+  },
+  {
+    "nombre": "Peña Tanes",
+    "confederacion": "cantabrico",
+    "nivel_porcentaje": 77.4,
+    "volumen_hm3": 71.8,
+    "caudal_entrada": 15.9,
+    "caudal_salida": 10.5
+  },
+  {
+    "nombre": "Sanillana",
+    "confederacion": "cantabrico",
+    "nivel_porcentaje": 89.7,
+    "volumen_hm3": 192.3,
+    "caudal_entrada": 8.7,
+    "caudal_salida": 1.0
+  },
+  {
+    "nombre": "Arredondo",
+    "confederacion": "cantabrico",
+    "nivel_porcentaje": 43.1,
+    "volumen_hm3": 211.5,
+    "caudal_entrada": 43.8,
+    "caudal_salida": 11.0
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "gijón",
+  "nombre": "Puerto de Gijón",
+  "ccaa": "Asturias",
+  "coordenadas": {
+    "lat": 43.55,
+    "lng": -5.67
+  },
+  "datos": null,
+  "oleaje": null
+}

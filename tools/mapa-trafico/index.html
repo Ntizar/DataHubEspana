@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataHub España — Mapa de Tráfico</title>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --azul: #2563eb;
+            --verde: #22c55e;
+            --amarillo: #eab308;
+            --naranja: #f97316;
+            --rojo: #ef4444;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 { font-size: 1.4rem; }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .kpi {
+            text-align: center;
+        }
+        
+        .kpi-label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .kpi.ok .kpi-value { color: #22c55e; }
+        .kpi.warn .kpi-value { color: #f97316; }
+        .kpi.bad .kpi-value { color: #ef4444; }
+        
+        #mapa {
+            height: calc(100vh - 220px);
+            min-height: 500px;
+        }
+        
+        .sidebar {
+            position: absolute;
+            top: 80px;
+            right: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 1rem;
+            max-width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .incidente {
+            padding: 0.5rem;
+            border-left: 3px solid var(--naranja);
+            background: #fffbeb;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .incidente.obra { border-color: var(--amarillo); }
+        .incidente.accidente { border-color: var(--rojo); background: #fef2f2; }
+        .incidente.corte { border-color: #6b7280; background: #f9fafb; }
+        
+        .incidente-tipo {
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--naranja);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 0.75rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .footer {
+            background: white;
+            text-align: center;
+            padding: 0.75rem;
+            color: #6b7280;
+            font-size: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🚗 DataHub España — Mapa de Tráfico</h1>
+            <div style="font-size:0.8rem;opacity:0.9">Tráfico tiempo real · Madrid + DGT</div>
+        </div>
+        <div style="text-align:right">
+            <div style="font-size:0.75rem;opacity:0.8" id="timestamp"></div>
+        </div>
+    </div>
+    
+    <div class="kpi-grid">
+        <div class="kpi ok">
+            <div class="kpi-label">Vel. Media Madrid</div>
+            <div class="kpi-value" id="kpi-vel">38 km/h</div>
+        </div>
+        <div class="kpi warn">
+            <div class="kpi-label">Incidencias</div>
+            <div class="kpi-value" id="kpi-inc">12</div>
+        </div>
+        <div class="kpi ok">
+            <div class="kpi-label">Aparcamientos libres</div>
+            <div class="kpi-value" id="kpi-aparca">2,847</div>
+        </div>
+        <div class="kpi bad">
+            <div class="kpi-label">Radares activos</div>
+            <div class="kpi-value" id="kpi-radar">156</div>
+        </div>
+        <div class="kpi ok">
+            <div class="kpi-label">BiciMAD libres</div>
+            <div class="kpi-value" id="kpi-bici">1,203</div>
+        </div>
+    </div>
+    
+    <div id="mapa"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>🚨 Incidencias activas</h3>
+        <div id="lista-incidencias"></div>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Fluida</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div> Moderada</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Densa</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Congestionada</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div> Corte</div>
+    </div>
+    
+    <div class="footer">
+        Hecho con ❤️ por David Antizar · Fuentes: datos.madrid.es · NAP DGT (nap.dgt.es)
+    </div>
+    
+    <script>
+        // === Datos de ejemplo ===
+        const TRAFICO_MADRID = [
+            // Principal: fluida
+            { lat: 40.4200, lng: -3.6900, tipo: 'fluida', via: 'Paseo de la Castellana', vel: 45 },
+            { lat: 40.4180, lng: -3.7050, tipo: 'moderada', via: 'Gran Vía', vel: 25 },
+            { lat: 40.4150, lng: -3.6850, tipo: 'fluida', via: 'Paseo del Prado', vel: 42 },
+            { lat: 40.4120, lng: -3.7100, tipo: 'densa', via: 'Calle de Alcalá', vel: 18 },
+            { lat: 40.4250, lng: -3.6800, tipo: 'fluida', via: 'Paseo de la Castellana (N)', vel: 48 },
+            { lat: 40.4080, lng: -3.6950, tipo: 'congestionada', via: 'Puerta del Sol zona', vel: 8 },
+            { lat: 40.4300, lng: -3.7200, tipo: 'fluida', via: 'A-6', vel: 55 },
+            { lat: 40.4100, lng: -3.6700, tipo: 'moderada', via: 'M-30 Este', vel: 30 },
+        ];
+        
+        const INCIDENCIAS = [
+            { tipo: 'obra', titulo: 'Obras en C/ Serrano', desc: 'Carril izquierdo cortado 06:00-18:00', lat: 40.4320, lng: -3.6890 },
+            { tipo: 'accidente', titulo: 'Accidente M-30', desc: 'Colisión lateral km 4.5. 1 herido leve', lat: 40.4050, lng: -3.7250 },
+            { tipo: 'corte', titulo: 'Corte C/ Gran Vía', desc: 'Evento cultural. Cortado 20:00-23:00', lat: 40.4200, lng: -3.7100 },
+            { tipo: 'obra', titulo: 'Obras A-2 entrada', desc: 'Limitación 80km/h. Carril central', lat: 40.4450, lng: -3.5800 },
+            { tipo: 'accidente', titulo: 'Avería autobús EMT', desc: 'Calle Bravo Murillo. Retención leve', lat: 40.4400, lng: -3.7000 },
+        ];
+        
+        const RADARES = [
+            { lat: 40.4500, lng: -3.7500, vel: 60, via: 'M-40', tipo: 'fijo' },
+            { lat: 40.3800, lng: -3.6500, vel: 50, via: 'A-4', tipo: 'fijo' },
+            { lat: 40.4600, lng: -3.6200, vel: 100, via: 'A-1', tipo: 'fijo' },
+            { lat: 40.4100, lng: -3.7800, vel: 80, via: 'A-5', tipo: 'fijo' },
+            { lat: 40.3500, lng: -3.7000, vel: 70, via: 'M-45', tipo: 'fijo' },
+        ];
+        
+        const APARCAMIENTOS = [
+            { lat: 40.4180, lng: -3.7080, nombre: 'Serrano', libres: 45, total: 320 },
+            { lat: 40.4230, lng: -3.6920, nombre: 'Castellana', libres: 120, total: 450 },
+            { lat: 40.4120, lng: -3.6950, nombre: 'Sol', libres: 12, total: 280 },
+            { lat: 40.4150, lng: -3.7200, nombre: 'Princesa', libres: 88, total: 380 },
+            { lat: 40.4300, lng: -3.7000, nombre: 'Chamartín', libres: 210, total: 500 },
+        ];
+        
+        const BICIMAD = [
+            { lat: 40.4200, lng: -3.7050, nombre: 'Gran Vía', libres: 15, total: 30 },
+            { lat: 40.4150, lng: -3.6900, nombre: 'Atocha', libres: 8, total: 25 },
+            { lat: 40.4250, lng: -3.6850, nombre: 'Colón', libres: 22, total: 28 },
+            { lat: 40.4100, lng: -3.7100, nombre: 'Opera', libres: 5, total: 20 },
+            { lat: 40.4300, lng: -3.7150, nombre: 'Plaza de España', libres: 18, total: 24 },
+        ];
+        
+        // === Init Map ===
+        const mapa = L.map('mapa').setView([40.4200, -3.7000], 13);
+        
+        L.tileLayer('https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBase-gris&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}&FORMAT=image/jpeg', {
+            attribution: '© IGN',
+            maxZoom: 19
+        }).addTo(mapa);
+        
+        // === Colores tráfico ===
+        const COLORS = {
+            fluida: '#22c55e',
+            moderada: '#eab308',
+            densa: '#f97316',
+            congestionada: '#ef4444',
+            corte: '#6b7280'
+        };
+        
+        // === Render tráfico ===
+        TRAFICO_MADRID.forEach(t => {
+            L.circleMarker([t.lat, t.lng], {
+                radius: 6,
+                fillColor: COLORS[t.tipo],
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.9
+            }).addTo(mapa)
+              .bindPopup(`
+                <strong>${t.via}</strong><br>
+                Velocidad: ${t.vel} km/h<br>
+                Estado: <span style="color:${COLORS[t.tipo]}">${t.tipo.toUpperCase()}</span>
+              `);
+        });
+        
+        // === Render incidencias ===
+        const listaInc = $('lista-incidencias');
+        INCIDENCIAS.forEach(inc => {
+            // Marker en mapa
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="background:${inc.tipo==='accidente'?'#ef4444':inc.tipo==='obra'?'#eab308':'#6b7280'};color:white;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold">${inc.tipo==='accidente'?'⚠️':inc.tipo==='obra'?'🚧':'⛔'}</div>`,
+                iconSize: [24, 24]
+            });
+            
+            L.marker([inc.lat, inc.lng], { icon }).addTo(mapa)
+              .bindPopup(`<strong>${inc.titulo}</strong><br>${inc.desc}`);
+            
+            // Lista sidebar
+            listaInc.innerHTML += `
+                <div class="incidente ${inc.tipo}">
+                    <div class="incidente-tipo">${inc.tipo}</div>
+                    <strong>${inc.titulo}</strong><br>
+                    <span style="color:#6b7280">${inc.desc}</span>
+                </div>
+            `;
+        });
+        
+        // === Render radares ===
+        RADARES.forEach(r => {
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="background:#1e40af;color:white;padding:1px 4px;border-radius:3px;font-size:9px;font-weight:bold">📸 ${r.vel}</div>`,
+                iconSize: [30, 16]
+            });
+            L.marker([r.lat, r.lng], { icon }).addTo(mapa)
+              .bindPopup(`Radar ${r.tipo}<br>${r.via}<br>Límite: ${r.vel} km/h`);
+        });
+        
+        // === Render aparcamientos ===
+        APARCAMIENTOS.forEach(a => {
+            const pct = a.libres / a.total;
+            const color = pct > 0.3 ? '#22c55e' : pct > 0.1 ? '#f97316' : '#ef4444';
+            
+            L.circleMarker([a.lat, a.lng], {
+                radius: 10,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                fillOpacity: 0.8,
+                className: 'aparcamiento'
+            }).addTo(mapa)
+              .bindPopup(`
+                <strong>Parking ${a.nombre}</strong><br>
+                Libres: ${a.libres} / ${a.total}<br>
+                <div style="background:#e5e7eb;height:8px;border-radius:4px;margin-top:4px">
+                    <div style="background:${color};height:100%;width:${pct*100}%;border-radius:4px"></div>
+                </div>
+              `);
+        });
+        
+        // === Render BiciMAD ===
+        BICIMAD.forEach(b => {
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="background:#059669;color:white;padding:1px 4px;border-radius:3px;font-size:9px">🚲 ${b.libres}</div>`,
+                iconSize: [28, 16]
+            });
+            L.marker([b.lat, b.lng], { icon }).addTo(mapa)
+              .bindPopup(`<strong>BiciMAD ${b.nombre}</strong><br>Bicis: ${b.libres}/${b.total}`);
+        });
+        
+        // === KPIs ===
+        $('kpi-vel').textContent = '38 km/h';
+        $('kpi-inc').textContent = INCIDENCIAS.length;
+        $('kpi-aparca').textContent = new Intl.NumberFormat('es-ES').format(APARCAMIENTOS.reduce((s,a) => s + a.libres, 0));
+        $('kpi-bici').textContent = new Intl.NumberFormat('es-ES').format(BICIMAD.reduce((s,b) => s + b.libres, 0));
+        $('timestamp').textContent = new Date().toLocaleString('es-ES');
+        
+        function $(id) { return document.getElementById(id); }
+    </script>
+</body>
+</html>

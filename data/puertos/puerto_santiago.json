@@ -1,0 +1,11 @@
+{
+  "id": "santiago",
+  "nombre": "Puerto de San Cibrao",
+  "ccaa": "Galicia",
+  "coordenadas": {
+    "lat": 43.68,
+    "lng": -7.77
+  },
+  "datos": null,
+  "oleaje": null
+}

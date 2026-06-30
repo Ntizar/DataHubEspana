@@ -1,0 +1,11 @@
+{
+  "id": "cádiz",
+  "nombre": "Puerto de Cádiz",
+  "ccaa": "Andalucía",
+  "coordenadas": {
+    "lat": 36.53,
+    "lng": -6.29
+  },
+  "datos": null,
+  "oleaje": null
+}

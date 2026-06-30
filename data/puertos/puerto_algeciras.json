@@ -1,0 +1,11 @@
+{
+  "id": "algeciras",
+  "nombre": "Puerto de Algeciras",
+  "ccaa": "Andalucía",
+  "coordenadas": {
+    "lat": 36.12,
+    "lng": -5.45
+  },
+  "datos": null,
+  "oleaje": null
+}

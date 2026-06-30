@@ -1,0 +1,14 @@
+{
+  "fecha": "2026-06-30",
+  "confederaciones": 7,
+  "total_embalses": 21,
+  "detalles": {
+    "Confederación Hidrográfica del Cantábrico": 4,
+    "Confederación Hidrográfica del Ebro": 4,
+    "Confederación Hidrográfica del Guadalquivir": 3,
+    "Confederación Hidrográfica del Júcar": 3,
+    "Confederación Hidrográfica del Miño-Sil": 2,
+    "Confederación Hidrográfica del Segura": 2,
+    "Confederación Hidrográfica del Tajo": 3
+  }
+}

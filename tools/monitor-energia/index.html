@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataHub España — Monitor Energía</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --azul: #2563eb;
+            --verde: #22c55e;
+            --amarillo: #eab308;
+            --naranja: #f97316;
+            --rojo: #ef4444;
+            --gris: #6b7280;
+            --gris-claro: #f3f4f6;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #111827;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 { font-size: 1.4rem; }
+        .header .sub { font-size: 0.85rem; opacity: 0.9; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .kpi {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .kpi-label {
+            font-size: 0.75rem;
+            color: var(--gris);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.25rem 0;
+        }
+        
+        .kpi-unit { font-size: 0.8rem; color: var(--gris); }
+        
+        .kpi.verde .kpi-value { color: #059669; }
+        .kpi.naranja .kpi-value { color: var(--naranja); }
+        .kpi.rojo .kpi-value { color: var(--rojo); }
+        .kpi.azul .kpi-value { color: var(--azul); }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        
+        .card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Indicador en vivo */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            color: #059669;
+            font-weight: 600;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #059669;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Tech table */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .tech-card {
+            background: var(--gris-claro);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .tech-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .tech-name { font-size: 0.75rem; color: var(--gris); }
+        .tech-value { font-size: 1.1rem; font-weight: 700; }
+        .tech-pct { font-size: 0.7rem; color: var(--gris); }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gris);
+            font-size: 0.8rem;
+        }
+        
+        /* Gauge */
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .gauge {
+            width: 200px;
+            height: 100px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>⚡ DataHub España — Monitor de Energía</h1>
+            <div class="sub">Red Eléctrica Española · Demanda y generación en tiempo real</div>
+        </div>
+        <div style="text-align:right">
+            <div class="live-indicator"><span class="live-dot"></span> EN VIVO</div>
+            <div style="font-size:0.75rem;opacity:0.8" id="timestamp"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi verde">
+                <div class="kpi-label">Demanda Actual</div>
+                <div class="kpi-value" id="kpi-demanda">—</div>
+                <div class="kpi-unit">MW</div>
+            </div>
+            <div class="kpi azul">
+                <div class="kpi-label">% Renovables</div>
+                <div class="kpi-value" id="kpi-renovable">—</div>
+                <div class="kpi-unit">sobre demanda</div>
+            </div>
+            <div class="kpi naranja">
+                <div class="kpi-label">Precio Mercado</div>
+                <div class="kpi-value" id="kpi-precio">—</div>
+                <div class="kpi-unit">€/MWh</div>
+            </div>
+            <div class="kpi rojo">
+                <div class="kpi-label">CO₂ Evitado</div>
+                <div class="kpi-value" id="kpi-co2">—</div>
+                <div class="kpi-unit">toneladas/h</div>
+            </div>
+        </div>
+        
+        <!-- Generación por tecnología -->
+        <div class="card" style="margin-bottom:1.5rem">
+            <h3>🔋 Generación por tecnología <span class="live-indicator"><span class="live-dot"></span> Actualización horaria</span></h3>
+            <div class="tech-grid" id="tech-grid">
+                <!-- Se llena con JS -->
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="grid-2">
+            <div class="card">
+                <h3>📊 Mix energético</h3>
+                <canvas id="chart-mix" height="280"></canvas>
+            </div>
+            <div class="card">
+                <h3>📈 Evolución demanda 24h</h3>
+                <canvas id="chart-demanda" height="280"></canvas>
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h3>🌱 Evolución renovables</h3>
+                <canvas id="chart-renovables" height="250"></canvas>
+            </div>
+            <div class="card">
+                <h3>💰 Precio mercado eléctrico</h3>
+                <canvas id="chart-precio" height="250"></canvas>
+            </div>
+        </div>
+        
+        <!-- Info -->
+        <div class="card" style="margin-top:1.5rem">
+            <h3>ℹ️ Sobre estos datos</h3>
+            <p style="font-size:0.85rem;color:var(--gris);line-height:1.6">
+                Datos de ejemplo del sistema eléctrico español. Para datos reales, conecta el 
+                <code>esios_scraper.py</code> con la API de Red Eléctrica Española (ree.es). 
+                La demanda eléctrica de España ronda los 25.000-40.000 MW según la hora y temporada.
+                Las renovables (eólica + solar + hidro) suelen cubrir el 40-60% de la demanda en días buenos.
+            </p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Hecho con ❤️ por David Antizar<br>
+        Fuente: Red Eléctrica Española (ree.es) · ESIOS (esios.ree.es)
+    </div>
+    
+    <script>
+        // === Datos de ejemplo realistas ===
+        const DEMANDA_24H = [
+            22500, 21800, 21200, 20800, 20500, 20900, 22800, 26500,
+            29200, 30800, 31500, 31800, 32000, 31500, 31000, 30500,
+            31200, 33500, 34800, 33200, 31000, 28500, 26200, 24100
+        ];
+        
+        const MIX_ENERGETICO = {
+            'Eólica': { mw: 8200, color: '#22c55e', icon: '🌬️' },
+            'Solar': { mw: 6500, color: '#eab308', icon: '☀️' },
+            'Hidroeléctrica': { mw: 3800, color: '#3b82f6', icon: '💧' },
+            'Nuclear': { mw: 5600, color: '#8b5cf6', icon: '⚛️' },
+            'Gas Natural': { mw: 5200, color: '#f97316', icon: '🔥' },
+            'Carbón': { mw: 800, color: '#6b7280', icon: '⛏️' },
+            'Ciclo combinado': { mw: 3100, color: '#ef4444', icon: '🏭' },
+        };
+        
+        const PRECIOS_24H = [
+            45.2, 42.1, 38.5, 35.8, 33.2, 36.8, 52.4, 78.9,
+            95.3, 102.8, 98.5, 92.1, 88.4, 85.2, 82.1, 78.5,
+            85.8, 112.4, 125.8, 108.2, 82.4, 65.8, 52.1, 48.5
+        ];
+        
+        // === Render ===
+        function render() {
+            const totalDemanda = Object.values(MIX_ENERGETICO).reduce((s, t) => s + t.mw, 0);
+            const totalRenovable = MIX_ENERGETICO['Eólica'].mw + MIX_ENERGETICO['Solar'].mw + MIX_ENERGETICO['Hidroeléctrica'].mw;
+            const pctRenovable = ((totalRenovable / totalDemanda) * 100).toFixed(1);
+            
+            // KPIs
+            $('kpi-demanda').textContent = new Intl.NumberFormat('es-ES').format(totalDemanda);
+            $('kpi-renovable').textContent = pctRenovable + '%';
+            $('kpi-precio').textContent = PRECIOS_24H[new Date().getHours()].toFixed(1);
+            $('kpi-co2').textContent = Math.round(totalRenovable * 0.25).toLocaleString('es-ES');
+            $('timestamp').textContent = new Date().toLocaleString('es-ES');
+            
+            // Tech grid
+            const grid = $('tech-grid');
+            grid.innerHTML = '';
+            for (const [nombre, data] of Object.entries(MIX_ENERGETICO)) {
+                const pct = ((data.mw / totalDemanda) * 100).toFixed(1);
+                grid.innerHTML += `
+                    <div class="tech-card">
+                        <div class="tech-icon">${data.icon}</div>
+                        <div class="tech-name">${nombre}</div>
+                        <div class="tech-value" style="color:${data.color}">${new Intl.NumberFormat('es-ES').format(data.mw)}</div>
+                        <div class="tech-pct">${pct}%</div>
+                    </div>
+                `;
+            }
+            
+            // Charts
+            renderMix(totalDemanda);
+            renderDemanda();
+            renderRenovables();
+            renderPrecio();
+        }
+        
+        function renderMix(total) {
+            const ctx = $('chart-mix').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(MIX_ENERGETICO),
+                    datasets: [{
+                        data: Object.values(MIX_ENERGETICO).map(t => t.mw),
+                        backgroundColor: Object.values(MIX_ENERGETICO).map(t => t.color),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right', labels: { padding: 10, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+        
+        function renderDemanda() {
+            const ctx = $('chart-demanda').getContext('2d');
+            const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2, '0')}:00`);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: horas,
+                    datasets: [{
+                        label: 'Demanda (MW)',
+                        data: DEMANDA_24H,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5,150,105,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, ticks: { callback: v => (v/1000).toFixed(0) + ' GW' } },
+                        x: { ticks: { maxTicksToShow: 8 } }
+                    }
+                }
+            });
+        }
+        
+        function renderRenovables() {
+            const ctx = $('chart-renovables').getContext('2d');
+            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            const eolica = [42, 45, 38, 35, 32, 28, 25, 27, 35, 40, 43, 44];
+            const solar = [8, 12, 18, 25, 32, 35, 38, 35, 28, 18, 10, 7];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: meses,
+                    datasets: [
+                        { label: 'Eólica', data: eolica, backgroundColor: '#22c55e', borderRadius: 4 },
+                        { label: 'Solar', data: solar, backgroundColor: '#eab308', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { stacked: true, ticks: { callback: v => v + '%' } },
+                        x: { stacked: true }
+                    }
+                }
+            });
+        }
+        
+        function renderPrecio() {
+            const ctx = $('chart-precio').getContext('2d');
+            const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2, '0')}:00`);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: horas,
+                    datasets: [{
+                        label: '€/MWh',
+                        data: PRECIOS_24H,
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249,115,22,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => v + '€' } },
+                        x: { ticks: { maxTicksToShow: 8 } }
+                    }
+                }
+            });
+        }
+        
+        function $(id) { return document.getElementById(id); }
+        
+        render();
+    </script>
+</body>
+</html>

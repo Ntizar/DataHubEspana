@@ -1,0 +1,31 @@
+{
+  "portal": "aragon",
+  "nombre": "Aragón Open Data",
+  "ccaa": "Aragón",
+  "web": "https://opendata.aragon.es",
+  "total_datasets": 200,
+  "total_recursos": 946,
+  "organizaciones": 47,
+  "etiquetas": 2264,
+  "formatos": {
+    "CSV": 219,
+    "XML": 191,
+    "JSON": 189,
+    "XLSX": 156,
+    "PX": 65,
+    "URL": 29,
+    "XLS": 24,
+    "HTML": 21,
+    "GEOJSON": 20,
+    "MAPVIEW": 20,
+    "ICS": 3,
+    "SHP": 2,
+    "TIF": 1,
+    "ASC": 1,
+    "GDB": 1,
+    "DGN": 1,
+    "DXF": 1,
+    "PDF": 1,
+    "LYR": 1
+  }
+}

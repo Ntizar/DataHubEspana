@@ -1,0 +1,11 @@
+{
+  "id": "bilbao",
+  "nombre": "Puerto de Bilbao",
+  "ccaa": "País Vasco",
+  "coordenadas": {
+    "lat": 43.33,
+    "lng": -2.96
+  },
+  "datos": null,
+  "oleaje": null
+}

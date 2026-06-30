@@ -1,0 +1,24 @@
+{
+  "portal": "madrid_ayunt",
+  "nombre": "Ayuntamiento de Madrid",
+  "ccaa": "C. de Madrid",
+  "web": "https://datos.madrid.es",
+  "total_datasets": 200,
+  "total_recursos": 2565,
+  "organizaciones": 1,
+  "etiquetas": 1025,
+  "formatos": {
+    "CSV": 814,
+    "XLSX": 592,
+    "XML": 276,
+    "JSON": 233,
+    "PDF": 207,
+    "XLS": 190,
+    "GEO": 74,
+    "RDF": 71,
+    "ZIP": 64,
+    "TXT": 29,
+    "KML": 10,
+    "KMZ": 5
+  }
+}

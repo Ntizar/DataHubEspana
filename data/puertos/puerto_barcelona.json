@@ -1,0 +1,11 @@
+{
+  "id": "barcelona",
+  "nombre": "Puerto de Barcelona",
+  "ccaa": "Cataluña",
+  "coordenadas": {
+    "lat": 41.34,
+    "lng": 2.18
+  },
+  "datos": null,
+  "oleaje": null
+}

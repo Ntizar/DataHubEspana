@@ -1,0 +1,11 @@
+{
+  "id": "celeiro",
+  "nombre": "Puerto del Celeiro",
+  "ccaa": "Galicia",
+  "coordenadas": {
+    "lat": 43.72,
+    "lng": -7.6
+  },
+  "datos": null,
+  "oleaje": null
+}

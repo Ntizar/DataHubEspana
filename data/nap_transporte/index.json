@@ -1,0 +1,22 @@
+{
+  "total_datasets": 20,
+  "organismos": {
+    "Renfe": 3,
+    "ADIF": 2,
+    "TMB": 2,
+    "FGC": 1,
+    "Euskotren": 1,
+    "FGV": 1,
+    "SFM": 1,
+    "TRAM": 1,
+    "Metro de Madrid": 1,
+    "Metro Bilbao": 1,
+    "Metrovalencia": 1,
+    "Metro Málaga": 1,
+    "EMT Madrid": 1,
+    "Bilbobus": 1,
+    "Donostibus": 1,
+    "Pamibus": 1
+  },
+  "formatos": {}
+}

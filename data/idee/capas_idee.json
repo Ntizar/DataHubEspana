@@ -1,0 +1,97 @@
+{
+  "administrativas": {
+    "nombre": "Límites administrativos",
+    "wms": "http://www.ign.es/wms/ign/limites",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Línea de costa",
+      "Límite de Comunidad Autónoma",
+      "Límite de Provincia",
+      "Límite de Municipio"
+    ]
+  },
+  "carreteras": {
+    "nombre": "Red de carreteras",
+    "wms": "http://www.ign.es/wms/mta-net-vigola",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Carreteras",
+      "Autovías",
+      "Autopistas",
+      "Puentes"
+    ]
+  },
+  "hidrografia": {
+    "nombre": "Red hidrográfica",
+    "wms": "http://www.ign.es/wms/ign/hs",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Ríos",
+      "Embalses",
+      "Cursos de agua"
+    ]
+  },
+  "toponimia": {
+    "nombre": "Toponimia",
+    "wms": "http://www.ign.es/wms/ign/toponimia",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Nombres de lugar",
+      "Montes",
+      "Picos"
+    ]
+  },
+  "relieve": {
+    "nombre": "Modelo Digital del Terreno",
+    "wms": "http://www.ign.es/wms/ign/mdt",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "MDT200",
+      "MDT50",
+      "Curvas de nivel",
+      "Sombras de relieve"
+    ]
+  },
+  "sismologia": {
+    "nombre": "Sismología",
+    "wms": "http://www.ign.es/wms/ign/sismologia",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Terremotos últimos 30 días",
+      "Catálogo sísmico"
+    ]
+  },
+  "volcanologia": {
+    "nombre": "Volcanología",
+    "wms": "http://www.ign.es/wms/ign/volcanologia",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Volcanes activos",
+      "Zonas volcánicas"
+    ]
+  },
+  "ciudades": {
+    "nombre": "Cartografía de ciudades",
+    "wms": "http://www.ign.es/wms/ign/ciudades",
+    "capabilities": {
+      "status": "offline"
+    },
+    "capas_disponibles": [
+      "Núcleos urbanos"
+    ]
+  }
+}
