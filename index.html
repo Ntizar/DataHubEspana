@@ -1953,7 +1953,12 @@
 
                     <!-- EVAPOTRANSPIRACIÓN TAB -->
                     <div class="tab-panel" id="tab-evapo">
-                        <div class="section-title">💧 Evapotranspiración y Balance Hídrico</div>
+                        <div class="section-title">
+                            💧 Evapotranspiración y Balance Hídrico
+                            <select id="evapo-province-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                            </select>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="evapo-et0-hoy">—</div>
@@ -1963,15 +1968,19 @@
                                 <div class="kpi-value" id="evapo-et0-7d">—</div>
                                 <div class="kpi-label">ET₀ 7 días (mm)</div>
                             </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="evapo-precip-7d">—</div>
+                                <div class="kpi-label">Precipitación 7d (mm)</div>
+                            </div>
                         </div>
                         <div class="kpi-row">
-                            <div class="kpi orange">
+                            <div class="kpi" id="evapo-balance-kpi">
                                 <div class="kpi-value" id="evapo-balance">—</div>
                                 <div class="kpi-label">Balance hídrico (mm)</div>
                             </div>
-                            <div class="kpi red">
-                                <div class="kpi-value" id="evapo-deficit">—</div>
-                                <div class="kpi-label">Déficit agua (mm)</div>
+                            <div class="kpi" id="evapo-aridez-kpi">
+                                <div class="kpi-value" id="evapo-aridez">—</div>
+                                <div class="kpi-label">Clasificación aridez</div>
                             </div>
                         </div>
                         <div class="card">
@@ -1984,7 +1993,7 @@
                             <div class="card-title">Mapa de estrés hídrico por ciudad</div>
                             <div id="evapo-map-cities" style="font-size:12px;"></div>
                         </div>
-                        <div class="section-title">Fuente: Open-Meteo Forecast API (et0_fao_evapotranspiration)</div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (et0_fao_evapotranspiration, precipitation_sum)</div>
                     </div>
 
                     <!-- CAPE Tormentas -->
@@ -5032,9 +5041,16 @@
         { name: 'Palma', lat: 39.57, lon: 2.65, cc: 'Islas Baleares' },
     ];
 
-    async function fetchEvapo() {
+    async function fetchEvapo(provinceFilter) {
+        // provinceFilter: undefined (all), 'all' o comunidad autónoma (cc)
+        const cities = (!provinceFilter || provinceFilter === 'all')
+            ? EVAPO_CITIES
+            : EVAPO_CITIES.filter(c => c.cc === provinceFilter);
+
+        if (cities.length === 0) return;
+
         // Fetch all cities in parallel
-        const promises = EVAPO_CITIES.map(async (city) => {
+        const promises = cities.map(async (city) => {
             try {
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&daily=et0_fao_evapotranspiration,precipitation_sum&timezone=Europe/Madrid&forecast_days=7`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
@@ -5049,17 +5065,15 @@
         // Procesar datos
         let et0Hoy = [];
         let et0SieteDias = [];
-        let precipHoy = [];
         let precipSieteDias = [];
         let et0DailySeries = [];
         let precipDailySeries = [];
         let cityLabels = [];
         let balanceByCity = [];
-        let deficitByCity = [];
 
         results.forEach((data, idx) => {
             if (!data || !data.daily) return;
-            cityLabels.push(EVAPO_CITIES[idx].name);
+            cityLabels.push(cities[idx].name);
 
             const et0 = data.daily.et0_fao_evapotranspiration;
             const precip = data.daily.precipitation_sum;
@@ -5076,44 +5090,65 @@
 
             if (precip) {
                 precipDailySeries.push(...precip.slice(0, 7));
-                precipHoy.push(precip[0] ?? 0);
                 precipSieteDias.push(precip.slice(0, 7).reduce((a, b) => a + (b || 0), 0));
             } else {
                 for (let i = 0; i < 7; i++) precipDailySeries.push(0);
-                precipHoy.push(0);
                 precipSieteDias.push(0);
             }
 
-            // Balance hídrico por ciudad: precip - ET₀ (7d) → negativo = déficit
+            // Balance hídrico por ciudad: precip - ET₀ (7d)
             const cityBalance = precipSieteDias[idx] - et0SieteDias[idx];
             balanceByCity.push(cityBalance);
-            deficitByCity.push(cityBalance < 0 ? Math.abs(cityBalance) : 0);
         });
 
         // KPIs promedio
         const avgEt0Hoy = et0Hoy.length > 0 ? (et0Hoy.reduce((a, b) => a + b, 0) / et0Hoy.length).toFixed(1) : '—';
-        const totalEt0Siete = et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.filter(v => v > 0).length;
         const avgEt0Siete = et0SieteDias.length > 0 ? (et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.length).toFixed(1) : '—';
         const totalPrecipSiete = precipSieteDias.reduce((a, b) => a + b, 0);
-        const totalBalance = totalPrecipSiete - totalEt0Siete * et0SieteDias.filter(v => v > 0).length;
-        const totalDeficit = deficitByCity.reduce((a, b) => a + b, 0);
+        const totalEt0Siete = et0SieteDias.reduce((a, b) => a + b, 0);
+        const totalBalance = totalPrecipSiete - totalEt0Siete;
+
+        // Clasificación de aridez: ET₀ / Precipitación (ratio 7d)
+        let aridezClasificacion = '—';
+        let aridezColor = '#64748b';
+        let aridezEmoji = '❓';
+        if (totalPrecipSiete > 0.5) {
+            const ratio = totalEt0Siete / totalPrecipSiete;
+            if (ratio < 0.5) { aridezClasificacion = 'Húmedo'; aridezColor = '#16a34a'; aridezEmoji = '💧'; }
+            else if (ratio < 0.65) { aridezClasificacion = 'Sub-húmedo seco'; aridezColor = '#22c55e'; aridezEmoji = '🌿'; }
+            else if (ratio < 0.75) { aridezClasificacion = 'Sub-húmedo húmedo'; aridezColor = '#84cc16'; aridezEmoji = '🌱'; }
+            else if (ratio < 1.0) { aridezClasificacion = 'Semiárido'; aridezColor = '#f59e0b'; aridezEmoji = '🌾'; }
+            else { aridezClasificacion = 'Árido'; aridezColor = '#dc2626'; aridezEmoji = '🏜️'; }
+        } else if (totalPrecipSiete === 0 && totalEt0Siete > 0) {
+            aridezClasificacion = 'Árido'; aridezColor = '#dc2626'; aridezEmoji = '🏜️';
+        } else {
+            aridezClasificacion = 'Saturado'; aridezColor = '#16a34a'; aridezEmoji = '🌊';
+        }
 
         // Actualizar KPIs
         const et0HoyEl = document.getElementById('evapo-et0-hoy');
         const et0SieteEl = document.getElementById('evapo-et0-7d');
+        const precip7dEl = document.getElementById('evapo-precip-7d');
         const balanceEl = document.getElementById('evapo-balance');
-        const deficitEl = document.getElementById('evapo-deficit');
+        const balanceKpi = document.getElementById('evapo-balance-kpi');
+        const aridezEl = document.getElementById('evapo-aridez');
+        const aridezKpi = document.getElementById('evapo-aridez-kpi');
 
         if (et0HoyEl) et0HoyEl.textContent = avgEt0Hoy;
         if (et0SieteEl) et0SieteEl.textContent = avgEt0Siete;
+        if (precip7dEl) precip7dEl.textContent = totalPrecipSiete.toFixed(1);
 
         if (balanceEl) {
             balanceEl.textContent = totalBalance.toFixed(1);
-            balanceEl.parentElement.className = totalBalance >= 0 ? 'kpi green' : 'kpi red';
+            balanceKpi.className = totalBalance >= 0 ? 'kpi green' : 'kpi red';
         }
-        if (deficitEl) deficitEl.textContent = totalDeficit.toFixed(1);
+        if (aridezEl) {
+            aridezEl.innerHTML = `${aridezEmoji} ${aridezClasificacion}`;
+            aridezEl.style.color = aridezColor;
+            aridezKpi.className = 'kpi';
+        }
 
-        // Chart: ET₀ vs precipitación 7 días
+        // Chart: ET₀ vs precipitación 7 días (doble eje)
         const ctxEvapo = document.getElementById('chart-evapo');
         if (ctxEvapo) {
             if (window._chartEvapo) window._chartEvapo.destroy();
@@ -5144,11 +5179,11 @@
                             data: precipDailySeries.slice(0, 7),
                             type: 'line',
                             borderColor: '#16a34a',
-                            backgroundColor: 'rgba(22, 163, 106, 0.1)',
+                            backgroundColor: 'rgba(22, 163, 106, 0.15)',
                             borderWidth: 2,
                             pointRadius: 4,
                             pointBackgroundColor: '#16a34a',
-                            fill: false,
+                            fill: true,
                             tension: 0.3,
                             yAxisID: 'y1',
                         },
@@ -5190,7 +5225,7 @@
         if (mapEl) {
             let html = '';
             results.forEach((data, idx) => {
-                const city = EVAPO_CITIES[idx];
+                const city = cities[idx];
                 if (!data || !data.daily) {
                     html += `<div class="list-item">
                         <div class="list-item-header">${city.name}</div>
@@ -5207,6 +5242,7 @@
                 const precipSeven = precip ? precip.slice(0, 7).reduce((a, b) => a + (b || 0), 0) : 0;
                 const balance = precipSeven - et0Seven;
 
+                // Clasificación por ciudad
                 let badgeClass = 'badge-blue';
                 let statusText = 'Balance OK';
                 if (balance < -50) { badgeClass = 'badge-red'; statusText = '⚠️ Déficit severo'; }
@@ -5214,11 +5250,22 @@
                 else if (balance < 0) { badgeClass = 'badge-orange'; statusText = 'Déficit leve'; }
                 else if (balance > 50) { badgeClass = 'badge-green'; statusText = '✅ Superávit hídrico'; }
 
+                // Aridez por ciudad
+                let aridezCity = '';
+                if (precipSeven > 0.5) {
+                    const ratio = et0Seven / precipSeven;
+                    if (ratio < 0.5) aridezCity = '💧 Húmedo';
+                    else if (ratio < 0.65) aridezCity = '🌿 Sub-húmedo seco';
+                    else if (ratio < 0.75) aridezCity = '🌱 Sub-húmedo húmedo';
+                    else if (ratio < 1.0) aridezCity = '🌾 Semiárido';
+                    else aridezCity = '🏜️ Árido';
+                }
+
                 html += `<div class="list-item">
                     <div class="list-item-header">${city.name} <span class="badge ${badgeClass}">${statusText}</span></div>
                     <div class="list-item-sub">
                         ET₀ hoy: <strong>${et0Today.toFixed(1)} mm</strong> · ET₀ 7d: <strong>${et0Seven.toFixed(1)} mm</strong> · Precip. 7d: <strong>${precipSeven.toFixed(1)} mm</strong>
-                        <br><span style="color:#64748b;">📍 ${city.cc} · Balance: <strong>${balance.toFixed(1)} mm</strong></span>
+                        <br><span style="color:#64748b;">📍 ${city.cc} · Balance: <strong>${balance.toFixed(1)} mm</strong> · ${aridezCity}</span>
                     </div>
                 </div>`;
             });
@@ -6244,6 +6291,21 @@ fetchPollen();
         fetchLluvia();
         fetchPresion();
         fetchFuego();
+        // Evapotranspiración selector event
+        const evapoProvinceSelect = document.getElementById('evapo-province-select');
+        if (evapoProvinceSelect) {
+            // Populate province options from EVAPO_CITIES unique cc values
+            const provinces = [...new Set(EVAPO_CITIES.map(c => c.cc))].sort();
+            provinces.forEach(prov => {
+                const opt = document.createElement('option');
+                opt.value = prov;
+                opt.textContent = prov;
+                evapoProvinceSelect.appendChild(opt);
+            });
+            evapoProvinceSelect.addEventListener('change', (e) => {
+                fetchEvapo(e.target.value);
+            });
+        }
         fetchEvapo();
         fetchCAPE();
         fetchSol();
