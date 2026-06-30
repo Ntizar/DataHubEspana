@@ -634,6 +634,7 @@
                 <button class="tab-btn" data-tab="nieve">❄️ Nieve</button>
                 <button class="tab-btn" data-tab="mar">🌊 Mar y Oleaje</button>
                 <button class="tab-btn" data-tab="uv">☀️ UV y Radiación</button>
+                <button class="tab-btn" data-tab="visibilidad">👁️ Visibilidad</button>
             </div>
         </div>
 
@@ -1395,6 +1396,46 @@
                         </div>
                         <div class="section-title">Datos por ciudad</div>
                         <div id="uv-cities"></div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- VISIBILIDAD TAB -->
+                    <div class="tab-panel" id="tab-visibilidad">
+                        <div class="section-title">👁️ Visibilidad y Condiciones Atmosféricas</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="vis-avg">—</div>
+                                <div class="kpi-label">Visibilidad promedio (km)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="vis-fog">—</div>
+                                <div class="kpi-label">Niebla detectada</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="vis-haze">—</div>
+                                <div class="kpi-label">Bruma (1–5 km)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="vis-calima">—</div>
+                                <div class="kpi-label">Calima (Canarias)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Visibilidad por ciudad (km)</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-visibilidad"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Evolución visibilidad 48h</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-vis-trend"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Detalle por ciudad</div>
+                        <div id="vis-cities"></div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
                     </div>
                 </div>
@@ -3517,6 +3558,7 @@
         fetchNieve();
         fetchMar();
         fetchUV();
+        fetchVisibilidad();
     }
 
     // ===== RESIZE HANDLER =====
@@ -4146,6 +4188,234 @@
         document.getElementById('gbfs-bikes').textContent = totalBikes.toLocaleString('es-ES');
         document.getElementById('gbfs-docking').textContent = totalDocking.toLocaleString('es-ES');
         listEl.innerHTML = html || '<div style="font-size:12px;color:#64748b;">No se encontraron sistemas GBFS.</div>';
+    }
+
+    // ===== VISIBILIDAD =====
+    const VIS_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
+    ];
+
+    async function fetchVisibilidad() {
+        // Fetch all cities in parallel
+        const promises = VIS_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=visibility,weather_code&hourly=visibility&timezone=Europe/Madrid&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // KPIs
+        let currentVis = [];
+        let fogCount = 0;
+        let hazeCount = 0;
+        let calimaDetected = false;
+
+        results.forEach((data) => {
+            if (!data || !data.current) return;
+            const vis = data.current.visibility ?? null;
+            if (vis !== null) {
+                const visKm = vis / 1000;
+                currentVis.push(visKm);
+                if (vis < 1000) fogCount++;
+                else if (vis < 5000) hazeCount++;
+            }
+            // Calima detection: Canary Islands + weather code 11 (dust) or very low visibility
+            const cityIdx = VIS_CITIES.findIndex(c => c.name === 'Las Palmas');
+            if (data.current.weather_code === 11 || (vis !== null && vis < 3000)) {
+                calimaDetected = true;
+            }
+        });
+
+        const avgVis = currentVis.length > 0 ? (currentVis.reduce((a, b) => a + b, 0) / currentVis.length).toFixed(1) : '—';
+        const minVis = currentVis.length > 0 ? Math.min(...currentVis).toFixed(1) : '—';
+        const maxVis = currentVis.length > 0 ? Math.max(...currentVis).toFixed(1) : '—';
+
+        document.getElementById('vis-avg').textContent = avgVis;
+        document.getElementById('vis-fog').textContent = fogCount > 0 ? `${fogCount} ciudad${fogCount > 1 ? 'es' : ''}` : 'No';
+        document.getElementById('vis-haze').textContent = hazeCount > 0 ? `${hazeCount} ciudad${hazeCount > 1 ? 'es' : ''}` : 'No';
+        document.getElementById('vis-calima').textContent = calimaDetected ? 'Sí ⚠️' : 'No';
+
+        // Chart 1: visibilidad por ciudad (barras)
+        const ctxVis = document.getElementById('chart-visibilidad');
+        if (ctxVis) {
+            if (window._chartVis) window._chartVis.destroy();
+
+            const labels = [];
+            const visValues = [];
+            const visColors = [];
+
+            results.forEach((data, idx) => {
+                labels.push(VIS_CITIES[idx].name);
+                if (data && data.current && data.current.visibility) {
+                    const visKm = data.current.visibility / 1000;
+                    visValues.push(visKm);
+                    if (data.current.visibility < 1000) visColors.push('#dc2626');
+                    else if (data.current.visibility < 5000) visColors.push('#f97316');
+                    else if (data.current.visibility < 10000) visColors.push('#eab308');
+                    else visColors.push('#16a34a');
+                } else {
+                    visValues.push(0);
+                    visColors.push('#94a3b8');
+                }
+            });
+
+            window._chartVis = new Chart(ctxVis, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Visibilidad (km)',
+                        data: visValues,
+                        backgroundColor: visColors.map(c => c + 'bb'),
+                        borderColor: visColors,
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `Visibilidad: ${ctx.parsed.y.toFixed(1)} km`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'km' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 2: evolución 48h
+        const ctxVisTrend = document.getElementById('chart-vis-trend');
+        if (ctxVisTrend) {
+            if (window._chartVisTrend) window._chartVisTrend.destroy();
+
+            const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2', '#dc2626', '#ea580c', '#60a5fa'];
+            const datasets = [];
+
+            results.forEach((data, idx) => {
+                if (!data || !data.hourly) return;
+                const labels = data.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+                const vis = data.hourly.visibility.slice(0, 48).map(v => v / 1000);
+
+                datasets.push({
+                    label: VIS_CITIES[idx].name,
+                    data: vis,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '22',
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                });
+            });
+
+            const firstData = results.find(d => d && d.hourly);
+            let chartLabels = [];
+            if (firstData) {
+                chartLabels = firstData.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+            }
+
+            window._chartVisTrend = new Chart(ctxVisTrend, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} km`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Tiempo' },
+                            ticks: { maxTicksLimit: 8, font: { size: 10 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Visibilidad (km)' },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Detalle por ciudad
+        const citiesEl = document.getElementById('vis-cities');
+        if (citiesEl) {
+            let html = '';
+            results.forEach((data, idx) => {
+                const city = VIS_CITIES[idx];
+                if (!data || !data.current) {
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${city.name}</div>
+                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                    </div>`;
+                    return;
+                }
+                const vis = data.current.visibility ?? 0;
+                const visKm = (vis / 1000).toFixed(1);
+                const code = data.current.weather_code ?? '—';
+                const desc = WMO_CODES[code] ?? 'Desconocido';
+
+                let visBadge = 'badge-green';
+                let visText = 'Buena';
+                const visVal = vis;
+                if (visVal < 1000) { visBadge = 'badge-red'; visText = 'Niebla'; }
+                else if (visVal < 5000) { visBadge = 'badge-orange'; visText = 'Bruma'; }
+                else if (visVal < 10000) { visBadge = 'badge-blue'; visText = 'Moderada'; }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${city.name} <span class="badge ${visBadge}">${visText} — ${visKm} km</span></div>
+                    <div class="list-item-sub">
+                        ☁️ ${desc} · 📊 Mín: ${minVis} km · Máx: ${maxVis} km
+                    </div>
+                </div>`;
+            });
+            citiesEl.innerHTML = html;
+        }
     }
 
     // ===== START =====
