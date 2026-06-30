@@ -1025,7 +1025,7 @@
                     </div>
                     <div class="detail-body" id="detail-body">
                         <div class="kpi-row">
-                            <div class="kpi">
+                            <div class="kpi blue">
                                 <div class="kpi-value" id="detail-pop">—</div>
                                 <div class="kpi-label">Población (INE 2024)</div>
                             </div>
@@ -1034,23 +1034,66 @@
                                 <div class="kpi-label">Capital</div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-title">Clima en la capital</div>
-                            <div class="info-row">
-                                <span class="info-label">Temperatura</span>
-                                <span class="info-value" id="detail-temp">Cargando…</span>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="detail-superficie">—</div>
+                                <div class="kpi-label">Superficie (km²)</div>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Humedad</span>
-                                <span class="info-value" id="detail-humidity">—</span>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="detail-density">—</div>
+                                <div class="kpi-label">Densidad (hab/km²)</div>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Viento</span>
-                                <span class="info-value" id="detail-wind">—</span>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="detail-altitude">—</div>
+                                <div class="kpi-label">Altitud media (m)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="detail-coast">—</div>
+                                <div class="kpi-label">Costa (km)</div>
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-title">Información catastro</div>
+                            <div class="card-title">Clima en la capital</div>
+                            <div class="info-row">
+                                <span class="info-label">🌡️ Temperatura</span>
+                                <span class="info-value" id="detail-temp">Cargando…</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">💧 Humedad</span>
+                                <span class="info-value" id="detail-humidity">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">💨 Viento</span>
+                                <span class="info-value" id="detail-wind">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">☁️ Condición</span>
+                                <span class="info-value" id="detail-weather-desc">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">🌅 Amanecer</span>
+                                <span class="info-value" id="detail-sunrise">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">🌇 Atardecer</span>
+                                <span class="info-value" id="detail-sunset">—</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Indicadores económicos</div>
+                            <div class="info-row">
+                                <span class="info-label">📊 Paro provincial</span>
+                                <span class="info-value" id="detail-paro">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">💰 PIB per cápita</span>
+                                <span class="info-value" id="detail-pib">—</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Información catastral</div>
                             <div class="info-row">
                                 <span class="info-label">Código INE</span>
                                 <span class="info-value" id="detail-code">—</span>
@@ -1083,13 +1126,25 @@
 
     // ===== CCAA NAMES =====
     const CCAA_NAMES = {
-        '01': 'Andalucía', '02': 'Aragón', '03': 'Asturias, Príncipe de',
-        '04': 'Baleares, Illes', '05': 'Canarias', '06': 'Cantabria',
-        '07': 'Castilla y León', '08': 'Castilla-La Mancha', '09': 'Cataluña',
-        '10': 'Extremadura', '11': 'Galicia', '12': 'Rioja, La',
-        '13': 'Madrid, Comunidad de', '14': 'Melilla', '15': 'Murcia, Región de',
-        '16': 'Navarra, Comunidad Foral de', '17': 'País Vasco',
-        '18': 'Ceuta', '19': 'Valenciana, Comunidad',
+        '01': 'Andalucía',
+        '02': 'Aragón',
+        '03': 'Principado de Asturias',
+        '04': 'Illes Balears',
+        '05': 'Canarias',
+        '06': 'Cantabria',
+        '07': 'Castilla y León',
+        '08': 'Castilla-La Mancha',
+        '09': 'Cataluña',
+        '10': 'Extremadura',
+        '11': 'Galicia',
+        '12': 'La Rioja',
+        '13': 'Comunidad de Madrid',
+        '14': 'Región de Murcia',
+        '15': 'Comunidad Foral de Navarra',
+        '16': 'País Vasco',
+        '17': 'Comunidad Valenciana',
+        '18': 'Ciudad de Ceuta',
+        '19': 'Ciudad de Melilla',
     };
 
     // ===== WMO WEATHER CODE DESCRIPTIONS =====
@@ -1523,17 +1578,29 @@
             });
         }
 
-        // Update detail panel
+        // Update detail panel - basic info
         document.getElementById('detail-name').textContent = nombre;
         document.getElementById('detail-pop').textContent = d.poblacion ? d.poblacion.toLocaleString('es-ES') : '—';
         document.getElementById('detail-capital').textContent = d.capital || '—';
         document.getElementById('detail-code').textContent = cod;
         document.getElementById('detail-ccaa').textContent = CCAA_NAMES[d.ccaa] || d.ccaa || '—';
 
+        // Extended province data
+        document.getElementById('detail-superficie').textContent = d.superficie ? d.superficie.toLocaleString('es-ES') + ' km²' : '—';
+        const density = (d.poblacion && d.superficie) ? (d.poblacion / d.superficie).toFixed(1) : '—';
+        document.getElementById('detail-density').textContent = density !== '—' ? density + ' hab/km²' : '—';
+        document.getElementById('detail-altitude').textContent = d.altitud_media ? d.altitud_media.toLocaleString('es-ES') + ' m' : '—';
+        document.getElementById('detail-coast').textContent = d.costa_km ? d.costa_km + ' km' : 'Sin costa';
+        document.getElementById('detail-paro').textContent = d.paro ? d.paro + '%' : '—';
+        document.getElementById('detail-pib').textContent = d.pib_capita ? d.pib_capita.toLocaleString('es-ES') + ' €' : '—';
+
         // Reset weather fields
         document.getElementById('detail-temp').textContent = 'Cargando…';
         document.getElementById('detail-humidity').textContent = '—';
         document.getElementById('detail-wind').textContent = '—';
+        document.getElementById('detail-weather-desc').textContent = '—';
+        document.getElementById('detail-sunrise').textContent = '—';
+        document.getElementById('detail-sunset').textContent = '—';
 
         // Open detail panel
         document.getElementById('province-detail').classList.add('open');
@@ -1553,7 +1620,7 @@
         const centroid = provinceCentroids[cod] || [40.0, -3.5];
         try {
             const res = await fetch(
-                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code`
+                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code,sunrise,sunset&daily=sunrise,sunset&timezone=Europe/Madrid`
             );
             if (!res.ok) throw new Error('Open-Meteo response not OK');
             const data = await res.json();
@@ -1565,12 +1632,30 @@
                     curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m} %` : '—';
                 document.getElementById('detail-wind').textContent =
                     curr.wind_speed_10m !== undefined ? `${curr.wind_speed_10m} km/h` : '—';
+
+                // Weather description from WMO code
+                const wmoCode = curr.weather_code;
+                const desc = WMO_CODES[wmoCode] || `Código ${wmoCode}`;
+                document.getElementById('detail-weather-desc').textContent = desc;
+
+                // Sunrise/sunset from daily data
+                if (data.daily && data.daily.sunrise && data.daily.sunrise[0]) {
+                    const sunrise = new Date(data.daily.sunrise[0]);
+                    document.getElementById('detail-sunrise').textContent = sunrise.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                }
+                if (data.daily && data.daily.sunset && data.daily.sunset[0]) {
+                    const sunset = new Date(data.daily.sunset[0]);
+                    document.getElementById('detail-sunset').textContent = sunset.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                }
             }
         } catch (err) {
             console.warn(`Weather fetch failed for province ${cod}:`, err);
             document.getElementById('detail-temp').textContent = 'No disponible';
             document.getElementById('detail-humidity').textContent = '—';
             document.getElementById('detail-wind').textContent = '—';
+            document.getElementById('detail-weather-desc').textContent = '—';
+            document.getElementById('detail-sunrise').textContent = '—';
+            document.getElementById('detail-sunset').textContent = '—';
         }
     }
 

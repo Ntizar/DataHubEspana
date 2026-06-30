@@ -2,313 +2,573 @@
   "01": {
     "nombre": "Álava",
     "poblacion": 333600,
-    "ccaa": "16",
-    "capital": "Vitoria-Gasteiz"
+    "ccaa": "07",
+    "capital": "Vitoria-Gasteiz",
+    "superficie": 2724,
+    "costa_km": 0,
+    "altitud_media": 525,
+    "paro": 8.2,
+    "pib_capita": 38500
   },
   "02": {
     "nombre": "Albacete",
     "poblacion": 387270,
     "ccaa": "08",
-    "capital": "Albacete"
+    "capital": "Albacete",
+    "superficie": 14926,
+    "costa_km": 0,
+    "altitud_media": 642,
+    "paro": 12.8,
+    "pib_capita": 26200
   },
   "03": {
     "nombre": "Alicante",
     "poblacion": 1976657,
-    "ccaa": "06",
-    "capital": "Alicante"
+    "ccaa": "17",
+    "capital": "Alicante",
+    "superficie": 5817,
+    "costa_km": 244,
+    "altitud_media": 119,
+    "paro": 13.1,
+    "pib_capita": 25400
   },
   "04": {
     "nombre": "Almería",
     "poblacion": 753524,
     "ccaa": "01",
-    "capital": "Almería"
+    "capital": "Almería",
+    "superficie": 8775,
+    "costa_km": 218,
+    "altitud_media": 357,
+    "paro": 19.8,
+    "pib_capita": 22100
   },
   "05": {
     "nombre": "Ávila",
     "poblacion": 156239,
     "ccaa": "07",
-    "capital": "Ávila"
+    "capital": "Ávila",
+    "superficie": 8050,
+    "costa_km": 0,
+    "altitud_media": 1133,
+    "paro": 12.4,
+    "pib_capita": 27100
   },
   "06": {
     "nombre": "Badajoz",
     "poblacion": 663704,
-    "ccaa": "11",
-    "capital": "Badajoz"
+    "ccaa": "10",
+    "capital": "Badajoz",
+    "superficie": 21766,
+    "costa_km": 0,
+    "altitud_media": 497,
+    "paro": 18.7,
+    "pib_capita": 20800
   },
   "07": {
     "nombre": "Baleares",
     "poblacion": 1187802,
     "ccaa": "04",
-    "capital": "Palma"
+    "capital": "Palma",
+    "superficie": 4992,
+    "costa_km": 644,
+    "altitud_media": 157,
+    "paro": 10.6,
+    "pib_capita": 29800
   },
   "08": {
     "nombre": "Barcelona",
     "poblacion": 5798605,
     "ccaa": "09",
-    "capital": "Barcelona"
+    "capital": "Barcelona",
+    "superficie": 7780,
+    "costa_km": 306,
+    "altitud_media": 372,
+    "paro": 10.2,
+    "pib_capita": 39500
   },
   "09": {
     "nombre": "Burgos",
     "poblacion": 359999,
     "ccaa": "07",
-    "capital": "Burgos"
+    "capital": "Burgos",
+    "superficie": 14305,
+    "costa_km": 0,
+    "altitud_media": 856,
+    "paro": 7.9,
+    "pib_capita": 32400
   },
   "10": {
     "nombre": "Cáceres",
     "poblacion": 398362,
-    "ccaa": "11",
-    "capital": "Cáceres"
+    "ccaa": "10",
+    "capital": "Cáceres",
+    "superficie": 41634,
+    "costa_km": 0,
+    "altitud_media": 582,
+    "paro": 16.9,
+    "pib_capita": 18900
   },
   "11": {
     "nombre": "Cádiz",
     "poblacion": 1244534,
     "ccaa": "01",
-    "capital": "Cádiz"
+    "capital": "Cádiz",
+    "superficie": 7393,
+    "costa_km": 260,
+    "altitud_media": 135,
+    "paro": 22.4,
+    "pib_capita": 20100
   },
   "12": {
     "nombre": "Castellón",
     "poblacion": 609834,
-    "ccaa": "06",
-    "capital": "Castellón"
+    "ccaa": "17",
+    "capital": "Castellón",
+    "superficie": 5027,
+    "costa_km": 326,
+    "altitud_media": 181,
+    "paro": 16.8,
+    "pib_capita": 22600
   },
   "13": {
     "nombre": "Ciudad Real",
     "poblacion": 497263,
     "ccaa": "08",
-    "capital": "Ciudad Real"
+    "capital": "Ciudad Real",
+    "superficie": 19751,
+    "costa_km": 0,
+    "altitud_media": 693,
+    "paro": 20.1,
+    "pib_capita": 23400
   },
   "14": {
     "nombre": "Córdoba",
     "poblacion": 786099,
     "ccaa": "01",
-    "capital": "Córdoba"
+    "capital": "Córdoba",
+    "superficie": 13569,
+    "costa_km": 0,
+    "altitud_media": 726,
+    "paro": 16.2,
+    "pib_capita": 24200
   },
   "15": {
     "nombre": "A Coruña",
     "poblacion": 1123529,
-    "ccaa": "12",
-    "capital": "A Coruña"
+    "ccaa": "11",
+    "capital": "A Coruña",
+    "superficie": 7950,
+    "costa_km": 928,
+    "altitud_media": 259,
+    "paro": 11.4,
+    "pib_capita": 28600
   },
   "16": {
     "nombre": "Cuenca",
     "poblacion": 197563,
     "ccaa": "08",
-    "capital": "Cuenca"
+    "capital": "Cuenca",
+    "superficie": 17210,
+    "costa_km": 0,
+    "altitud_media": 895,
+    "paro": 13.8,
+    "pib_capita": 26900
   },
   "17": {
     "nombre": "Girona",
     "poblacion": 804900,
     "ccaa": "09",
-    "capital": "Girona"
+    "capital": "Girona",
+    "superficie": 5910,
+    "costa_km": 330,
+    "altitud_media": 225,
+    "paro": 11.8,
+    "pib_capita": 32100
   },
   "18": {
     "nombre": "Granada",
     "poblacion": 929494,
     "ccaa": "01",
-    "capital": "Granada"
+    "capital": "Granada",
+    "superficie": 12531,
+    "costa_km": 315,
+    "altitud_media": 685,
+    "paro": 20.3,
+    "pib_capita": 22400
   },
   "19": {
     "nombre": "Guadalajara",
     "poblacion": 290253,
     "ccaa": "08",
-    "capital": "Guadalajara"
+    "capital": "Guadalajara",
+    "superficie": 12190,
+    "costa_km": 0,
+    "altitud_media": 1029,
+    "paro": 11.2,
+    "pib_capita": 27800
   },
   "20": {
     "nombre": "Gipuzkoa",
     "poblacion": 727219,
     "ccaa": "16",
-    "capital": "San Sebastián"
+    "capital": "San Sebastián",
+    "superficie": 1997,
+    "costa_km": 118,
+    "altitud_media": 303,
+    "paro": 7.8,
+    "pib_capita": 42100
   },
   "21": {
     "nombre": "Huelva",
     "poblacion": 519909,
     "ccaa": "01",
-    "capital": "Huelva"
+    "capital": "Huelva",
+    "superficie": 10148,
+    "costa_km": 127,
+    "altitud_media": 290,
+    "paro": 23.8,
+    "pib_capita": 18600
   },
   "22": {
     "nombre": "Huesca",
     "poblacion": 227074,
     "ccaa": "02",
-    "capital": "Huesca"
+    "capital": "Huesca",
+    "superficie": 15636,
+    "costa_km": 0,
+    "altitud_media": 1005,
+    "paro": 8.6,
+    "pib_capita": 31200
   },
   "23": {
     "nombre": "Jaén",
     "poblacion": 628970,
     "ccaa": "01",
-    "capital": "Jaén"
+    "capital": "Jaén",
+    "superficie": 13489,
+    "costa_km": 0,
+    "altitud_media": 680,
+    "paro": 19.2,
+    "pib_capita": 20900
   },
   "24": {
     "nombre": "León",
     "poblacion": 449130,
     "ccaa": "07",
-    "capital": "León"
+    "capital": "León",
+    "superficie": 15581,
+    "costa_km": 0,
+    "altitud_media": 950,
+    "paro": 9.8,
+    "pib_capita": 27600
   },
   "25": {
     "nombre": "Lleida",
     "poblacion": 440547,
     "ccaa": "09",
-    "capital": "Lleida"
+    "capital": "Lleida",
+    "superficie": 12149,
+    "costa_km": 0,
+    "altitud_media": 624,
+    "paro": 9.1,
+    "pib_capita": 31800
   },
   "26": {
     "nombre": "La Rioja",
     "poblacion": 322480,
-    "ccaa": "17",
-    "capital": "Logroño"
+    "ccaa": "12",
+    "capital": "Logroño",
+    "superficie": 5045,
+    "costa_km": 0,
+    "altitud_media": 578,
+    "paro": 8.4,
+    "pib_capita": 35200
   },
   "27": {
     "nombre": "Lugo",
     "poblacion": 322370,
-    "ccaa": "12",
-    "capital": "Lugo"
+    "ccaa": "11",
+    "capital": "Lugo",
+    "superficie": 9856,
+    "costa_km": 0,
+    "altitud_media": 612,
+    "paro": 10.6,
+    "pib_capita": 24800
   },
   "28": {
     "nombre": "Madrid",
     "poblacion": 6841408,
-    "ccaa": "09",
-    "capital": "Madrid"
+    "ccaa": "13",
+    "capital": "Madrid",
+    "superficie": 8028,
+    "costa_km": 0,
+    "altitud_media": 657,
+    "paro": 9.8,
+    "pib_capita": 42800
   },
   "29": {
     "nombre": "Málaga",
     "poblacion": 1760509,
     "ccaa": "01",
-    "capital": "Málaga"
+    "capital": "Málaga",
+    "superficie": 7308,
+    "costa_km": 326,
+    "altitud_media": 589,
+    "paro": 17.2,
+    "pib_capita": 26800
   },
   "30": {
     "nombre": "Murcia",
     "poblacion": 1551665,
     "ccaa": "14",
-    "capital": "Murcia"
+    "capital": "Murcia",
+    "superficie": 11314,
+    "costa_km": 250,
+    "altitud_media": 239,
+    "paro": 13.6,
+    "pib_capita": 24900
   },
   "31": {
     "nombre": "Navarra",
     "poblacion": 672155,
     "ccaa": "15",
-    "capital": "Pamplona"
+    "capital": "Pamplona",
+    "superficie": 10391,
+    "costa_km": 0,
+    "altitud_media": 628,
+    "paro": 6.2,
+    "pib_capita": 38400
   },
   "32": {
     "nombre": "Ourense",
     "poblacion": 304489,
-    "ccaa": "12",
-    "capital": "Ourense"
+    "ccaa": "11",
+    "capital": "Ourense",
+    "superficie": 7273,
+    "costa_km": 0,
+    "altitud_media": 463,
+    "paro": 12.1,
+    "pib_capita": 22900
   },
   "33": {
     "nombre": "Asturias",
     "poblacion": 1005214,
     "ccaa": "03",
-    "capital": "Oviedo"
+    "capital": "Oviedo",
+    "superficie": 10604,
+    "costa_km": 345,
+    "altitud_media": 472,
+    "paro": 10.8,
+    "pib_capita": 30200
   },
   "34": {
     "nombre": "Palencia",
     "poblacion": 149399,
     "ccaa": "07",
-    "capital": "Palencia"
+    "capital": "Palencia",
+    "superficie": 8052,
+    "costa_km": 0,
+    "altitud_media": 820,
+    "paro": 8.1,
+    "pib_capita": 28400
   },
   "35": {
     "nombre": "Las Palmas",
     "poblacion": 1143363,
     "ccaa": "05",
-    "capital": "Las Palmas"
+    "capital": "Las Palmas",
+    "superficie": 4066,
+    "costa_km": 344,
+    "altitud_media": 396,
+    "paro": 16.4,
+    "pib_capita": 23600
   },
   "36": {
     "nombre": "Pontevedra",
     "poblacion": 946179,
-    "ccaa": "12",
-    "capital": "Pontevedra"
+    "ccaa": "11",
+    "capital": "Pontevedra",
+    "superficie": 4495,
+    "costa_km": 214,
+    "altitud_media": 362,
+    "paro": 10.2,
+    "pib_capita": 27200
   },
   "37": {
     "nombre": "Salamanca",
     "poblacion": 328385,
     "ccaa": "07",
-    "capital": "Salamanca"
+    "capital": "Salamanca",
+    "superficie": 12350,
+    "costa_km": 0,
+    "altitud_media": 826,
+    "paro": 9.4,
+    "pib_capita": 27900
   },
   "38": {
     "nombre": "S.C. Tenerife",
     "poblacion": 1076844,
     "ccaa": "05",
-    "capital": "S.C. Tenerife"
+    "capital": "S.C. Tenerife",
+    "superficie": 3381,
+    "costa_km": 358,
+    "altitud_media": 632,
+    "paro": 15.8,
+    "pib_capita": 22800
   },
   "39": {
     "nombre": "Cantabria",
     "poblacion": 588058,
-    "ccaa": "03",
-    "capital": "Santander"
+    "ccaa": "06",
+    "capital": "Santander",
+    "superficie": 5321,
+    "costa_km": 285,
+    "altitud_media": 463,
+    "paro": 11.2,
+    "pib_capita": 29100
   },
   "40": {
     "nombre": "Segovia",
     "poblacion": 156099,
     "ccaa": "07",
-    "capital": "Segovia"
+    "capital": "Segovia",
+    "superficie": 6943,
+    "costa_km": 0,
+    "altitud_media": 1000,
+    "paro": 9.6,
+    "pib_capita": 32100
   },
   "41": {
     "nombre": "Sevilla",
     "poblacion": 1958180,
     "ccaa": "01",
-    "capital": "Sevilla"
+    "capital": "Sevilla",
+    "superficie": 14042,
+    "costa_km": 127,
+    "altitud_media": 178,
+    "paro": 18.9,
+    "pib_capita": 24200
   },
   "42": {
     "nombre": "Soria",
     "poblacion": 88593,
     "ccaa": "07",
-    "capital": "Soria"
+    "capital": "Soria",
+    "superficie": 10303,
+    "costa_km": 0,
+    "altitud_media": 1082,
+    "paro": 7.2,
+    "pib_capita": 29800
   },
   "43": {
     "nombre": "Tarragona",
     "poblacion": 823486,
     "ccaa": "09",
-    "capital": "Tarragona"
+    "capital": "Tarragona",
+    "superficie": 6303,
+    "costa_km": 281,
+    "altitud_media": 382,
+    "paro": 11.4,
+    "pib_capita": 29100
   },
   "44": {
     "nombre": "Teruel",
     "poblacion": 133922,
     "ccaa": "02",
-    "capital": "Teruel"
+    "capital": "Teruel",
+    "superficie": 14810,
+    "costa_km": 0,
+    "altitud_media": 1350,
+    "paro": 8.4,
+    "pib_capita": 27600
   },
   "45": {
     "nombre": "Toledo",
     "poblacion": 710323,
     "ccaa": "08",
-    "capital": "Toledo"
+    "capital": "Toledo",
+    "superficie": 15379,
+    "costa_km": 0,
+    "altitud_media": 665,
+    "paro": 14.2,
+    "pib_capita": 26100
   },
   "46": {
     "nombre": "Valencia",
     "poblacion": 2659489,
-    "ccaa": "06",
-    "capital": "Valencia"
+    "ccaa": "17",
+    "capital": "Valencia",
+    "superficie": 10807,
+    "costa_km": 532,
+    "altitud_media": 365,
+    "paro": 12.8,
+    "pib_capita": 28400
   },
   "47": {
     "nombre": "Valladolid",
     "poblacion": 519546,
     "ccaa": "07",
-    "capital": "Valladolid"
+    "capital": "Valladolid",
+    "superficie": 8110,
+    "costa_km": 0,
+    "altitud_media": 754,
+    "paro": 8.6,
+    "pib_capita": 31200
   },
   "48": {
     "nombre": "Bizkaia",
     "poblacion": 1159348,
     "ccaa": "16",
-    "capital": "Bilbao"
+    "capital": "Bilbao",
+    "superficie": 2191,
+    "costa_km": 103,
+    "altitud_media": 300,
+    "paro": 8.2,
+    "pib_capita": 38600
   },
   "49": {
     "nombre": "Zamora",
     "poblacion": 166275,
     "ccaa": "07",
-    "capital": "Zamora"
+    "capital": "Zamora",
+    "superficie": 10559,
+    "costa_km": 0,
+    "altitud_media": 825,
+    "paro": 11.8,
+    "pib_capita": 23800
   },
   "50": {
     "nombre": "Zaragoza",
     "poblacion": 983469,
     "ccaa": "02",
-    "capital": "Zaragoza"
+    "capital": "Zaragoza",
+    "superficie": 17274,
+    "costa_km": 0,
+    "altitud_media": 564,
+    "paro": 8.8,
+    "pib_capita": 34200
   },
   "51": {
     "nombre": "Ceuta",
     "poblacion": 84202,
     "ccaa": "18",
-    "capital": "Ceuta"
+    "capital": "Ceuta",
+    "superficie": 32,
+    "costa_km": 14,
+    "altitud_media": 15,
+    "paro": 22.4,
+    "pib_capita": 24100
   },
   "52": {
     "nombre": "Melilla",
     "poblacion": 86125,
     "ccaa": "19",
-    "capital": "Melilla"
+    "capital": "Melilla",
+    "superficie": 12,
+    "costa_km": 12,
+    "altitud_media": 10,
+    "paro": 21.8,
+    "pib_capita": 23800
   }
 }
