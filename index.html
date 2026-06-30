@@ -1788,15 +1788,35 @@
 
                     <!-- LLUVIA TAB -->
                     <div class="tab-panel" id="tab-lluvia">
-                        <div class="section-title">🌧️ Probabilidad de Lluvia — España</div>
+                        <!-- Selector de ciudad -->
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:11px;color:#64748b;font-weight:600;margin-right:6px;">Ciudad:</label>
+                            <select id="lluvia-city-select" style="padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                            </select>
+                        </div>
+                        <!-- Semáforo de lluvia -->
+                        <div id="lluvia-semaforo" style="padding:10px 14px;border-radius:8px;margin-bottom:10px;font-size:13px;font-weight:600;text-align:center;transition:all 0.3s;background:#f1f5f9;color:#94a3b8;">
+                            —
+                        </div>
                         <div class="kpi-row">
-                            <div class="kpi blue">
+                            <div class="kpi" id="lluvia-kpi-prob" style="background:linear-gradient(135deg,#eff6ff 0%,#ffffff 100%);">
                                 <div class="kpi-value" id="lluvia-max-prob">—</div>
                                 <div class="kpi-label">Prob. máx. de lluvia (%)</div>
                             </div>
+                            <div class="kpi" id="lluvia-kpi-tipo">
+                                <div class="kpi-value" id="lluvia-tipo">—</div>
+                                <div class="kpi-label">Tipo de precipitación</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
                             <div class="kpi orange">
                                 <div class="kpi-value" id="lluvia-precip-total">—</div>
                                 <div class="kpi-label">Precipitación total (mm)</div>
+                            </div>
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="lluvia-acum-7d">—</div>
+                                <div class="kpi-label">Acumulación 7 días (mm)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
@@ -1810,8 +1830,8 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-title">Probabilidad de lluvia y precipitación 7 días</div>
-                            <div class="chart-container" style="height:260px;">
+                            <div class="card-title" id="lluvia-chart-title">Probabilidad de lluvia — Próximas 24 horas</div>
+                            <div class="chart-container" style="height:220px;">
                                 <canvas id="chart-lluvia"></canvas>
                             </div>
                         </div>
@@ -6054,6 +6074,20 @@ fetchPollen();
         fetchUV();
         fetchVisibilidad();
         fetchRafagas();
+        // Lluvia selector event
+        const lluviaCitySelect = document.getElementById('lluvia-city-select');
+        if (lluviaCitySelect) {
+            // Populate city options from LLUVIA_CITIES
+            LLUVIA_CITIES.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city.name;
+                opt.textContent = city.name;
+                lluviaCitySelect.appendChild(opt);
+            });
+            lluviaCitySelect.addEventListener('change', (e) => {
+                fetchLluvia();
+            });
+        }
         fetchLluvia();
         fetchPresion();
         fetchFuego();
@@ -8171,10 +8205,67 @@ fetchPollen();
         { name: 'A Coruña', lat: 43.37, lon: -8.41 },
     ];
 
+    // ===== LLUVIA — SEMÁFORO + TIPO PRECIP + SELECTOR =====
+    function getRainSemaphor(prob) {
+        if (prob >= 70) return { label: '🟣 Muy probable', bg: 'linear-gradient(135deg,#f3e8ff 0%,#e9d5ff 100%)', color: '#6b21a8', border: '#a855f7' };
+        if (prob >= 50) return { label: '🔵 Probable', bg: 'linear-gradient(135deg,#1e3a5f 0%,#1e40af 100%)', color: '#ffffff', border: '#2563eb' };
+        if (prob >= 20) return { label: '🔵 Posible', bg: 'linear-gradient(135deg,#bfdbfe 0%,#93c5fd 100%)', color: '#1e40af', border: '#3b82f6' };
+        return { label: '💧 Improbable', bg: 'linear-gradient(135deg,#e0f2fe 0%,#bae6fd 100%)', color: '#0369a1', border: '#38bdf8' };
+    }
+
+    function detectPrecipType(data) {
+        // Detectar tipo de precipitación de datos actuales/horarios
+        if (!data) return { type: 'Sin datos', icon: '❓' };
+
+        const current = data.current || {};
+        const hourly = data.hourly || {};
+
+        // Open-Meteo: current tiene showery/rain, hourly tiene snowfall/snow_depth
+        const currentRain = (current.rain || 0) + (current.showers || 0);
+        const currentSnow = current.snowfall || 0;
+        const currentSleet = current.snow_depth || 0;
+
+        // Buscar nieve en próximas 24h
+        let snow24h = 0;
+        if (hourly.snowfall && hourly.snowfall.length > 0) {
+            for (let i = 0; i < Math.min(24, hourly.snowfall.length); i++) {
+                snow24h += hourly.snowfall[i] || 0;
+            }
+        }
+        let rain24h = 0;
+        if (hourly.rain && hourly.rain.length > 0) {
+            for (let i = 0; i < Math.min(24, hourly.rain.length); i++) {
+                rain24h += hourly.rain[i] || 0;
+            }
+        }
+        // Aguanieve: prob > 30% con temp baja → usar precipitation_form (0=lluvia, 1=lluvia_congelada, 2=nieve, 3=aguanieve)
+        let sleetProb = 0;
+        if (hourly.precipitation_form && hourly.precipitation_form.length > 0) {
+            for (let i = 0; i < Math.min(24, hourly.precipitation_form.length); i++) {
+                const pf = hourly.precipitation_form[i] || 0;
+                if (pf === 3) sleetProb += 1; // aguanieve
+                else if (pf === 2) snow24h += 0.5; // nieve
+            }
+        }
+
+        if (snow24h > 0.5 || currentSnow > 0) return { type: 'Nieve', icon: '❄️' };
+        if (sleetProb > 6) return { type: 'Aguanieve', icon: '🌨️' };
+        if (rain24h > 0 || currentRain > 0) return { type: 'Lluvia', icon: '🌧️' };
+        return { type: 'Sin precipitación', icon: '☀️' };
+    }
+
+    function getIntensityLabel(mm) {
+        if (mm == null || mm === 0) return 'Sin datos';
+        if (mm < 2.5) return 'Débil';
+        if (mm < 10) return 'Moderada';
+        if (mm < 30) return 'Fuerte';
+        return 'Torrencial';
+    }
+
     async function fetchLluvia() {
         const promises = LLUVIA_CITIES.map(async (city) => {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=precipitation,precipitation_probability,rain,showers&hourly=precipitation_probability,precipitation,rain&daily=precipitation_sum,precipitation_probability_max,precipitation_hours&timezone=Europe/Madrid&forecast_days=7`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=precipitation,precipitation_probability,rain,showers,snowfall,snow_depth&hourly=precipitation_probability,precipitation,rain,snowfall,precipitation_form&daily=precipitation_sum,precipitation_probability_max,precipitation_hours&timezone=Europe/Madrid&forecast_days=7`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -8184,37 +8275,92 @@ fetchPollen();
 
         const results = await Promise.all(promises);
 
-        // KPIs globales
+        // === SEMÁFORO: probabilidad global ===
         let maxProb = 0;
         let totalPrecip = 0;
         let rainyDays = 0;
         let maxIntensity = 0;
+        let totalAcum7d = 0;
 
         results.forEach((data) => {
             if (!data || !data.daily) return;
-            // Max prob from daily
             if (data.daily.precipitation_probability_max != null) {
                 const dayMaxProb = Math.max(...data.daily.precipitation_probability_max);
                 if (dayMaxProb > maxProb) maxProb = dayMaxProb;
             }
-            // Total precip from daily
             if (data.daily.precipitation_sum != null) {
-                totalPrecip += data.daily.precipitation_sum.reduce((a, b) => a + (b || 0), 0);
+                const daySum = data.daily.precipitation_sum.reduce((a, b) => a + (b || 0), 0);
+                totalPrecip += daySum;
+                totalAcum7d += daySum;
             }
-            // Rainy days
             if (data.daily.precipitation_hours != null) {
-                data.daily.precipitation_hours.forEach(d => {
-                    if (d > 0) rainyDays++;
-                });
+                data.daily.precipitation_hours.forEach(d => { if (d > 0) rainyDays++; });
             }
-            // Max intensity from hourly
             if (data.hourly && data.hourly.precipitation != null) {
                 const hourMax = Math.max(...data.hourly.precipitation.map(v => v || 0));
                 if (hourMax > maxIntensity) maxIntensity = hourMax;
             }
         });
 
-        // Count total rainy days across all cities (unique days per city)
+        const semaforo = getRainSemaphor(maxProb);
+        const semaforoEl = document.getElementById('lluvia-semaforo');
+        if (semaforoEl) {
+            semaforoEl.style.background = semaforo.bg;
+            semaforoEl.style.color = semaforo.color;
+            semaforoEl.style.border = `2px solid ${semaforo.border}`;
+            semaforoEl.textContent = semaforo.label;
+        }
+
+        // === TIPO DE PRECIPITACIÓN: usar ciudad con mayor prob ===
+        let bestCityIdx = 0;
+        let bestCityProb = 0;
+        results.forEach((data, idx) => {
+            if (!data || !data.daily) return;
+            if (data.daily.precipitation_probability_max != null) {
+                const cityMaxProb = Math.max(...data.daily.precipitation_probability_max);
+                if (cityMaxProb > bestCityProb) {
+                    bestCityProb = cityMaxProb;
+                    bestCityIdx = idx;
+                }
+            }
+        });
+        const precipType = detectPrecipType(results[bestCityIdx]);
+
+        // === KPIs ===
+        const probEl = document.getElementById('lluvia-max-prob');
+        const probContainer = document.getElementById('lluvia-kpi-prob');
+        const probColor = maxProb >= 70 ? '#6b21a8' : maxProb >= 50 ? '#1e3a5f' : maxProb >= 20 ? '#1e40af' : '#0369a1';
+        probEl.textContent = maxProb ? `${maxProb.toFixed(0)}%` : '—';
+        probEl.style.color = maxProb ? probColor : '#94a3b8';
+        if (maxProb >= 70) {
+            probContainer.style.background = 'linear-gradient(135deg,#f3e8ff 0%,#ffffff 100%)';
+        } else if (maxProb >= 50) {
+            probContainer.style.background = 'linear-gradient(135deg,#1e3a5f 0%,#ffffff 100%)';
+            probContainer.style.color = '#fff';
+        } else if (maxProb >= 20) {
+            probContainer.style.background = 'linear-gradient(135deg,#eff6ff 0%,#ffffff 100%)';
+            probContainer.style.color = '#1e40af';
+        } else {
+            probContainer.style.background = 'linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%)';
+            probContainer.style.color = '#0369a1';
+        }
+
+        const tipoEl = document.getElementById('lluvia-tipo');
+        const tipoContainer = document.getElementById('lluvia-kpi-tipo');
+        tipoEl.textContent = `${precipType.icon} ${precipType.type}`;
+        if (precipType.type === 'Nieve') {
+            tipoContainer.style.background = 'linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%)';
+        } else if (precipType.type === 'Aguanieve') {
+            tipoContainer.style.background = 'linear-gradient(135deg,#fef3c7 0%,#ffffff 100%)';
+        } else if (precipType.type === 'Sin precipitación') {
+            tipoContainer.style.background = 'linear-gradient(135deg,#f0fdf4 0%,#ffffff 100%)';
+        } else {
+            tipoContainer.style.background = 'linear-gradient(135deg,#eff6ff 0%,#ffffff 100%)';
+        }
+
+        document.getElementById('lluvia-precip-total').textContent = totalPrecip ? `${totalPrecip.toFixed(1)} mm` : '—';
+        document.getElementById('lluvia-acum-7d').textContent = totalAcum7d ? `${totalAcum7d.toFixed(1)} mm` : '—';
+
         const rainyDaysPerCity = results.map(data => {
             if (!data || !data.daily || !data.daily.precipitation_hours) return 0;
             let days = 0;
@@ -8225,99 +8371,131 @@ fetchPollen();
             ? (rainyDaysPerCity.reduce((a, b) => a + b, 0) / rainyDaysPerCity.length).toFixed(1)
             : '—';
 
-        document.getElementById('lluvia-max-prob').textContent = maxProb ? `${maxProb.toFixed(0)}%` : '—';
-        document.getElementById('lluvia-precip-total').textContent = totalPrecip ? `${totalPrecip.toFixed(1)} mm` : '—';
         document.getElementById('lluvia-dias').textContent = avgRainyDays;
-        document.getElementById('lluvia-intensidad').textContent = maxIntensity ? `${maxIntensity.toFixed(1)} mm/h` : '—';
+        document.getElementById('lluvia-intensidad').textContent = maxIntensity ? `${getIntensityLabel(maxIntensity)} (${maxIntensity.toFixed(1)} mm/h)` : '—';
 
-        // Chart: probabilidad lluvia (barras) + precipitación acumulada (línea) — promedio 7 días
+        // === CHART: 24h probabilidad (línea) + precipitación (barras) ===
         const ctxLluvia = document.getElementById('chart-lluvia');
         if (ctxLluvia) {
             if (window._chartLluvia) window._chartLluvia.destroy();
 
-            // Average daily probability across cities
-            const labels = [];
-            const avgProb = [];
-            const avgPrecip = [];
+            // Usar la ciudad seleccionada o la primera con datos
+            const sel = document.getElementById('lluvia-city-select');
+            const cityVal = sel ? sel.value : 'all';
 
-            if (results[0] && results[0].daily && results[0].daily.time) {
-                for (let i = 0; i < results[0].daily.time.length; i++) {
-                    const t = new Date(results[0].daily.time[i]);
-                    labels.push(`${t.getDate()}/${t.getMonth() + 1}`);
+            let chartData = [];
+            let chartLabels = [];
 
-                    let probSum = 0;
-                    let precipSum = 0;
-                    let valid = 0;
+            if (cityVal === 'all') {
+                // Promedio de todas las ciudades — 24h
+                const validResults = results.filter(d => d && d.hourly && d.hourly.time);
+                if (validResults.length > 0 && validResults[0].hourly.time) {
+                    const times = validResults[0].hourly.time;
+                    // Limitar a primeras 24h
+                    const limit = Math.min(24, times.length);
+                    for (let i = 0; i < limit; i++) {
+                        const t = new Date(times[i]);
+                        chartLabels.push(`${t.getDate()}/${t.getMonth()+1} ${t.getHours().toString().padStart(2,'0')}:00`);
 
-                    results.forEach(data => {
-                        if (!data || !data.daily) return;
-                        if (data.daily.precipitation_probability_max != null && data.daily.precipitation_probability_max[i] != null) {
-                            probSum += data.daily.precipitation_probability_max[i];
-                        }
-                        if (data.daily.precipitation_sum != null && data.daily.precipitation_sum[i] != null) {
-                            precipSum += data.daily.precipitation_sum[i] || 0;
-                        }
-                        valid++;
-                    });
-
-                    avgProb.push(valid > 0 ? probSum / valid : 0);
-                    avgPrecip.push(precipSum);
+                        let probSum = 0, precipSum = 0, valid = 0;
+                        validResults.forEach(data => {
+                            if (!data.hourly) return;
+                            if (data.hourly.precipitation_probability != null && data.hourly.precipitation_probability[i] != null) {
+                                probSum += data.hourly.precipitation_probability[i];
+                            }
+                            if (data.hourly.precipitation != null && data.hourly.precipitation[i] != null) {
+                                precipSum += data.hourly.precipitation[i] || 0;
+                            }
+                            valid++;
+                        });
+                        chartData.push({
+                            prob: valid > 0 ? probSum / valid : 0,
+                            precip: precipSum
+                        });
+                    }
+                }
+            } else {
+                // Ciudad específica
+                const cityIdx = LLUVIA_CITIES.findIndex(c => c.name === cityVal);
+                if (cityIdx >= 0 && results[cityIdx] && results[cityIdx].hourly && results[cityIdx].hourly.time) {
+                    const data = results[cityIdx];
+                    const times = data.hourly.time;
+                    const limit = Math.min(24, times.length);
+                    for (let i = 0; i < limit; i++) {
+                        const t = new Date(times[i]);
+                        chartLabels.push(`${t.getDate()}/${t.getMonth()+1} ${t.getHours().toString().padStart(2,'0')}:00`);
+                        chartData.push({
+                            prob: (data.hourly.precipitation_probability?.[i] ?? 0),
+                            precip: (data.hourly.precipitation?.[i] ?? 0)
+                        });
+                    }
                 }
             }
+
+            const probValues = chartData.map(d => d.prob);
+            const precipValues = chartData.map(d => d.precip);
+
+            const semaforoColors = probValues.map(p => {
+                if (p >= 70) return '#a855f7';
+                if (p >= 50) return '#1e40af';
+                if (p >= 20) return '#3b82f6';
+                return '#38bdf8';
+            });
 
             window._chartLluvia = new Chart(ctxLluvia, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: chartLabels,
                     datasets: [
                         {
-                            type: 'bar',
-                            label: 'Prob. lluvia máx. (%)',
-                            data: avgProb,
-                            backgroundColor: avgProb.map(p => {
-                                if (p > 60) return '#dc262688';
-                                if (p > 30) return '#f9731688';
-                                return '#2563eb88';
-                            }),
-                            borderColor: avgProb.map(p => {
-                                if (p > 60) return '#dc2626';
-                                if (p > 30) return '#f97316';
-                                return '#2563eb';
-                            }),
-                            borderWidth: 1,
-                            borderRadius: 4,
+                            type: 'line',
+                            label: 'Prob. lluvia (%)',
+                            data: probValues,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.1)',
+                            borderWidth: 2.5,
+                            pointRadius: probValues.map(p => p > 30 ? 4 : 2),
+                            pointBackgroundColor: semaforoColors,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 1.5,
+                            fill: true,
+                            tension: 0.3,
                             yAxisID: 'y',
-                            order: 2,
+                            order: 1,
                         },
                         {
-                            type: 'line',
+                            type: 'bar',
                             label: 'Precipitación (mm)',
-                            data: avgPrecip,
-                            borderColor: '#1e90ff',
-                            backgroundColor: '#1e90ff22',
-                            borderWidth: 2.5,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#1e90ff',
-                            fill: true,
-                            tension: 0.4,
+                            data: precipValues,
+                            backgroundColor: precipValues.map(p => {
+                                if (p > 10) return '#dc262666';
+                                if (p > 5) return '#f9731666';
+                                if (p > 0) return '#3b82f666';
+                                return '#e2e8f066';
+                            }),
+                            borderColor: precipValues.map(p => {
+                                if (p > 10) return '#dc2626';
+                                if (p > 5) return '#f97316';
+                                if (p > 0) return '#3b82f6';
+                                return '#cbd5e1';
+                            }),
+                            borderWidth: 1,
+                            borderRadius: 2,
                             yAxisID: 'y1',
-                            order: 1,
+                            order: 2,
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
                         tooltip: {
                             callbacks: {
                                 label: function(ctx) {
-                                    if (ctx.dataset.type === 'bar') {
+                                    if (ctx.dataset.type === 'line') {
                                         return `Prob: ${ctx.parsed.y.toFixed(0)}%`;
                                     }
                                     return `Precip: ${ctx.parsed.y.toFixed(1)} mm`;
@@ -8333,7 +8511,7 @@ fetchPollen();
                             beginAtZero: true,
                             max: 100,
                             title: { display: true, text: 'Probabilidad (%)' },
-                            ticks: { font: { size: 10 } },
+                            ticks: { font: { size: 9 } },
                             grid: { color: '#f1f5f9' },
                         },
                         y1: {
@@ -8342,12 +8520,11 @@ fetchPollen();
                             position: 'right',
                             beginAtZero: true,
                             title: { display: true, text: 'Precipitación (mm)' },
-                            ticks: { font: { size: 10 } },
+                            ticks: { font: { size: 9 } },
                             grid: { drawOnChartArea: false },
                         },
                         x: {
-                            title: { display: true, text: 'Día' },
-                            ticks: { font: { size: 10 } },
+                            ticks: { font: { size: 8 }, maxRotation: 45 },
                             grid: { display: false },
                         },
                     },
@@ -8355,7 +8532,7 @@ fetchPollen();
             });
         }
 
-        // Detalle por ciudad
+        // === DETALLE POR CIUDAD ===
         const citiesEl = document.getElementById('lluvia-cities');
         if (citiesEl) {
             let html = '';
@@ -8369,37 +8546,34 @@ fetchPollen();
                     return;
                 }
 
-                // Max prob today
                 const maxProbToday = data.daily.precipitation_probability_max != null
                     ? Math.max(...data.daily.precipitation_probability_max).toFixed(0)
                     : '—';
-                // Today's precip
                 const precipToday = data.daily.precipitation_sum != null
                     ? (data.daily.precipitation_sum[0] ?? 0).toFixed(1)
                     : '0.0';
-                // Days with rain
+
                 let daysRain = 0;
                 if (data.daily.precipitation_hours != null) {
                     data.daily.precipitation_hours.forEach(d => { if (d > 0) daysRain++; });
                 }
-                // Max intensity from current
-                const maxInt = data.current && data.current.precipitation != null
-                    ? data.current.precipitation.toFixed(1)
-                    : (data.hourly && data.hourly.precipitation != null
-                        ? Math.max(...data.hourly.precipitation.map(v => v || 0)).toFixed(1)
-                        : '—');
 
-                let rainBadge = 'badge-green';
-                let rainText = 'Sin lluvia';
-                const probNum = typeof maxProbToday === 'number' ? maxProbToday : 0;
-                if (probNum > 60) { rainBadge = 'badge-red'; rainText = 'Muy probable'; }
-                else if (probNum > 30) { rainBadge = 'badge-orange'; rainText = 'Posible'; }
-                else if (probNum > 10) { rainBadge = 'badge-blue'; rainText = 'Leve'; }
+                const maxInt = data.hourly && data.hourly.precipitation != null
+                    ? Math.max(...data.hourly.precipitation.map(v => v || 0)).toFixed(1)
+                    : '—';
+
+                const cityType = detectPrecipType(data);
+                const intensityLabel = getIntensityLabel(maxInt === '—' ? 0 : parseFloat(maxInt));
+
+                const sem = getRainSemaphor(parseInt(maxProbToday) || 0);
+                const semBadge = sem.label.includes('Muy probable') ? 'badge-red' :
+                                 sem.label.includes('Probable') ? 'badge-blue' :
+                                 sem.label.includes('Posible') ? 'badge-orange' : 'badge-green';
 
                 html += `<div class="list-item">
-                    <div class="list-item-header">${city.name} <span class="badge ${rainBadge}">${rainText} ${maxProbToday}%</span></div>
+                    <div class="list-item-header">${city.name} <span class="badge ${semBadge}">${sem.label.replace(/[🟣🔵💧]/g,'').trim()} ${maxProbToday}%</span></div>
                     <div class="list-item-sub">
-                        🌧️ Hoy: ${precipToday} mm · 📅 Días lluvia: ${daysRain}/7 · 💧 Intensidad: ${maxInt} mm/h
+                        ${cityType.icon} ${cityType.type} · 🌧️ Hoy: ${precipToday} mm · 📅 Días lluvia: ${daysRain}/7 · 💧 ${intensityLabel}: ${maxInt} mm/h
                     </div>
                 </div>`;
             });
