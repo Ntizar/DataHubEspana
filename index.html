@@ -2349,6 +2349,16 @@
                                 <div class="kpi-label">Horas sol 7d (h)</div>
                             </div>
                             <div class="kpi green">
+                                <div class="kpi-value" id="sol-max-mes">—</div>
+                                <div class="kpi-label">Máximo mes (h)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="sol-pred-manana">—</div>
+                                <div class="kpi-label">Predicción mañana (h)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
                                 <div class="kpi-value" id="sol-pct-max">—</div>
                                 <div class="kpi-label">% sobre máx teórico</div>
                             </div>
@@ -2482,6 +2492,16 @@
                             <div class="kpi orange">
                                 <div class="kpi-value" id="rad-energia">—</div>
                                 <div class="kpi-label">Energía solar estimada kWh/panel (300W)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="rad-max-24h">—</div>
+                                <div class="kpi-label">Máxima 24h (W/m²)</div>
+                            </div>
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="rad-uv">—</div>
+                                <div class="kpi-label">UV asociado (estimado)</div>
                             </div>
                         </div>
                         <div class="card">
@@ -6372,6 +6392,18 @@
         const totalEt0Siete = et0SieteDias.reduce((a, b) => a + b, 0);
         const totalBalance = totalPrecipSiete - totalEt0Siete;
 
+        // Clasificación agrícola ET₀ (FAO-56): <2 Baja, 2-4 Media, 4-6 Alta, >6 Muy alta
+        let et0Clasificacion = '—';
+        let et0Color = '#64748b';
+        let et0Emoji = '❓';
+        if (avgEt0Hoy !== '—') {
+            const et0Val = parseFloat(avgEt0Hoy);
+            if (et0Val < 2) { et0Clasificacion = 'Baja'; et0Color = '#16a34a'; et0Emoji = '🌱'; }
+            else if (et0Val < 4) { et0Clasificacion = 'Media'; et0Color = '#eab308'; et0Emoji = '☀️'; }
+            else if (et0Val < 6) { et0Clasificacion = 'Alta'; et0Color = '#f97316'; et0Emoji = '🔥'; }
+            else { et0Clasificacion = 'Muy alta'; et0Color = '#dc2626'; et0Emoji = '🌡️'; }
+        }
+
         // Clasificación de aridez: ET₀ / Precipitación (ratio 7d)
         let aridezClasificacion = '—';
         let aridezColor = '#64748b';
@@ -6410,6 +6442,22 @@
             aridezEl.innerHTML = `${aridezEmoji} ${aridezClasificacion}`;
             aridezEl.style.color = aridezColor;
             aridezKpi.className = 'kpi';
+        }
+
+        // Clasificación agrícola ET₀ KPI
+        let et0ClassEl = document.getElementById('evapo-et0-class');
+        if (!et0ClassEl) {
+            // Create a new KPI card for ET0 classification
+            const balanceKpiEl = document.getElementById('evapo-balance-kpi');
+            if (balanceKpiEl) {
+                et0ClassEl = document.createElement('div');
+                et0ClassEl.id = 'evapo-et0-class';
+                et0ClassEl.className = 'kpi';
+                balanceKpiEl.parentElement.appendChild(et0ClassEl);
+            }
+        }
+        if (et0ClassEl) {
+            et0ClassEl.innerHTML = `<div class="kpi-value" style="color:${et0Color}">${et0Emoji} ${et0Clasificacion}</div><div class="kpi-label">Clasificación agrícola ET₀</div>`;
         }
 
         // Chart: ET₀ vs precipitación 7 días (doble eje)
@@ -6525,11 +6573,19 @@
                     else aridezCity = '🏜️ Árido';
                 }
 
+                // Clasificación ET₀ por ciudad
+                let et0ClassCity = '';
+                let et0ColorCity = '#64748b';
+                if (et0Today > 6) { et0ClassCity = '🌡️ Muy alta'; et0ColorCity = '#dc2626'; }
+                else if (et0Today > 4) { et0ClassCity = '🔥 Alta'; et0ColorCity = '#f97316'; }
+                else if (et0Today > 2) { et0ClassCity = '☀️ Media'; et0ColorCity = '#eab308'; }
+                else { et0ClassCity = '🌱 Baja'; et0ColorCity = '#16a34a'; }
+
                 html += `<div class="list-item">
                     <div class="list-item-header">${city.name} <span class="badge ${badgeClass}">${statusText}</span></div>
                     <div class="list-item-sub">
                         ET₀ hoy: <strong>${et0Today.toFixed(1)} mm</strong> · ET₀ 7d: <strong>${et0Seven.toFixed(1)} mm</strong> · Precip. 7d: <strong>${precipSeven.toFixed(1)} mm</strong>
-                        <br><span style="color:#64748b;">📍 ${city.cc} · Balance: <strong>${balance.toFixed(1)} mm</strong> · ${aridezCity}</span>
+                        <br><span style="color:#64748b;">📍 ${city.cc} · Balance: <strong>${balance.toFixed(1)} mm</strong> · ${aridezCity} · <span style="color:${et0ColorCity}">${et0ClassCity}</span></span>
                     </div>
                 </div>`;
             });
@@ -6551,29 +6607,23 @@
 
     // Escala de riesgo de tormenta (Open-Meteo CAPE thresholds)
     function capeRiskLevel(cape) {
-        if (cape > 2000) return { text: '🟣 Tormentas extremas', cls: 'badge-purple', color: '#9333ea' };
-        if (cape > 1000) return { text: '🔴 Tormentas fuertes', cls: 'badge-red', color: '#dc2626' };
-        if (cape > 500)  return { text: '🟠 Tormentas probables', cls: 'badge-orange', color: '#ea580c' };
-        if (cape >= 200)  return { text: '🟡 Tormentas posibles', cls: 'badge-yellow', color: '#ca8a04' };
+        if (cape > 1000) return { text: '🔴 Tormenta severa', cls: 'badge-red', color: '#dc2626' };
+        if (cape >= 300) return { text: '🟡 Tormenta', cls: 'badge-yellow', color: '#eab308' };
         return { text: '🟢 Inestable', cls: 'badge-green', color: '#16a34a' };
     }
 
     // Escala para KPI global
     function capeGlobalRisk(avgCape) {
-        if (avgCape > 2000) return { text: '⚠️ Tormentas extremas', cls: 'kpi purple' };
-        if (avgCape > 1000) return { text: '🔴 Tormentas fuertes', cls: 'kpi red' };
-        if (avgCape > 500)  return { text: '🟠 Tormentas probables', cls: 'kpi orange' };
-        if (avgCape >= 200)  return { text: '🟡 Tormentas posibles', cls: 'kpi yellow' };
+        if (avgCape > 1000) return { text: '🔴 Tormenta severa', cls: 'kpi red' };
+        if (avgCape >= 300) return { text: '🟡 Tormenta', cls: 'kpi yellow' };
         return { text: '🟢 Inestable', cls: 'kpi green' };
     }
 
     // Color para KPI de CAPE según nivel
     function capeKpiColor(cape) {
-        if (cape > 2000) return '#9333ea';
         if (cape > 1000) return '#dc2626';
-        if (cape > 500)  return '#ea580c';
-        if (cape >= 200)  return '#ca8a04';
-        return null;
+        if (cape >= 300) return '#eab308';
+        return '#16a34a';
     }
 
     async function fetchCAPE() {
@@ -6626,10 +6676,9 @@
 
             // Risk classification per city
             let risk = 'bajo';
-            if (cape > 2000) risk = 'extremo';
-            else if (cape > 1000) risk = 'fuerte';
-            else if (cape > 500) risk = 'probable';
-            else if (cape >= 200) risk = 'posible';
+            if (cape > 1000) risk = 'severa';
+            else if (cape >= 300) risk = 'tormenta';
+            else risk = 'inestable';
 
             const riskInfo = capeRiskLevel(cape);
             riskByCity.push({ name: CAPE_CITIES[idx].name, cape, risk, riskInfo });
@@ -6703,40 +6752,22 @@
             const colors = ['#ef4444', '#f97316', '#eab308', '#2563eb', '#16a34a', '#7c3aed', '#0891b2', '#ec4899'];
             const datasets = [];
 
-            // Bandas de riesgo (fondos)
+            // Bandas de riesgo (fondos): <300 inestable, 300-1000 tormenta, >1000 severa
             datasets.push({
-                label: '> 2000 J/kg extremo',
-                data: new Array(168).fill(2000),
-                borderColor: '#9333ea',
-                borderWidth: 1,
-                borderDash: [4, 4],
-                pointRadius: 0,
-                fill: false,
-            });
-            datasets.push({
-                label: '> 1000 J/kg fuerte',
+                label: '> 1000 J/kg severa',
                 data: new Array(168).fill(1000),
                 borderColor: '#dc2626',
-                borderWidth: 1,
-                borderDash: [4, 4],
+                borderWidth: 2,
+                borderDash: [6, 4],
                 pointRadius: 0,
                 fill: false,
             });
             datasets.push({
-                label: '> 500 J/kg probable',
-                data: new Array(168).fill(500),
-                borderColor: '#ea580c',
-                borderWidth: 1,
-                borderDash: [4, 4],
-                pointRadius: 0,
-                fill: false,
-            });
-            datasets.push({
-                label: '> 200 J/kg posible',
-                data: new Array(168).fill(200),
-                borderColor: '#ca8a04',
-                borderWidth: 1,
-                borderDash: [4, 4],
+                label: '> 300 J/kg tormenta',
+                data: new Array(168).fill(300),
+                borderColor: '#eab308',
+                borderWidth: 2,
+                borderDash: [6, 4],
                 pointRadius: 0,
                 fill: false,
             });
@@ -6784,13 +6815,8 @@
                         tooltip: {
                             callbacks: {
                                 label: function(ctx) {
-                                    if (ctx.dataset.label.includes('J/kg') && !ctx.dataset.label.includes('extremo')) {
-                                        return ctx.dataset.label;
-                                    }
-                                    if (ctx.dataset.label.includes('extremo')) return '🟣 > 2000 J/kg: Extremo';
-                                    if (ctx.dataset.label.includes('fuerte')) return '🔴 > 1000 J/kg: Fuerte';
-                                    if (ctx.dataset.label.includes('probable')) return '🟠 > 500 J/kg: Probable';
-                                    if (ctx.dataset.label.includes('posible')) return '🟡 > 200 J/kg: Posible';
+                                    if (ctx.dataset.label.includes('severa')) return '🔴 > 1000 J/kg: Tormenta severa';
+                                    if (ctx.dataset.label.includes('tormenta')) return '🟡 > 300 J/kg: Tormenta';
                                     return `${ctx.parsed.y} J/kg`;
                                 },
                             },
@@ -6820,10 +6846,9 @@
                     <div class="list-item-header">${item.name} <span class="badge ${item.riskInfo.cls}">${item.riskInfo.text}</span></div>
                     <div class="list-item-sub">
                         ⚡ CAPE: <strong>${item.cape} J/kg</strong> · ${item.risk}
-                        ${item.cape > 2000 ? '<br>🟣 <em>¡Energía extrema! Tormentas severas muy probables</em>' : ''}
-                        ${item.cape > 1000 ? '<br>🔴 <em>Alta energía convectiva — tormentas fuertes esperadas</em>' : ''}
-                        ${item.cape > 500 && item.cape <= 1000 ? '<br>🟠 <em>Energía moderada-alta — tormentas probables</em>' : ''}
-                        ${item.cape >= 200 && item.cape <= 500 ? '<br>🟡 <em>Energía baja-moderada — tormentas posibles</em>' : ''}
+                        ${item.cape > 1000 ? '<br>🔴 <em>Energía extrema — tormentas severas muy probables</em>' : ''}
+                        ${item.cape >= 300 && item.cape <= 1000 ? '<br>🟡 <em>Energía moderada — tormentas esperadas</em>' : ''}
+                        ${item.cape < 300 ? '<br>🟢 <em>Inestabilidad baja — riesgo mínimo</em>' : ''}
                     </div>
                 </div>`;
             });
@@ -7090,6 +7115,27 @@
             document.getElementById('sol-vs-media').style.color = vsMediaColor;
             document.getElementById('sol-amencer').textContent = avgSunriseStr;
             document.getElementById('sol-atardecer').textContent = avgSunsetStr;
+
+            // Máximo del mes: buscar el día con más sol en los 7 días (usamos 7d como proxy del mes)
+            let maxMonth = 0;
+            cityData.forEach(d => {
+                const dayMax = Math.max(...d.hrs7d);
+                if (dayMax > maxMonth) maxMonth = dayMax;
+            });
+            const maxMonthAvg = cityData.length > 0 ? maxMonth : 0;
+            document.getElementById('sol-max-mes').textContent = maxMonthAvg.toFixed(1);
+            document.getElementById('sol-max-mes').title = `Mayor concentración de horas sol en un día (7d)`;
+
+            // Predicción mañana: día 1 (índice 1) del array daily
+            let predManana = 0;
+            cityData.forEach(d => {
+                if (d.hrs7d.length > 1) {
+                    predManana += d.hrs7d[1] || 0;
+                }
+            });
+            predManana = cityData.length > 0 ? predManana / cityData.length : 0;
+            document.getElementById('sol-pred-manana').textContent = predManana.toFixed(1);
+            document.getElementById('sol-pred-manana').title = `Horas sol predichas para mañana`;
         }
 
         // Selector de ciudad
@@ -7420,6 +7466,24 @@
             const energyKwh = peakSunHours * panelKwp * systemEfficiency * 24 / 24;
             // Simplified: energy per day = peak_sun_hours * 0.3 * 0.2
             const energyPerDay = peakSunHours * 0.3 * 0.2;
+
+            // Máxima 24h: already computed as peakGlobal above
+            const radMax24hEl = document.getElementById('rad-max-24h');
+            if (radMax24hEl) radMax24hEl.textContent = peakGlobal.toFixed(1);
+
+            // UV estimado: fórmula simplificada (WMO) — UV ≈ shortwave_global / 30
+            // Aproximación: 1 W/m² ≈ 0.033 UV (máximo ~2000 W/m² → ~66 UV, pero real ~12 en España)
+            // Mejor: UV ≈ (shortwave_global / 260) * 12 (escalado al máximo real en España)
+            const uvEstimado = peakGlobal > 0 ? Math.min(12, (peakGlobal / 260) * 12) : 0;
+            const radUvEl = document.getElementById('rad-uv');
+            if (radUvEl) {
+                let uvClass = '';
+                if (uvEstimado < 3) { uvClass = 'badge-green'; }
+                else if (uvEstimado < 6) { uvClass = 'badge-yellow'; }
+                else if (uvEstimado < 8) { uvClass = 'badge-orange'; }
+                else { uvClass = 'badge-red'; }
+                radUvEl.innerHTML = `${uvEstimado.toFixed(1)} <span class="badge ${uvClass}" style="font-size:10px;">${uvEstimado < 3 ? 'Bajo' : uvEstimado < 6 ? 'Moderado' : uvEstimado < 8 ? 'Alto' : 'Muy alto'}</span>`;
+            }
 
             // Update KPIs
             document.getElementById('rad-directa').textContent = peakDirect.toFixed(1);
@@ -11126,30 +11190,25 @@
                 const bochorno = diff < 3;
                 if (bochorno) bochornoCount++;
 
-                // DETECCIÓN DE CONFORT POR ROCÍO
+                // DETECCIÓN DE CONFORT POR ROCÍO — <10 Seco, 10-16 Cómodo, 16-20 Húmedo, >20 Muy húmedo
                 let confortLabel, confortEmoji, comfortClass, kpiColor;
-                if (rocío < 5) {
-                    confortLabel = 'Aire muy seco';
-                    confortEmoji = '💧';
-                    comfortClass = 'badge-red';
-                    kpiColor = '#dc2626';
-                } else if (rocío >= 5 && rocío < 10) {
+                if (rocío < 10) {
                     confortLabel = 'Seco';
                     confortEmoji = '🌵';
                     comfortClass = 'badge-orange';
                     kpiColor = '#f97316';
                 } else if (rocío >= 10 && rocío <= 16) {
-                    confortLabel = 'Confortable';
+                    confortLabel = 'Cómodo';
                     confortEmoji = '😊';
                     comfortClass = 'badge-green';
                     kpiColor = '#16a34a';
-                } else if (rocío > 16 && rocío <= 21) {
+                } else if (rocío > 16 && rocío <= 20) {
                     confortLabel = 'Húmedo';
                     confortEmoji = '💦';
                     comfortClass = 'badge-yellow';
-                    kpiColor = '#ca8a04';
+                    kpiColor = '#eab308';
                 } else {
-                    confortLabel = 'Bochornoso';
+                    confortLabel = 'Muy húmedo';
                     confortEmoji = '🥵';
                     comfortClass = 'badge-red';
                     kpiColor = '#dc2626';
@@ -11209,13 +11268,13 @@
         const alertsEl = document.getElementById('rocio-alerts');
         let alertsHtml = '';
         const hasBochorno = ciudadData.some(c => c.bochorno === 'Sí 🥵');
-        const hasSeco = ciudadData.some(c => c.confort === 'Aire muy seco' || c.confort === 'Seco');
+        const hasSeco = ciudadData.some(c => c.confort === 'Seco');
         if (hasBochorno) {
             const bochornoCities = ciudadData.filter(c => c.bochorno === 'Sí 🥵').map(c => c.name).join(', ');
             alertsHtml += `<div class="alert-banner alert-critical">🥵 <strong>Bochorno detectado</strong> en: ${bochornoCities} (diferencia T-rocío < 3°C)</div>`;
         }
         if (hasSeco) {
-            const secoCities = ciudadData.filter(c => c.confort === 'Aire muy seco' || c.confort === 'Seco').map(c => c.name).join(', ');
+            const secoCities = ciudadData.filter(c => c.confort === 'Seco').map(c => c.name).join(', ');
             alertsHtml += `<div class="alert-banner alert-warning">💧 <strong>Aire seco</strong> en: ${secoCities}</div>`;
         }
         if (!hasBochorno && !hasSeco) {
