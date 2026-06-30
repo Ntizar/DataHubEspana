@@ -733,7 +733,8 @@
                 <button class="tab-btn" data-tab="radiacion">🔆 Radiación</button>
                 <button class="tab-btn" data-tab="termica">🤒 Sensación Térmica</button>
                 <button class="tab-btn" data-tab="mareas">🌊 Mareas</button>
-            </div>
+                <button class="tab-btn" data-tab="eolica">🌬️ Energía Eólica</button>
+                </div>
         </div>
 
         <!-- MAIN -->
@@ -2049,6 +2050,40 @@
                         <div class="section-title">Puertos con datos de marea</div>
                         <div id="marea-puertos"></div>
                         <div class="section-title">Fuente: Open-Meteo Marine API</div>
+                    </div>
+
+                    <!-- 🌬️ ENERGÍA EÓLICA -->
+                    <div class="tab-panel" id="tab-eolica">
+                        <div class="section-title">🌬️ Energía Eólica — Potencial por Ciudades</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="eolica-velocidad">—</div>
+                                <div class="kpi-label">Vel. viento media (km/h)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="eolica-capacidad">—</div>
+                                <div class="kpi-label">Capacidad instalada estimada (MW)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="eolica-energia">—</div>
+                                <div class="kpi-label">Energía estimada (MW)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="eolica-turbinas">—</div>
+                                <div class="kpi-label">Turbinas activas (est.)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Potencial eólico 7 días por ciudad</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-eolica"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Ranking ciudades más ventosas</div>
+                        <div id="eolica-ranking"></div>
+                        <div class="section-title">Fuente: Open-Meteo API · Modelo: turbina 100m rotor (50m radio)</div>
                     </div>
                 </div>
             </div>
@@ -5910,6 +5945,7 @@ fetchPollen();
         fetchRadiacion();
         fetchTermica();
         fetchMareas();
+        fetchEolica();
     }
 
     // ===== RESIZE HANDLER =====
@@ -6251,6 +6287,167 @@ fetchPollen();
         { name: 'Bilbao', lat: 43.26, lon: -2.93 },
         { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
     ];
+
+    // ===== ENERGÍA EÓLICA =====
+    const EOLICA_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -5.99 },
+        { name: 'Valencia', lat: 39.47, lon: -0.38 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.41 },
+        { name: 'Tarifa', lat: 36.01, lon: -5.61 },
+        { name: 'Tarragona', lat: 41.12, lon: 1.25 },
+        { name: 'Cádiz', lat: 36.53, lon: -6.29 },
+    ];
+
+    function calcWindPower(speedKmH) {
+        const v = speedKmH / 3.6;
+        return 0.5 * 1.225 * Math.PI * 50 * 50 * Math.pow(v, 3) / 1e6;
+    }
+
+    async function fetchEolica() {
+        const promises = EOLICA_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=wind_speed_10m,wind_gusts_10m&daily=wind_speed_10m_max,wind_gusts_10m_max&timezone=Europe/Madrid&forecast_days=7`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        let speeds = [];
+        let capacities = [];
+        let energies = [];
+        let dailySpeeds = [];
+        let dailyLabels = [];
+        const cityData = [];
+
+        results.forEach((data, i) => {
+            const city = EOLICA_CITIES[i];
+            if (!data || !data.current || data.current.wind_speed_10m === undefined) {
+                cityData.push({ name: city.name, speed: '—', power: '—', gusts: '—', class: 'no-data' });
+                return;
+            }
+
+            const currentSpeed = data.current.wind_speed_10m;
+            const currentDir = data.current.wind_direction_10m ?? '—';
+            const currentGusts = data.current.wind_gusts_10m ?? '—';
+            const power = calcWindPower(currentSpeed);
+
+            speeds.push(currentSpeed);
+            capacities.push(power);
+            energies.push(power);
+
+            if (data.hourly && data.hourly.time && data.hourly.wind_speed_10m) {
+                const limit = Math.min(data.hourly.time.length, 24);
+                for (let h = 0; h < limit; h++) {
+                    const t = new Date(data.hourly.time[h]);
+                    const label = `${t.getDate()}/${t.getMonth() + 1} ${t.getHours().toString().padStart(2, '0')}h`;
+                    dailyLabels.push(label);
+                    dailySpeeds.push({ label: label, speed: data.hourly.wind_speed_10m[h] ?? 0, city: city.name });
+                }
+            }
+
+            if (data.daily && data.daily.time && data.daily.wind_speed_10m_max) {
+                for (let d = 0; d < data.daily.time.length; d++) {
+                    const t = new Date(data.daily.time[d]);
+                    const label = `${t.getDate()}/${t.getMonth() + 1}`;
+                    const maxSpeed = data.daily.wind_speed_10m_max[d] ?? 0;
+                    dailyLabels.push(label);
+                    dailySpeeds.push({ label: label, speed: maxSpeed, city: city.name, max: true });
+                }
+            }
+
+            cityData.push({
+                name: city.name,
+                speed: currentSpeed,
+                power: power.toFixed(2),
+                gusts: currentGusts,
+                direction: currentDir,
+                class: 'data'
+            });
+        });
+
+        // KPIs
+        const avgSpeed = speeds.length > 0 ? (speeds.reduce((a, b) => a + b, 0) / speeds.length).toFixed(1) : '—';
+        const totalCapacity = capacities.reduce((a, b) => a + b, 0);
+        const avgEnergy = energies.length > 0 ? (energies.reduce((a, b) => a + b, 0) / energies.length).toFixed(2) : '—';
+        const turbinesEst = totalCapacity > 0 ? Math.round(totalCapacity / 5) : 0;
+
+        document.getElementById('eolica-velocidad').textContent = avgSpeed;
+        document.getElementById('eolica-capacidad').textContent = totalCapacity.toFixed(1);
+        document.getElementById('eolica-energia').textContent = avgEnergy;
+        document.getElementById('eolica-turbinas').textContent = turbinesEst;
+
+        // Chart: promedio de viento por día para las 10 ciudades
+        const ctxEolica = document.getElementById('chart-eolica');
+        if (ctxEolica) {
+            if (window._chartEolica) window._chartEolica.destroy();
+
+            const cities = EOLICA_CITIES;
+            const datasets = cities.map((city, idx) => {
+                const cityResults = results[idx];
+                const data = { label: city.name, data: [], borderColor: ['#2563eb', '#dc2626', '#16a34a', '#f97316', '#7c3aed', '#0891b2', '#be185d', '#65a30d', '#ea580c', '#4f46e5'][idx], backgroundColor: 'transparent', borderWidth: 2, pointRadius: 1, tension: 0.3, fill: false };
+
+                if (cityResults && cityResults.hourly && cityResults.hourly.time && cityResults.hourly.wind_speed_10m) {
+                    const limit = Math.min(cityResults.hourly.time.length, 168);
+                    for (let h = 0; h < limit; h++) {
+                        const t = new Date(cityResults.hourly.time[h]);
+                        const dayKey = `${t.getDate()}/${t.getMonth() + 1}`;
+                        if (!data.groups) data.groups = {};
+                        if (!data.groups[dayKey]) data.groups[dayKey] = [];
+                        data.groups[dayKey].push(cityResults.hourly.wind_speed_10m[h] ?? 0);
+                        if (data.labels === undefined) data.labels = [];
+                    }
+                    data.labels = [];
+                    for (const key in data.groups) {
+                        data.labels.push(key);
+                        data.data.push(data.groups[key].reduce((a, b) => a + b, 0) / data.groups[key].length);
+                    }
+                }
+
+                return data;
+            });
+
+            window._chartEolica = new Chart(ctxEolica, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 }, padding: 8 } },
+                    },
+                    scales: {
+                        x: { display: true, ticks: { maxTicksLimit: 10, font: { size: 9 } } },
+                        y: { display: true, title: { display: true, text: 'Vel. viento (km/h)' }, beginAtZero: true }
+                    },
+                },
+            });
+        }
+
+        // Ranking ciudades más ventosas
+        const rankingEl = document.getElementById('eolica-ranking');
+        if (rankingEl) {
+            const sorted = cityData.filter(c => c.speed !== '—').sort((a, b) => b.speed - a.speed);
+            let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+            sorted.forEach((c, idx) => {
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+                html += `<div class="list-item"><div class="list-item-header">${medal} ${c.name} <span style="color:#2563eb;font-weight:700;">${c.speed} km/h</span></div><div class="list-item-sub">Potencia: ${c.power} MW · Ráfagas: ${c.gusts} km/h · Dir.: ${c.direction}°</div></div>`;
+            });
+            html += '</div>';
+            rankingEl.innerHTML = html;
+        }
+    }
 
     async function fetchMareas() {
         const promises = MAREAS_PORTS.map(async (port) => {
