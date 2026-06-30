@@ -144,45 +144,58 @@
         .card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-1px);
         }
         .card-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: #64748b;
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
         }
         .kpi-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 14px;
         }
         .kpi {
-            background: #ffffff;
+            background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            border-left: 4px solid #2563eb;
+            border-radius: 10px;
+            padding: 14px 16px;
+            transition: all 0.2s ease;
         }
-        .kpi.green { border-left-color: #16a34a; }
-        .kpi.orange { border-left-color: #f97316; }
-        .kpi.red { border-left-color: #dc2626; }
+        .kpi:hover {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transform: translateY(-1px);
+        }
+        .kpi.green { background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); }
+        .kpi.orange { background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%); }
+        .kpi.red { background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); }
+        .kpi.blue { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); }
         .kpi-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            color: #1e293b;
+            color: #0f172a;
             line-height: 1.2;
             font-variant-numeric: tabular-nums;
+            letter-spacing: -0.5px;
         }
         .kpi-label {
-            font-size: 11px;
+            font-size: 12px;
             color: #64748b;
-            margin-top: 2px;
+            margin-top: 4px;
             line-height: 1.3;
         }
         .section-title {
@@ -583,6 +596,9 @@
                     <button class="tab-btn" data-tab="transporte">🚗 Transporte</button>
                     <button class="tab-btn" data-tab="ambiente">🌿 Ambiente</button>
                     <button class="tab-btn" data-tab="catastro">🏗️ Catastro</button>
+                    <button class="tab-btn" data-tab="poblacion">👥 Población</button>
+                    <button class="tab-btn" data-tab="economia-det">📈 Economía</button>
+                    <button class="tab-btn" data-tab="puertos">🚢 Puertos</button>
                 </div>
                 <div id="search-container">
                     <input type="text" id="province-search" placeholder="Buscar provincia…" autocomplete="off" />
@@ -843,6 +859,125 @@
                         </div>
                         <div class="section-title">Enlace directo</div>
                         <a href="https://www.sedecatastro.gob.es/" target="_blank" style="font-size:13px;">Sede Electrónica del Catastro →</a>
+                    </div>
+
+                    <!-- POBLACIÓN TAB -->
+                    <div class="tab-panel" id="tab-poblacion">
+                        <div class="section-title">Demografía (INE)</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="pop-total">47.615.034</div>
+                                <div class="kpi-label">Población total</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="pop-density">94,7</div>
+                                <div class="kpi-label">Densidad hab/km²</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="pop-foreign">7.433.962</div>
+                                <div class="kpi-label">Extranjeros</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="pop-growth">+0,2%</div>
+                                <div class="kpi-label">Crecimiento anual</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Población por CCAA (Top 10)</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-pop-ccaa"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Distribución por grupos de edad</div>
+                            <div class="chart-container" style="height:240px;">
+                                <canvas id="chart-pop-age"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuentes</div>
+                        <div style="font-size:12px;color:#64748b;">
+                            Datos del INE (Instituto Nacional de Estadística). Cifras de población a 1 de julio de 2024 (avance).
+                        </div>
+                    </div>
+
+                    <!-- ECONOMÍA DETALLADA TAB -->
+                    <div class="tab-panel" id="tab-economia-det">
+                        <div class="section-title">Indicadores Económicos</div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="econ-gdp">1.418.352M€</div>
+                                <div class="kpi-label">PIB nominal</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="econ-unemp">11,2%</div>
+                                <div class="kpi-label">Tasa de paro</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="econ-cpi">2,8%</div>
+                                <div class="kpi-label">IPC (inflación)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="econ-infra">52.491 km</div>
+                                <div class="kpi-label">Red de carreteras</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">PIB por sector (%)</div>
+                            <div class="chart-container" style="height:240px;">
+                                <canvas id="chart-gdp-sector"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Evolución paro por provincias (Top 10)</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-unemp-prov"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuentes</div>
+                        <div style="font-size:12px;color:#64748b;">
+                            INE, Banco de España, Ministerio de Transportes. Datos de 2024.
+                        </div>
+                    </div>
+
+                    <!-- PUERTOS TAB -->
+                    <div class="tab-panel" id="tab-puertos">
+                        <div class="section-title">Puertos del Estado</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="port-containers">17,8M</div>
+                                <div class="kpi-label">Contenedores TEU</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="port-cargo">489 Mt</div>
+                                <div class="kpi-label">Mercancía total</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="port-passengers">32,4M</div>
+                                <div class="kpi-label">Pasajeros</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="port-cruises">5,8M</div>
+                                <div class="kpi-label">Cruceristas</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Top 10 Puertos por tráfico (millones de toneladas)</div>
+                            <div class="chart-container" style="height:300px;">
+                                <canvas id="chart-ports"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Lista de principales puertos</div>
+                        <div id="ports-list"></div>
+                        <div class="section-title">Fuentes</div>
+                        <div style="font-size:12px;color:#64748b;">
+                            Puertos del Estado. Datos del año 2023. El tráfico incluye mercancías importadas y exportadas.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1744,6 +1879,290 @@
         document.getElementById('parks-list').innerHTML = html;
     }
 
+    // ===== RENDER POPULATION CHARTS (INE) =====
+    function renderPopulation() {
+        const ccaa = [
+            'Andalucía', 'Cataluña', 'C. de Madrid', 'C. Valenciana',
+            'Galicia', 'Castilla y León', 'Castilla-La Mancha', 'País Vasco',
+            'Canarias', 'Aragón'
+        ];
+        const pops = [8494092, 7901046, 6790361, 5221333, 2699798, 2410892, 2078421, 2225404, 2236691, 1329391];
+
+        if (charts.popCcaa) charts.popCcaa.destroy();
+        const ctxPop = document.getElementById('chart-pop-ccaa');
+        if (ctxPop) {
+            charts.popCcaa = new Chart(ctxPop, {
+                type: 'bar',
+                data: {
+                    labels: ccaa,
+                    datasets: [{
+                        label: 'Población',
+                        data: pops,
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.parsed.x.toLocaleString('es-ES')} habitantes`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: v => (v / 1000000).toFixed(1) + 'M',
+                                font: { size: 11 },
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            ticks: { font: { size: 11 }, color: '#475569' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Age distribution (doughnut)
+        if (charts.popAge) charts.popAge.destroy();
+        const ctxAge = document.getElementById('chart-pop-age');
+        if (ctxAge) {
+            charts.popAge = new Chart(ctxAge, {
+                type: 'doughnut',
+                data: {
+                    labels: ['0-14 años', '15-24 años', '25-54 años', '55-64 años', '65+ años'],
+                    datasets: [{
+                        data: [13.2, 9.4, 36.8, 13.5, 27.1],
+                        backgroundColor: ['#2563eb', '#60a5fa', '#16a34a', '#f97316', '#dc2626'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '50%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 11 },
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyleWidth: 10
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.parsed}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // ===== RENDER ECONOMY DETAIL =====
+    function renderEconomyDetail() {
+        // PIB by sector (horizontal bar)
+        const sectors = ['Servicios', 'Industria', 'Construcción', 'Agricultura'];
+        const gdpPcts = [67.5, 16.2, 8.1, 4.3];
+        const gdpColors = ['#2563eb', '#f97316', '#64748b', '#16a34a'];
+
+        if (charts.gdpSector) charts.gdpSector.destroy();
+        const ctxGdp = document.getElementById('chart-gdp-sector');
+        if (ctxGdp) {
+            charts.gdpSector = new Chart(ctxGdp, {
+                type: 'bar',
+                data: {
+                    labels: sectors,
+                    datasets: [{
+                        label: '% del PIB',
+                        data: gdpPcts,
+                        backgroundColor: gdpColors,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.parsed.x}% del PIB`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            max: 80,
+                            ticks: {
+                                callback: v => v + '%',
+                                font: { size: 11 },
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            ticks: { font: { size: 12, weight: '500' }, color: '#475569' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Unemployment by province (bar)
+        const provs = ['Cádiz', 'Córdoba', 'Sevilla', 'Jaén', 'Granada', 'Málaga', 'Huelva', 'Almería', 'León', 'Lugo'];
+        const unempRates = [24.8, 21.3, 19.7, 18.4, 16.9, 15.2, 14.8, 13.6, 12.9, 12.4];
+
+        if (charts.unempProv) charts.unempProv.destroy();
+        const ctxUnemp = document.getElementById('chart-unemp-prov');
+        if (ctxUnemp) {
+            charts.unempProv = new Chart(ctxUnemp, {
+                type: 'bar',
+                data: {
+                    labels: provs,
+                    datasets: [{
+                        label: 'Tasa de paro (%)',
+                        data: unempRates,
+                        backgroundColor: unempRates.map(v => v > 20 ? '#dc2626' : v > 15 ? '#f97316' : '#f59e0b'),
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `Paro: ${ctx.parsed.y}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 30,
+                            ticks: {
+                                callback: v => v + '%',
+                                font: { size: 11 },
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 }, color: '#64748b' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // ===== RENDER PORTS =====
+    function renderPorts() {
+        const ports = [
+            { name: 'Algeciras', volume: 100.2 },
+            { name: 'Valencia', volume: 82.6 },
+            { name: 'Barcelona', volume: 71.4 },
+            { name: 'Bilbao', volume: 43.8 },
+            { name: 'Las Palmas', volume: 38.2 },
+            { name: 'Santa Cruz de Tenerife', volume: 35.7 },
+            { name: 'Cartagena', volume: 28.9 },
+            { name: 'Huelva', volume: 22.4 },
+            { name: 'A Coruña', volume: 19.8 },
+            { name: 'Gijón', volume: 17.2 }
+        ];
+
+        if (charts.ports) charts.ports.destroy();
+        const ctxPorts = document.getElementById('chart-ports');
+        if (ctxPorts) {
+            charts.ports = new Chart(ctxPorts, {
+                type: 'bar',
+                data: {
+                    labels: ports.map(p => p.name),
+                    datasets: [{
+                        label: 'Millones de toneladas',
+                        data: ports.map(p => p.volume),
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.parsed.x} Mt`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => v + ' Mt',
+                                font: { size: 11 },
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            ticks: { font: { size: 11, weight: '500' }, color: '#475569' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Port list
+        const portsData = [
+            { name: 'Puerto de Algeciras', desc: 'Estrecho de Gibraltar · Mayor puerto de España por tonelaje' },
+            { name: 'Puerto de Valencia', desc: 'Mediterráneo · Líder en contenedores' },
+            { name: 'Puerto de Barcelona', desc: 'Mediterráneo · Mercancías generales y cruceros' },
+            { name: 'Puerto de Bilbao', desc: 'Atlántico · Principal del norte' },
+            { name: 'Puerto de Las Palmas', desc: 'Canarias · Hub atlántico' },
+            { name: 'Puerto de Santa Cruz de Tenerife', desc: 'Canarias · Abastecimiento y pasajeros' },
+            { name: 'Puerto de Cartagena', desc: 'Región de Murcia · Mercancías a granel' },
+            { name: 'Puerto de Huelva', desc: 'Atlántico · Químicos y fosfatos' },
+            { name: 'Puerto de A Coruña', desc: 'Atlántico · Gas y petrolíferos' },
+            { name: 'Puerto de Gijón', desc: 'Atlántico · Carbón y acero' }
+        ];
+        let listHtml = '';
+        portsData.forEach(p => {
+            listHtml += `
+                <div class="list-item">
+                    <div class="list-item-header">🚢 ${p.name}</div>
+                    <div class="list-item-sub">${p.desc}</div>
+                </div>
+            `;
+        });
+        document.getElementById('ports-list').innerHTML = listHtml;
+    }
+
     // ===== RENDER ENERGY CHARTS =====
     function renderEnergyCharts() {
         // PVPC 24h line chart
@@ -1903,6 +2322,9 @@
         renderWater();
         renderEconomy();
         renderParks();
+        renderPopulation();
+        renderEconomyDetail();
+        renderPorts();
     }
 
     // ===== RESIZE HANDLER =====
