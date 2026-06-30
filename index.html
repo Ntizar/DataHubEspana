@@ -643,6 +643,7 @@
                 <button class="tab-btn" data-tab="fuego">🔥 Índice de Fuego</button>
                 <button class="tab-btn" data-tab="evapo">💧 Evapotranspiración</button>
                 <button class="tab-btn" data-tab="cape">⚡ CAPE Tormentas</button>
+                <button class="tab-btn" data-tab="sol">☀️ Horas de Sol</button>
             </div>
         </div>
 
@@ -1663,6 +1664,54 @@
                             <div id="cape-city-map" style="font-size:12px;"></div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API (cape)</div>
+                    </div>
+
+                    <!-- ☀️ Horas de Sol -->
+                    <div class="tab-panel" id="tab-sol">
+                        <div class="section-title">☀️ Horas de Sol — Radiación Solar en España</div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="sol-hoy">—</div>
+                                <div class="kpi-label">Horas de sol hoy (h)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="sol-7d">—</div>
+                                <div class="kpi-label">Horas sol 7d (h)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="sol-max">—</div>
+                                <div class="kpi-label">Día más largo (h)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="sol-ciudad">—</div>
+                                <div class="kpi-label">Ciudad más soleada</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="sol-amencer">—</div>
+                                <div class="kpi-label">Amanecer promedio</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="sol-atardecer">—</div>
+                                <div class="kpi-label">Atardecer promedio</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="sol-daylight">—</div>
+                                <div class="kpi-label">Duración día promedio (h)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Horas de sol por ciudad (7 días)</div>
+                            <div class="chart-container" style="height:320px;">
+                                <canvas id="chart-sol"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Ranking ciudades más soleadas (7d)</div>
+                            <div id="sol-ranking" style="font-size:13px;"></div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (sunshine_duration, daylight_duration)</div>
                     </div>
                 </div>
             </div>
@@ -4555,6 +4604,207 @@
     }
 
 
+    // ===== ☀️ HORAS DE SOL =====
+    const SOL_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.40 },
+    ];
+
+    async function fetchSol() {
+        // Fetch all cities in parallel
+        const promises = SOL_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&daily=sunshine_duration,daylight_duration,sunrise,sunset&timezone=Europe/Madrid&forecast_days=7`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Calcular KPIs
+        let todaySunshine = [];
+        let total7d = [];
+        let maxSunshine = 0;
+        let maxCity = '';
+        let totalSunrise = [];
+        let totalSunset = [];
+        let totalDaylight = [];
+        let cityTotals = [];
+
+        results.forEach((data, idx) => {
+            const city = SOL_CITIES[idx];
+            if (!data || !data.daily || !data.daily.time) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            const dayIdx = data.daily.time.indexOf(today);
+
+            // Horas de sol hoy
+            const todaySun = dayIdx >= 0 ? (data.daily.sunshine_duration[dayIdx] || 0) : 0;
+            todaySunshine.push(todaySun);
+
+            // Total 7d
+            const weekTotal = (data.daily.sunshine_duration || []).reduce((a, b) => a + (b || 0), 0);
+            total7d.push(weekTotal);
+
+            // Día más largo
+            if (weekTotal > maxSunshine) {
+                maxSunshine = weekTotal;
+                maxCity = city.name;
+            }
+
+            // Total por ciudad para ranking
+            cityTotals.push({ name: city.name, total: weekTotal });
+
+            // Amanecer/Atardecer promedio
+            if (data.daily.sunrise && data.daily.sunset) {
+                data.daily.sunrise.forEach((sr, i) => {
+                    if (sr) totalSunrise.push(sr);
+                });
+                data.daily.sunset.forEach((ss, i) => {
+                    if (ss) totalSunset.push(ss);
+                });
+            }
+
+            // Daylight duration
+            if (data.daily.daylight_duration) {
+                data.daily.daylight_duration.forEach(d => {
+                    if (d != null) totalDaylight.push(d);
+                });
+            }
+        });
+
+        // KPIs
+        const avgToday = todaySunshine.length > 0 ? (todaySunshine.reduce((a, b) => a + b, 0) / todaySunshine.length).toFixed(1) : '—';
+        const avg7d = total7d.length > 0 ? (total7d.reduce((a, b) => a + b, 0) / total7d.length).toFixed(1) : '—';
+        const totalWeek = total7d.reduce((a, b) => a + b, 0);
+        const avgDaylight = totalDaylight.length > 0 ? (totalDaylight.reduce((a, b) => a + b, 0) / totalDaylight.length / 3600).toFixed(1) : '—';
+
+        // Amanecer promedio (hora:min)
+        let avgSunrise = '—';
+        if (totalSunrise.length > 0) {
+            const avgMs = totalSunrise.reduce((a, b) => a + new Date(b).getTime(), 0) / totalSunrise.length;
+            const d = new Date(avgMs);
+            avgSunrise = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Atardecer promedio (hora:min)
+        let avgSunset = '—';
+        if (totalSunset.length > 0) {
+            const avgMs = totalSunset.reduce((a, b) => a + new Date(b).getTime(), 0) / totalSunset.length;
+            const d = new Date(avgMs);
+            avgSunset = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Actualizar KPIs DOM
+        document.getElementById('sol-hoy').textContent = avgToday;
+        document.getElementById('sol-hoy').title = `Total 7 ciudades: ${todaySunshine.reduce((a, b) => a + b, 0).toFixed(1)} h`;
+        document.getElementById('sol-7d').textContent = avg7d;
+        document.getElementById('sol-7d').title = `Total 7 días: ${totalWeek.toFixed(1)} h`;
+        document.getElementById('sol-max').textContent = maxSunshine.toFixed(1);
+        document.getElementById('sol-max').title = `${maxCity} tiene la semana más soleada`;
+        document.getElementById('sol-ciudad').textContent = maxCity;
+        document.getElementById('sol-amencer').textContent = avgSunrise;
+        document.getElementById('sol-atardecer').textContent = avgSunset;
+        document.getElementById('sol-daylight').textContent = avgDaylight;
+
+        // Chart: barras horas sol por ciudad (hoy) + línea daylight
+        const ctxSol = document.getElementById('chart-sol');
+        if (ctxSol) {
+            if (charts._chartSol) charts._chartSol.destroy();
+
+            const labels = SOL_CITIES.map(c => c.name);
+            const sunshineData = todaySunshine.map(v => v || 0);
+
+            // Calcular daylight promedio por ciudad
+            const daylightPerCity = [];
+            results.forEach((data, idx) => {
+                if (!data || !data.daily || !data.daily.daylight_duration) {
+                    daylightPerCity.push(0);
+                    return;
+                }
+                const totalSec = data.daily.daylight_duration.reduce((a, b) => a + (b || 0), 0);
+                daylightPerCity.push(totalSec / data.daily.daylight_duration.length / 3600);
+            });
+
+            charts._chartSol = new Chart(ctxSol, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Horas sol hoy (h)',
+                            data: sunshineData,
+                            backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Duración día promedio (h)',
+                            data: daylightPerCity,
+                            type: 'line',
+                            borderColor: 'rgba(251, 191, 36, 1)',
+                            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(251, 191, 36, 1)',
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y1',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 11 } } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Horas sol (h)' },
+                            position: 'left',
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Duración día (h)' },
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                        }
+                    }
+                }
+            });
+        }
+
+        // Ranking ciudades más soleadas
+        const rankingEl = document.getElementById('sol-ranking');
+        if (rankingEl) {
+            cityTotals.sort((a, b) => b.total - a.total);
+            let html = '';
+            const medals = ['🥇', '🥈', '🥉'];
+            cityTotals.forEach((c, i) => {
+                const medal = i < 3 ? medals[i] : `${i + 1}.`;
+                html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #f1f5f9;align-items:center;">
+                    <span style="font-weight:600;">${medal} ${c.name}</span>
+                    <span style="color:#f97316;font-weight:700;">${c.total.toFixed(1)} h</span>
+                </div>`;
+            });
+            rankingEl.innerHTML = html;
+        }
+    }
+
     // ===== MAIN INIT =====
     async function init() {
         initMap();
@@ -4609,6 +4859,7 @@ fetchPollen();
         fetchFuego();
         fetchEvapo();
         fetchCAPE();
+        fetchSol();
     }
 
     // ===== RESIZE HANDLER =====
