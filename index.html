@@ -646,6 +646,7 @@
                 <button class="tab-btn" data-tab="cape">⚡ CAPE Tormentas</button>
                 <button class="tab-btn" data-tab="sol">☀️ Horas de Sol</button>
                 <button class="tab-btn" data-tab="rocio">🌡️ Rocío</button>
+                <button class="tab-btn" data-tab="radiacion">🔆 Radiación</button>
             </div>
         </div>
 
@@ -1804,6 +1805,40 @@
                         <div class="section-title">Mapa de confort térmico por ciudad</div>
                         <div id="rocio-cities-list" style="font-size:13px;"></div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API (dew_point_2m, apparent_temperature)</div>
+                    </div>
+
+                    <!-- RADIACIÓN SOLAR TAB -->
+                    <div class="tab-panel" id="tab-radiacion">
+                        <div class="section-title">🔆 Radiación Solar y Potencial Fotovoltaico — España</div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="rad-maxima">—</div>
+                                <div class="kpi-label">Radiación máxima W/m² (directa)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="rad-total">—</div>
+                                <div class="kpi-label">Radiación total diaria MJ/m²</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="rad-difusa">—</div>
+                                <div class="kpi-label">Radiación difusa promedio W/m²</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="rad-eficiencia">—</div>
+                                <div class="kpi-label">Eficiencia solar estimada (%)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Curva de radiación solar — Próximas 24h</div>
+                            <div class="chart-container" style="height:250px;">
+                                <canvas id="chart-radiacion"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Potencial solar por ciudad (radiación diaria)</div>
+                        <div id="rad-ranking" style="font-size:13px;"></div>
+                        <div class="section-title">Fuente: Open-Meteo API (shortwave_radiation, direct_normal_irradiance, diffuse_radiation)</div>
                     </div>
                 </div>
             </div>
@@ -5011,6 +5046,221 @@
         }
     }
 
+    // ===== RADIACIÓN SOLAR =====
+    const RADIACION_CITIES = [
+        { name: 'Las Palmas', lat: 28.12, lon: -15.43 },
+        { name: 'Santa Cruz', lat: 28.46, lon: -16.25 },
+        { name: 'Almería', lat: 36.84, lon: -2.46 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Murcia', lat: 37.99, lon: -1.13 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+    ];
+
+    async function fetchRadiacion() {
+        // Fetch all cities in parallel
+        const promises = RADIACION_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&hourly=shortwave_radiation,direct_normal_irradiance,diffuse_radiation&daily=shortwave_radiation_sum&timezone=Europe/Madrid&forecast_days=1`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Collect hourly data for chart (average across cities)
+        let hourlyLabels = [];
+        let totalRadiation = [];
+        let directRadiation = [];
+        let diffuseRadiation = [];
+
+        // Collect daily data for KPIs and ranking
+        let dailyTotals = [];
+        let maxDirect = 0;
+        let maxDirectCity = '';
+        let totalDiffuse = [];
+        let efficiencyValues = [];
+
+        results.forEach((data, idx) => {
+            const city = RADIACION_CITIES[idx];
+            if (!data) return;
+
+            // Hourly data
+            if (data.hourly && data.hourly.time) {
+                data.hourly.time.forEach((time, i) => {
+                    if (!hourlyLabels.includes(time)) {
+                        hourlyLabels.push(time);
+                        totalRadiation.push(0);
+                        directRadiation.push(0);
+                        diffuseRadiation.push(0);
+                    }
+                    const tr = data.hourly.shortwave_radiation?.[i] || 0;
+                    const dr = data.hourly.direct_normal_irradiance?.[i] || 0;
+                    const df = data.hourly.diffuse_radiation?.[i] || 0;
+                    const slotIdx = hourlyLabels.indexOf(time);
+                    totalRadiation[slotIdx] += tr;
+                    directRadiation[slotIdx] += dr;
+                    diffuseRadiation[slotIdx] += df;
+                });
+            }
+
+            // Daily data
+            if (data.daily && data.daily.time && data.daily.shortwave_radiation_sum) {
+                const today = new Date().toISOString().split('T')[0];
+                const dayIdx = data.daily.time.indexOf(today);
+                const dailySum = dayIdx >= 0 ? data.daily.shortwave_radiation_sum[dayIdx] : 0;
+                dailyTotals.push({ name: city.name, total: dailySum });
+
+                // Max direct irradiance
+                if (data.hourly && data.hourly.direct_normal_irradiance) {
+                    const cityMaxDirect = Math.max(...data.hourly.direct_normal_irradiance.map(v => v || 0));
+                    if (cityMaxDirect > maxDirect) {
+                        maxDirect = cityMaxDirect;
+                        maxDirectCity = city.name;
+                    }
+                }
+
+                // Average diffuse
+                if (data.hourly && data.hourly.diffuse_radiation) {
+                    const avgDiffuse = data.hourly.diffuse_radiation.reduce((a, b) => a + (b || 0), 0) / data.hourly.diffuse_radiation.length;
+                    totalDiffuse.push(avgDiffuse);
+                }
+
+                // Efficiency estimate: ratio of direct to total (higher = better for PV)
+                const totalHourly = (data.hourly?.shortwave_radiation || []).reduce((a, b) => a + (b || 0), 0);
+                const directHourly = (data.hourly?.direct_normal_irradiance || []).reduce((a, b) => a + (b || 0), 0);
+                if (totalHourly > 0) {
+                    efficiencyValues.push((directHourly / totalHourly) * 100);
+                }
+            }
+        });
+
+        // Average hourly values across cities
+        const cityCount = RADIACION_CITIES.length;
+        const avgTotal = totalRadiation.map(v => v / cityCount);
+        const avgDirect = directRadiation.map(v => v / cityCount);
+        const avgDiffuse = diffuseRadiation.map(v => v / cityCount);
+
+        // Format hourly labels
+        const chartLabels = hourlyLabels.map(t => {
+            const d = new Date(t);
+            return `${d.getHours().toString().padStart(2, '0')}:00`;
+        });
+
+        // KPIs
+        const maxAvgDirect = Math.max(...avgDirect.map(v => v || 0));
+        const avgDailyTotal = dailyTotals.reduce((a, b) => a + b.total, 0) / dailyTotals.length;
+        const avgDiffuseVal = totalDiffuse.length > 0 ? totalDiffuse.reduce((a, b) => a + b, 0) / totalDiffuse.length : 0;
+        const avgEfficiency = efficiencyValues.length > 0 ? efficiencyValues.reduce((a, b) => a + b, 0) / efficiencyValues.length : 0;
+
+        // Update KPIs DOM
+        document.getElementById('rad-maxima').textContent = maxAvgDirect.toFixed(1);
+        document.getElementById('rad-maxima').title = `Máx: ${maxDirect.toFixed(1)} W/m² en ${maxDirectCity}`;
+        document.getElementById('rad-total').textContent = avgDailyTotal.toFixed(1);
+        document.getElementById('rad-difusa').textContent = avgDiffuseVal.toFixed(1);
+        document.getElementById('rad-eficiencia').textContent = avgEfficiency.toFixed(1);
+
+        // Chart: curva radiación solar 24h
+        const ctxRad = document.getElementById('chart-radiacion');
+        if (ctxRad) {
+            if (charts._chartRadiacion) charts._chartRadiacion.destroy();
+
+            charts._chartRadiacion = new Chart(ctxRad, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Radiación total (W/m²)',
+                            data: avgTotal,
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                            borderWidth: 3,
+                            pointRadius: 3,
+                            pointBackgroundColor: 'rgba(249, 115, 22, 1)',
+                            tension: 0.4,
+                            fill: true,
+                        },
+                        {
+                            label: 'Radiación directa (W/m²)',
+                            data: avgDirect,
+                            borderColor: 'rgba(234, 179, 8, 1)',
+                            backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            pointBackgroundColor: 'rgba(234, 179, 8, 1)',
+                            tension: 0.4,
+                            fill: false,
+                        },
+                        {
+                            label: 'Radiación difusa (W/m²)',
+                            data: avgDiffuse,
+                            borderColor: 'rgba(59, 130, 246, 0.8)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 3],
+                            pointRadius: 2,
+                            tension: 0.4,
+                            fill: false,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} W/m²`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'W/m²' },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 }, maxRotation: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Ranking ciudades por potencial solar
+        const rankingEl = document.getElementById('rad-ranking');
+        if (rankingEl) {
+            dailyTotals.sort((a, b) => b.total - a.total);
+            const medals = ['🥇', '🥈', '🥉'];
+            let html = '';
+            dailyTotals.forEach((c, i) => {
+                const medal = i < 3 ? medals[i] : `${i + 1}.`;
+                const potential = c.total > 6 ? 'Excelente' : c.total > 4 ? 'Bueno' : c.total > 2 ? 'Regular' : 'Bajo';
+                const badgeClass = c.total > 6 ? 'badge-green' : c.total > 4 ? 'badge-blue' : c.total > 2 ? 'badge-orange' : 'badge-red';
+                html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #f1f5f9;align-items:center;">
+                    <span style="font-weight:600;">${medal} ${c.name}</span>
+                    <span style="color:#f97316;font-weight:700;">${c.total.toFixed(1)} MJ/m²</span>
+                    <span class="badge ${badgeClass}">${potential}</span>
+                </div>`;
+            });
+            rankingEl.innerHTML = html;
+        }
+    }
+
     // ===== MAIN INIT =====
     async function init() {
         initMap();
@@ -5068,6 +5318,7 @@ fetchPollen();
         fetchCAPE();
         fetchSol();
         fetchRocio();
+        fetchRadiacion();
     }
 
     // ===== RESIZE HANDLER =====
