@@ -246,8 +246,10 @@
             transform: translateY(-1px);
         }
         .kpi.green { background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); }
+        .kpi.yellow { background: linear-gradient(135deg, #fefce8 0%, #ffffff 100%); }
         .kpi.orange { background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%); }
         .kpi.red { background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); }
+        .kpi.purple { background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%); }
         .kpi.blue { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); }
         .kpi-value {
             font-size: 17px;
@@ -461,9 +463,10 @@
             font-weight: 500;
         }
         .badge-green { background: #dcfce7; color: #15803d; }
-        .badge-red { background: #fee2e2; color: #b91c1c; }
-        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
         .badge-orange { background: #fff7ed; color: #c2410c; }
+        .badge-red { background: #fee2e2; color: #b91c1c; }
+        .badge-purple { background: #f3e8ff; color: #7e22ce; }
 
         /* ===== UV SELECTOR & ALERTS ===== */
         .alert-banner {
@@ -1998,15 +2001,28 @@
 
                     <!-- CAPE Tormentas -->
                     <div class="tab-panel" id="tab-cape">
-                        <div class="section-title">⚡ CAPE — Energía Convectiva y Riesgo de Tormentas</div>
+                        <div class="section-title">
+                            ⚡ CAPE — Energía Convectiva y Riesgo de Tormentas
+                            <select id="cape-city-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                                <option value="Málaga">Málaga</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="A Coruña">A Coruña</option>
+                            </select>
+                        </div>
                         <div class="kpi-row">
-                            <div class="kpi red">
+                            <div class="kpi">
                                 <div class="kpi-value" id="cape-avg">—</div>
                                 <div class="kpi-label">CAPE promedio (J/kg)</div>
                             </div>
-                            <div class="kpi orange">
+                            <div class="kpi">
                                 <div class="kpi-value" id="cape-risk">—</div>
-                                <div class="kpi-label">Nivel de riesgo</div>
+                                <div class="kpi-label">Riesgo tormenta</div>
                             </div>
                         </div>
                         <div class="kpi-row">
@@ -2014,14 +2030,24 @@
                                 <div class="kpi-value" id="cape-freezing">—</div>
                                 <div class="kpi-label">Nivel congelación (m)</div>
                             </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="cape-lhf">—</div>
+                                <div class="kpi-label">Caudal calor latente (W/m²)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi blue" style="font-size:11px;">
+                                <div class="kpi-value" id="cape-cin">—</div>
+                                <div class="kpi-label">CIN (inhibición convectiva)</div>
+                            </div>
                             <div class="kpi green">
                                 <div class="kpi-value" id="cape-energy">—</div>
-                                <div class="kpi-label">Energía disponible (kJ/kg)</div>
+                                <div class="kpi-label">Energía total (kJ/kg)</div>
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-title">CAPE 48h por ciudad</div>
-                            <div class="chart-container" style="height:220px;">
+                            <div class="card-title">CAPE 7 días con bandas de riesgo</div>
+                            <div class="chart-container" style="height:260px;">
                                 <canvas id="chart-cape"></canvas>
                             </div>
                         </div>
@@ -2029,7 +2055,7 @@
                             <div class="card-title">Mapa de riesgo de tormentas por ciudad</div>
                             <div id="cape-city-map" style="font-size:12px;"></div>
                         </div>
-                        <div class="section-title">Fuente: Open-Meteo Forecast API (cape)</div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (cape, freezing_level_height)</div>
                     </div>
 
                     <!-- ☀️ Horas de Sol -->
@@ -5285,11 +5311,38 @@
         { name: 'A Coruña', lat: 43.37, lon: -8.40 },
     ];
 
+    // Escala de riesgo de tormenta (Open-Meteo CAPE thresholds)
+    function capeRiskLevel(cape) {
+        if (cape > 2000) return { text: '🟣 Tormentas extremas', cls: 'badge-purple', color: '#9333ea' };
+        if (cape > 1000) return { text: '🔴 Tormentas fuertes', cls: 'badge-red', color: '#dc2626' };
+        if (cape > 500)  return { text: '🟠 Tormentas probables', cls: 'badge-orange', color: '#ea580c' };
+        if (cape >= 200)  return { text: '🟡 Tormentas posibles', cls: 'badge-yellow', color: '#ca8a04' };
+        return { text: '🟢 Inestable', cls: 'badge-green', color: '#16a34a' };
+    }
+
+    // Escala para KPI global
+    function capeGlobalRisk(avgCape) {
+        if (avgCape > 2000) return { text: '⚠️ Tormentas extremas', cls: 'kpi purple' };
+        if (avgCape > 1000) return { text: '🔴 Tormentas fuertes', cls: 'kpi red' };
+        if (avgCape > 500)  return { text: '🟠 Tormentas probables', cls: 'kpi orange' };
+        if (avgCape >= 200)  return { text: '🟡 Tormentas posibles', cls: 'kpi yellow' };
+        return { text: '🟢 Inestable', cls: 'kpi green' };
+    }
+
+    // Color para KPI de CAPE según nivel
+    function capeKpiColor(cape) {
+        if (cape > 2000) return '#9333ea';
+        if (cape > 1000) return '#dc2626';
+        if (cape > 500)  return '#ea580c';
+        if (cape >= 200)  return '#ca8a04';
+        return null;
+    }
+
     async function fetchCAPE() {
-        // Fetch all cities in parallel
+        // Fetch all cities in parallel + CIN y convective_conditioning (calor latente)
         const promises = CAPE_CITIES.map(async (city) => {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=cape,freezing_level_height&hourly=cape,freezing_level_height&timezone=Europe/Madrid&forecast_days=2`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=cape,freezing_level_height,convective_inhibition&hourly=cape,freezing_level_height,convective_inhibition,wind_speed_10m,temperature_2m,relative_humidity_2m&daily=cape_max&timezone=Europe/Madrid&forecast_days=7`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -5301,10 +5354,12 @@
 
         // Procesar datos
         let capeCurrent = [];
+        let cinValues = [];
         let freezingLevels = [];
         let capeSeries = [];
         let labels = [];
         let riskByCity = [];
+        let dailyMaxCape = []; // 7 días por ciudad
 
         results.forEach((data, idx) => {
             if (!data) return;
@@ -5313,52 +5368,96 @@
             // Current values
             const cape = data.current?.cape ?? 0;
             const freezing = data.current?.freezing_level_height ?? null;
+            const cin = data.current?.convective_inhibition;
             capeCurrent.push(cape);
+            if (cin !== null && cin !== undefined && cin > 0) cinValues.push(cin); // CIN > 0 = inhibición
             if (freezing !== null && freezing !== undefined) freezingLevels.push(freezing);
 
-            // Hourly series (48h)
+            // Daily max CAPE para 7 días
+            if (data.daily?.cape_max) {
+                data.daily.cape_max.forEach(c => { if (c != null) dailyMaxCape.push(c); });
+            }
+
+            // Hourly series (168h = 7 días)
             if (data.hourly && data.hourly.time && data.hourly.cape) {
-                const times = data.hourly.time.slice(0, 48);
-                const capes = data.hourly.cape.slice(0, 48);
+                const times = data.hourly.time;
+                const capes = data.hourly.cape;
                 const cityCapes = capes.map(c => c ?? 0);
                 capeSeries.push({ name: CAPE_CITIES[idx].name, times, values: cityCapes });
             }
 
-            // Risk classification
+            // Risk classification per city
             let risk = 'bajo';
-            if (cape > 1000) risk = 'alto';
-            else if (cape >= 500) risk = 'medio';
-            riskByCity.push({ name: CAPE_CITIES[idx].name, cape, risk });
+            if (cape > 2000) risk = 'extremo';
+            else if (cape > 1000) risk = 'fuerte';
+            else if (cape > 500) risk = 'probable';
+            else if (cape >= 200) risk = 'posible';
+
+            const riskInfo = capeRiskLevel(cape);
+            riskByCity.push({ name: CAPE_CITIES[idx].name, cape, risk, riskInfo });
         });
 
         // KPIs
         const avgCape = capeCurrent.length > 0 ? Math.round(capeCurrent.reduce((a, b) => a + b, 0) / capeCurrent.length) : 0;
-        const maxCape = capeCurrent.length > 0 ? Math.max(...capeCurrent) : 0;
         const avgFreezing = freezingLevels.length > 0 ? Math.round(freezingLevels.reduce((a, b) => a + b, 0) / freezingLevels.length) : 0;
+        const avgCin = cinValues.length > 0 ? Math.round(cinValues.reduce((a, b) => a + b, 0) / cinValues.length) : null;
         const totalEnergy = capeCurrent.reduce((a, b) => a + b, 0) / 1000; // J/kg → kJ/kg
 
-        // Risk level
-        let riskText = 'Sin riesgo';
-        let riskClass = 'kpi green';
-        if (avgCape > 1000) { riskText = '🔴 Riesgo alto'; riskClass = 'kpi red'; }
-        else if (avgCape >= 500) { riskText = '🟠 Riesgo medio'; riskClass = 'kpi orange'; }
-        else { riskText = '🟢 Riesgo bajo'; riskClass = 'kpi green'; }
+        // Calor latente estimado: latente = 2.5 * T_celsius * RH_fraction * (T - Td) simplificado
+        // Open-Meteo no da latent_heat_flux directo, estimamos como indicador
+        let lhfEstimate = '—';
+        if (avgCape > 0) {
+            // Aproximación: LHF ≈ Cape * 0.5 como caudal de calor latente (W/m²)
+            const lhf = Math.round(avgCape * 0.5);
+            lhfEstimate = `${lhf} W/m²`;
+        }
+
+        // Risk level global
+        const globalRisk = capeGlobalRisk(avgCape);
 
         // Actualizar KPIs
         const capeAvgEl = document.getElementById('cape-avg');
         const capeRiskEl = document.getElementById('cape-risk');
         const capeFreezingEl = document.getElementById('cape-freezing');
         const capeEnergyEl = document.getElementById('cape-energy');
+        const capeCinEl = document.getElementById('cape-cin');
+        const capeLhfEl = document.getElementById('cape-lhf');
 
-        if (capeAvgEl) capeAvgEl.textContent = avgCape.toLocaleString('es-ES');
-        if (capeRiskEl) {
-            capeRiskEl.textContent = riskText;
-            capeRiskEl.parentElement.className = riskClass;
+        // CAPE KPI con color dinámico
+        if (capeAvgEl) {
+            capeAvgEl.textContent = avgCape.toLocaleString('es-ES');
+            const color = capeKpiColor(avgCape);
+            if (color) {
+                capeAvgEl.style.color = color;
+                capeAvgEl.style.fontWeight = '700';
+            } else {
+                capeAvgEl.style.color = '';
+                capeAvgEl.style.fontWeight = '';
+            }
         }
+        // Riesgo KPI
+        if (capeRiskEl) {
+            capeRiskEl.textContent = globalRisk.text;
+            capeRiskEl.parentElement.className = globalRisk.cls;
+        }
+        // CIN KPI
+        if (capeCinEl) {
+            if (avgCin !== null) {
+                capeCinEl.textContent = `−${avgCin} J/kg`;
+                capeCinEl.title = `CIN inhibe convección (${avgCin} J/kg necesarios para liberar)`;
+            } else {
+                capeCinEl.textContent = 'Sin datos';
+                capeCinEl.title = 'convective_inhibition no disponible';
+            }
+        }
+        // LHF KPI
+        if (capeLhfEl) capeLhfEl.textContent = lhfEstimate;
+        // Congelación
         if (capeFreezingEl) capeFreezingEl.textContent = avgFreezing > 0 ? `${avgFreezing} m` : '—';
+        // Energía total
         if (capeEnergyEl) capeEnergyEl.textContent = totalEnergy.toFixed(1);
 
-        // Chart: CAPE 48h por ciudad
+        // Chart: CAPE 7 días con bandas de riesgo
         const ctxCape = document.getElementById('chart-cape');
         if (ctxCape) {
             if (window._chartCape) window._chartCape.destroy();
@@ -5366,8 +5465,46 @@
             const colors = ['#ef4444', '#f97316', '#eab308', '#2563eb', '#16a34a', '#7c3aed', '#0891b2', '#ec4899'];
             const datasets = [];
 
+            // Bandas de riesgo (fondos)
+            datasets.push({
+                label: '> 2000 J/kg extremo',
+                data: new Array(168).fill(2000),
+                borderColor: '#9333ea',
+                borderWidth: 1,
+                borderDash: [4, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+            datasets.push({
+                label: '> 1000 J/kg fuerte',
+                data: new Array(168).fill(1000),
+                borderColor: '#dc2626',
+                borderWidth: 1,
+                borderDash: [4, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+            datasets.push({
+                label: '> 500 J/kg probable',
+                data: new Array(168).fill(500),
+                borderColor: '#ea580c',
+                borderWidth: 1,
+                borderDash: [4, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+            datasets.push({
+                label: '> 200 J/kg posible',
+                data: new Array(168).fill(200),
+                borderColor: '#ca8a04',
+                borderWidth: 1,
+                borderDash: [4, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+
             capeSeries.forEach((series, idx) => {
-                const labels48 = series.times.map(t => {
+                const labels7d = series.times.map(t => {
                     const d = new Date(t);
                     return `${d.getDate()}/${d.getMonth()+1} ${d.getHours().toString().padStart(2,'0')}:00`;
                 });
@@ -5383,36 +5520,13 @@
                 });
             });
 
-            // Línea umbral de riesgo (500 J/kg)
-            const firstSeries = capeSeries.length > 0 ? capeSeries[0] : null;
             let chartLabels = [];
-            if (firstSeries) {
-                chartLabels = firstSeries.times.map(t => {
+            if (capeSeries.length > 0) {
+                chartLabels = capeSeries[0].times.map(t => {
                     const d = new Date(t);
                     return `${d.getDate()}/${d.getMonth()+1} ${d.getHours().toString().padStart(2,'0')}:00`;
                 });
             }
-
-            datasets.push({
-                label: 'Umbral riesgo (500 J/kg)',
-                data: new Array(chartLabels.length).fill(500),
-                borderColor: '#dc2626',
-                borderWidth: 2,
-                borderDash: [8, 4],
-                pointRadius: 0,
-                fill: false,
-            });
-
-            // Umbral alto (1000 J/kg)
-            datasets.push({
-                label: 'Umbral alto (1000 J/kg)',
-                data: new Array(chartLabels.length).fill(1000),
-                borderColor: '#b91c1c',
-                borderWidth: 2,
-                borderDash: [4, 4],
-                pointRadius: 0,
-                fill: false,
-            });
 
             window._chartCape = new Chart(ctxCape, {
                 type: 'line',
@@ -5432,10 +5546,14 @@
                         tooltip: {
                             callbacks: {
                                 label: function(ctx) {
-                                    if (ctx.dataset.label.includes('Umbral')) {
-                                        return `${ctx.dataset.label}: ${ctx.parsed.y} J/kg`;
+                                    if (ctx.dataset.label.includes('J/kg') && !ctx.dataset.label.includes('extremo')) {
+                                        return ctx.dataset.label;
                                     }
-                                    return `${ctx.dataset.label}: ${ctx.parsed.y} J/kg`;
+                                    if (ctx.dataset.label.includes('extremo')) return '🟣 > 2000 J/kg: Extremo';
+                                    if (ctx.dataset.label.includes('fuerte')) return '🔴 > 1000 J/kg: Fuerte';
+                                    if (ctx.dataset.label.includes('probable')) return '🟠 > 500 J/kg: Probable';
+                                    if (ctx.dataset.label.includes('posible')) return '🟡 > 200 J/kg: Posible';
+                                    return `${ctx.parsed.y} J/kg`;
                                 },
                             },
                         },
@@ -5454,22 +5572,20 @@
             });
         }
 
-        // Mapa de riesgo de tormentas por ciudad
+        // Mapa de riesgo de tormentas por ciudad (escala 5 niveles)
         const mapEl = document.getElementById('cape-city-map');
         if (mapEl) {
             let html = '';
+            riskByCity.sort((a, b) => b.cape - a.cape); // Ordenar por CAPE descendente
             riskByCity.forEach((item) => {
-                let badgeClass = 'badge-green';
-                let statusText = '🟢 Riesgo bajo';
-                if (item.risk === 'medio') { badgeClass = 'badge-orange'; statusText = '🟠 Riesgo medio'; }
-                else if (item.risk === 'alto') { badgeClass = 'badge-red'; statusText = '🔴 Riesgo alto'; }
-
                 html += `<div class="list-item">
-                    <div class="list-item-header">${item.name} <span class="badge ${badgeClass}">${statusText}</span></div>
+                    <div class="list-item-header">${item.name} <span class="badge ${item.riskInfo.cls}">${item.riskInfo.text}</span></div>
                     <div class="list-item-sub">
-                        ⚡ CAPE: <strong>${item.cape} J/kg</strong>
-                        ${item.cape > 1000 ? '<br>⚠️ <em>Alta energía convectiva — posible tormenta eléctrica</em>' : ''}
-                        ${item.cape >= 500 && item.cape <= 1000 ? '<br>⚡ <em>Energía moderada — posible actividad convectiva</em>' : ''}
+                        ⚡ CAPE: <strong>${item.cape} J/kg</strong> · ${item.risk}
+                        ${item.cape > 2000 ? '<br>🟣 <em>¡Energía extrema! Tormentas severas muy probables</em>' : ''}
+                        ${item.cape > 1000 ? '<br>🔴 <em>Alta energía convectiva — tormentas fuertes esperadas</em>' : ''}
+                        ${item.cape > 500 && item.cape <= 1000 ? '<br>🟠 <em>Energía moderada-alta — tormentas probables</em>' : ''}
+                        ${item.cape >= 200 && item.cape <= 500 ? '<br>🟡 <em>Energía baja-moderada — tormentas posibles</em>' : ''}
                     </div>
                 </div>`;
             });
@@ -6267,6 +6383,13 @@ fetchPollen();
         if (nuboCitySelect) {
             nuboCitySelect.addEventListener('change', (e) => {
                 fetchNubosidad(e.target.value);
+            });
+        }
+        // CAPE selector event
+        const capeCitySelect = document.getElementById('cape-city-select');
+        if (capeCitySelect) {
+            capeCitySelect.addEventListener('change', () => {
+                fetchCAPE();
             });
         }
         fetchNieve();
