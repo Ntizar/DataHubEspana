@@ -2072,7 +2072,7 @@
         const centroid = provinceCentroids[cod] || [40.0, -3.5];
         try {
             const res = await fetch(
-                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code,sunrise,sunset&daily=sunrise,sunset&timezone=Europe/Madrid`
+                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Europe/Madrid`
             );
             if (!res.ok) throw new Error('Open-Meteo response not OK');
             const data = await res.json();
