@@ -620,7 +620,6 @@
                 <button class="tab-btn" data-tab="clima">🌤️ Clima</button>
                 <button class="tab-btn" data-tab="agua">💧 Agua</button>
                 <button class="tab-btn" data-tab="economia">💼 Economía</button>
-                <button class="tab-btn" data-tab="transporte">🚗 Transporte</button>
                 <button class="tab-btn" data-tab="ambiente">🌿 Ambiente</button>
                 <button class="tab-btn" data-tab="catastro">🏗️ Catastro</button>
                 <button class="tab-btn" data-tab="poblacion">👥 Población</button>
@@ -849,42 +848,6 @@
                         </div>
                     </div>
 
-                    <!-- TRANSPORTE TAB -->
-                    <div class="tab-panel" id="tab-transporte">
-                        <div class="section-title">Red de Transporte (DGT)</div>
-                        <div class="kpi-row">
-                            <div class="kpi">
-                                <div class="kpi-value">1.400+</div>
-                                <div class="kpi-label">Radares DGT en red</div>
-                            </div>
-                            <div class="kpi orange">
-                                <div class="kpi-value">15</div>
-                                <div class="kpi-label">ZBE activas</div>
-                            </div>
-                        </div>
-                        <div class="section-title">Zonas de Bajas Emisiones (ZBE)</div>
-                        <div class="list-item">
-                            <div class="list-item-header">Madrid ZBE</div>
-                            <div class="list-item-sub">Activa desde enero 2023 · 46 km²</div>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-item-header">Barcelona ZBE</div>
-                            <div class="list-item-sub">Activa desde enero 2020 · 95 km²</div>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-item-header">Valencia ZBE</div>
-                            <div class="list-item-sub">Activa desde enero 2024</div>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-item-header">Sevilla ZBE</div>
-                            <div class="list-item-sub">En fase de implantación</div>
-                        </div>
-                        <div class="section-title">Información</div>
-                        <div style="font-size:12px;color:#64748b;">
-                            Las Zonas de Bajas Emisiones restringen el acceso de vehículos más contaminantes en grandes ciudades. La red de radares de la DGT cubre toda la red viaria estatal.
-                        </div>
-                    </div>
-
                     <!-- MEDIO AMBIENTE TAB -->
                     <div class="tab-panel" id="tab-ambiente">
                         <div class="section-title">Parques Nacionales de España</div>
@@ -908,7 +871,7 @@
                                 <span class="info-value" id="catastro-province">Ninguna</span>
                             </div>
                             <div class="info-row">
-                                <span class="info-label">Código</span>
+                                <span class="info-label">Código INE</span>
                                 <span class="info-value" id="catastro-cod">—</span>
                             </div>
                             <div class="info-row">
@@ -919,9 +882,21 @@
                                 <span class="info-label">CCAA</span>
                                 <span class="info-value" id="catastro-ccaa">—</span>
                             </div>
+                            <div class="info-row">
+                                <span class="info-label">Superficie</span>
+                                <span class="info-value" id="catastro-superficie">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Densidad</span>
+                                <span class="info-value" id="catastro-density">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Municipios</span>
+                                <span class="info-value" id="catastro-municipios">—</span>
+                            </div>
                         </div>
                         <div class="section-title">Enlace directo</div>
-                        <a href="https://www.sedecatastro.gob.es/" target="_blank" style="font-size:13px;">Sede Electrónica del Catastro →</a>
+                        <a id="catastro-link" href="https://www.sedecatastro.gob.es/" target="_blank" style="font-size:13px;">Sede Electrónica del Catastro →</a>
                     </div>
 
                     <!-- POBLACIÓN TAB -->
@@ -1224,6 +1199,9 @@
                     </div>
                     <div class="tab-panel" id="tab-inundaciones">
                         <div class="section-title">🌊 Riesgo de Inundación</div>
+                        <div style="font-size:12px;color:#2563eb;margin-bottom:8px;font-weight:600;">
+                            <span id="flood-river-name">Río principal de la provincia</span>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="flood-current">—</div>
@@ -1245,7 +1223,7 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-title">Caudal del río — 14 días</div>
+                            <div class="card-title" id="flood-chart-title">Caudal del río — 14 días</div>
                             <div class="chart-container" style="height:250px;">
                                 <canvas id="chart-flood"></canvas>
                             </div>
@@ -1494,22 +1472,22 @@
 
     // ===== NATIONAL PARKS (OAPN) =====
     const NATIONAL_PARKS = [
-        { nombre: 'Picos de Europa', comunidad: 'Asturias / Cantabria / Castilla y León', superficie: '646 km²', anio: 1918 },
-        { nombre: 'Ordesa y Monte Perdido', comunidad: 'Aragón', superficie: '156 km²', anio: 1918 },
-        { nombre: 'Aigüestortes i Estany de Sant Maurici', comunidad: 'Cataluña', superficie: '408 km²', anio: 1955 },
-        { nombre: 'Sierra de Guadarrama', comunidad: 'Castilla y León / Madrid', superficie: '339 km²', anio: 2013 },
-        { nombre: 'Cabañeros', comunidad: 'Castilla-La Mancha', superficie: '390 km²', anio: 1995 },
-        { nombre: 'Monfragüe', comunidad: 'Extremadura', superficie: '116 km²', anio: 2007 },
-        { nombre: 'Doñana', comunidad: 'Andalucía', superficie: '542 km²', anio: 1969 },
-        { nombre: 'Sierra Nevada', comunidad: 'Andalucía', superficie: '862 km²', anio: 1999 },
-        { nombre: 'Tablas de Daimiel', comunidad: 'Castilla-La Mancha', superficie: '30 km²', anio: 1973 },
-        { nombre: 'Islas Atlánticas de Galicia', comunidad: 'Galicia', superficie: '1.185 km²', anio: 2004 },
-        { nombre: 'Sierra de las Nieves', comunidad: 'Andalucía', superficie: '201 km²', anio: 2021 },
-        { nombre: 'Calderón de Barredos', comunidad: 'Castilla-La Mancha', superficie: '184 km²', anio: 1998 },
-        { nombre: 'Fuerteventura', comunidad: 'Canarias', superficie: 'Reserva de la Biosfera', anio: 2009 },
-        { nombre: 'La Gomera', comunidad: 'Canarias', superficie: 'Reserva de la Biosfera', anio: 2012 },
-        { nombre: 'Timanfaya', comunidad: 'Canarias', superficie: '51 km²', anio: 1974 },
-        { nombre: 'Garajonay', comunidad: 'Canarias', superficie: '40 km²', anio: 1981 },
+        { nombre: 'Picos de Europa', comunidad: 'Asturias / Cantabria / Castilla y León', superficie: 646, anio: 1918, lat: 43.17, lon: -4.85 },
+        { nombre: 'Ordesa y Monte Perdido', comunidad: 'Aragón', superficie: 156, anio: 1918, lat: 42.67, lon: -0.02 },
+        { nombre: 'Aigüestortes i Estany de Sant Maurici', comunidad: 'Cataluña', superficie: 408, anio: 1955, lat: 42.58, lon: 1.02 },
+        { nombre: 'Sierra de Guadarrama', comunidad: 'Castilla y León / Madrid', superficie: 339, anio: 2013, lat: 40.85, lon: -3.85 },
+        { nombre: 'Monfragüe', comunidad: 'Extremadura', superficie: 116, anio: 2007, lat: 39.83, lon: -6.05 },
+        { nombre: 'Cabañeros', comunidad: 'Castilla-La Mancha', superficie: 390, anio: 1995, lat: 39.38, lon: -4.32 },
+        { nombre: 'Doñana', comunidad: 'Andalucía', superficie: 542, anio: 1969, lat: 36.95, lon: -6.35 },
+        { nombre: 'Sierra Nevada', comunidad: 'Andalucía', superficie: 862, anio: 1999, lat: 37.05, lon: -3.37 },
+        { nombre: 'Tablas de Daimiel', comunidad: 'Castilla-La Mancha', superficie: 30, anio: 1973, lat: 39.15, lon: -3.08 },
+        { nombre: 'Timanfaya', comunidad: 'Canarias', superficie: 51, anio: 1974, lat: 29.00, lon: -13.83 },
+        { nombre: 'Caldera de Taburiente', comunidad: 'Canarias', superficie: 46, anio: 1954, lat: 28.75, lon: -17.87 },
+        { nombre: 'Garajonay', comunidad: 'Canarias', superficie: 40, anio: 1981, lat: 28.10, lon: -17.23 },
+        { nombre: 'Teide', comunidad: 'Canarias', superficie: 189, anio: 1954, lat: 28.27, lon: -16.64 },
+        { nombre: 'Archipiélago de Cabrera', comunidad: 'Illes Balears', superficie: 100, anio: 1991, lat: 39.15, lon: 2.95 },
+        { nombre: 'Islas Atlánticas de Galicia', comunidad: 'Galicia', superficie: 1185, anio: 2004, lat: 42.50, lon: -9.00 },
+        { nombre: 'Sierra de las Nieves', comunidad: 'Andalucía', superficie: 201, anio: 2021, lat: 36.68, lon: -5.02 },
     ];
 
     // ===== EMBALSES DATA (from data/embalses/) =====
@@ -1551,11 +1529,67 @@
         ]
     };
 
+    // ===== PROVINCE MAIN RIVERS =====
+    const PROVINCE_RIVERS = {
+        '28': 'Tajo',
+        '08': 'Llobregat',
+        '41': 'Guadalquivir',
+        '48': 'Nervión',
+        '46': 'Turia',
+        '50': 'Ebro',
+        '20': 'Bidasoa',
+        '36': 'Lérez',
+        '15': 'Anllóns',
+        '17': 'Ter',
+        '14': 'Segura',
+        '03': 'Segura',
+        '30': 'Segura',
+        '06': 'Guadalete',
+        '33': 'Nalón',
+        '39': 'Sella',
+        '24': 'Bernesga',
+        '23': 'Guadalquivir',
+        '11': 'Odiel',
+        '04': 'Andarax',
+        '29': 'Guadalhorce',
+        '18': 'Darro',
+        '21': 'Odiel',
+        '45': 'Guadiana',
+        '09': 'Ebro',
+        '22': 'Ebro',
+        '16': 'Júcar',
+        '12': 'Segura',
+        '10': 'Guadiana',
+        '05': 'Guadalupejo',
+        '25': 'Segre',
+        '43': 'Ebro',
+        '44': 'Jiloca',
+        '31': 'Ega',
+        '32': 'Miño',
+        '34': 'Esla',
+        '37': 'Tormes',
+        '47': 'Duero',
+        '49': 'Tormes',
+        '02': 'Jiloca',
+        '13': 'Guadiana',
+        '19': 'Henares',
+        '42': 'Duero',
+        '38': 'Güímar',
+        '35': 'Barranco de Tirajana',
+        '01': 'Nervión',
+        '40': 'Eresma',
+        '26': 'Ebro',
+        '27': 'Sil',
+        '07': 'Torrente de Ses Feixes',
+    };
+
     // ===== GLOBAL STATE =====
     let map = null;
     let provincesGeo = null;
     let provinceData = {};
     let geoLayer = null;
+    let provincesOverlay = null;
+    let parksOverlay = null;
     let selectedProvince = null;
     let charts = {};
     let provinceCentroids = {};
@@ -1633,7 +1667,7 @@
         }
         // 1-8: switch tabs
         if (!e.ctrlKey && !e.altKey && !e.metaKey && !e.target.closest('input')) {
-            const tabKeys = { '1': 'panel', '2': 'energia', '3': 'clima', '4': 'agua', '5': 'economia', '6': 'transporte', '7': 'ambiente', '8': 'catastro' };
+            const tabKeys = { '1': 'panel', '2': 'energia', '3': 'clima', '4': 'agua', '5': 'economia', '6': 'ambiente', '7': 'catastro', '8': 'poblacion' };
             if (tabKeys[e.key]) {
                 const btn = document.querySelector(`[data-tab="${tabKeys[e.key]}"]`);
                 if (btn) btn.click();
@@ -1726,13 +1760,17 @@
         });
 
         // Layer control
+        provincesOverlay = L.layerGroup();
+        parksOverlay = L.layerGroup();
         const baseLayers = {
             'Carto Light': baseOSM,
             'OpenStreetMap': baseOSMStd
         };
         const overlays = {
             'Carreteras': roadsLayer,
-            'Ferrocarriles': railwaysLayer
+            'Ferrocarriles': railwaysLayer,
+            'Provincias (coropleta)': provincesOverlay,
+            'Parques Nacionales': parksOverlay
         };
         L.control.layers(baseLayers, overlays, { collapsed: true, position: 'topright' }).addTo(map);
 
@@ -1803,7 +1841,7 @@
     // ===== RENDER CHOROPLETH =====
     function renderChoropleth() {
         if (!provincesGeo) return;
-        if (geoLayer) map.removeLayer(geoLayer);
+        if (geoLayer && provincesOverlay) provincesOverlay.removeLayer(geoLayer);
 
         geoLayer = L.geoJSON(provincesGeo, {
             style: feature => {
@@ -1851,7 +1889,13 @@
                     }
                 });
             }
-        }).addTo(map);
+        });
+        if (provincesOverlay) {
+            provincesOverlay.addLayer(geoLayer);
+            if (!map.hasLayer(provincesOverlay)) provincesOverlay.addTo(map);
+        } else {
+            geoLayer.addTo(map);
+        }
 
         // Ensure tooltips pane is on top
         const tooltipPane = map.getPane('tooltipPane');
@@ -1926,6 +1970,15 @@
         document.getElementById('catastro-cod').textContent = cod;
         document.getElementById('catastro-capital').textContent = d.capital || '—';
         document.getElementById('catastro-ccaa').textContent = CCAA_NAMES[d.ccaa] || d.ccaa || '—';
+        document.getElementById('catastro-superficie').textContent = d.superficie ? d.superficie.toLocaleString('es-ES') + ' km²' : '—';
+        const catDensity = (d.poblacion && d.superficie) ? (d.poblacion / d.superficie).toFixed(1) + ' hab/km²' : '—';
+        document.getElementById('catastro-density').textContent = catDensity;
+        document.getElementById('catastro-municipios').textContent = d.num_municipios || d.municipios || '—';
+        const catLink = document.getElementById('catastro-link');
+        if (catLink) {
+            catLink.href = `https://www.sedecatastro.gob.es/portal/contenido/consulta-buscar-parcela-catastral?Reference=${cod}&Provincia=${encodeURIComponent(nombre)}`;
+            catLink.textContent = `Consulta catastro de ${nombre} →`;
+        }
 
         // Update climate tab with province data
         updateClimateForProvince(cod, nombre, d);
@@ -1949,8 +2002,10 @@
     // ===== UPDATE CLIMATE TAB FOR PROVINCE =====
     async function updateClimateForProvince(cod, nombre, d) {
         const centroid = provinceCentroids[cod] || [40.0, -3.5];
+        console.log(`[Clima] Actualizando clima para ${nombre} (${cod}) — centroid: ${centroid[0]}, ${centroid[1]}`);
         try {
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe/Madrid&forecast_days=7`;
+            console.log(`[Clima] URL: ${url}`);
             const res = await fetch(url);
             if (!res.ok) throw new Error(`Weather API HTTP ${res.status}`);
             const data = await res.json();
@@ -1961,7 +2016,8 @@
             if (climaTitle) climaTitle.textContent = `Clima Actual — ${d.capital || nombre}`;
 
             if (curr) {
-                const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; else console.warn('Element not found:', id); };
+                const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; else console.warn('[Clima] Elemento no encontrado:', id); };
+                console.log(`[Clima] Datos actuales:`, JSON.stringify(curr));
                 setTxt('weather-temp', (curr.temperature_2m !== undefined ? curr.temperature_2m : '—') + ' °C');
                 setTxt('weather-humidity', (curr.relative_humidity_2m !== undefined ? curr.relative_humidity_2m : '—') + ' %');
                 setTxt('weather-wind', (curr.wind_speed_10m !== undefined ? curr.wind_speed_10m : '—') + ' km/h');
@@ -2569,13 +2625,41 @@
         let html = '';
         NATIONAL_PARKS.forEach(p => {
             html += `
-                <div class="park-item">
-                    <div class="park-name">🌲 ${p.nombre}</div>
-                    <div class="park-info">${p.comunidad} · ${p.superficie} · Declarado: ${p.anio}</div>
+                <div class="list-item" style="cursor:pointer; transition:background 0.15s;"
+                     onmouseover="this.style.background='#f1f5f9'"
+                     onmouseout="this.style.background='transparent'"
+                     onclick='selectPark(${JSON.stringify({nombre:p.nombre, lat:p.lat, lon:p.lon}).replace(/'/g, "&#39;")})'>
+                    <div class="list-item-header">🌲 ${p.nombre}</div>
+                    <div class="list-item-sub">${p.comunidad} · ${p.superficie.toLocaleString('es-ES')} km² · Declarado: ${p.anio}</div>
                 </div>
             `;
         });
         document.getElementById('parks-list').innerHTML = html;
+
+        // Add park markers to map as overlay
+        if (parksOverlay) parksOverlay.clearLayers();
+        else parksOverlay = L.layerGroup();
+        NATIONAL_PARKS.forEach(p => {
+            const marker = L.circleMarker([p.lat, p.lon], {
+                radius: 7,
+                fillColor: '#16a34a',
+                color: '#ffffff',
+                weight: 2,
+                fillOpacity: 0.9
+            }).bindTooltip(`<strong>🌲 ${p.nombre}</strong><br>${p.comunidad}<br>${p.superficie} km² — ${p.anio}`, { sticky: true });
+            parksOverlay.addLayer(marker);
+        });
+
+        if (map && !map.hasLayer(parksOverlay)) {
+            parksOverlay.addTo(map);
+        }
+    }
+
+    // ===== SELECT PARK =====
+    function selectPark(park) {
+        if (map) {
+            map.flyTo([park.lat, park.lon], 11, { duration: 1.5 });
+        }
     }
 
     // ===== RENDER POPULATION CHARTS (INE) =====
@@ -3038,7 +3122,14 @@
         if (c) fetchPollen(c[0], c[1]);
     }
     function updateFloodForProvince(feature) {
-        const c = provinceCentroids[feature.properties.cod];
+        const cod = feature.properties.cod;
+        const c = provinceCentroids[cod];
+        // Update river name in flood tab
+        const riverName = PROVINCE_RIVERS[cod] || 'Río principal';
+        const riverEl = document.getElementById('flood-river-name');
+        const chartTitleEl = document.getElementById('flood-chart-title');
+        if (riverEl) riverEl.textContent = `📍 Río ${riverName} — ${feature.properties.nombre || ''}`;
+        if (chartTitleEl) chartTitleEl.textContent = `Caudal del río ${riverName} — 14 días`;
         if (c) fetchFlood(c[0], c[1]);
     }
     function updateSoilForProvince(feature) {
@@ -3056,6 +3147,11 @@
         const detailPanel = document.getElementById('port-detail');
         detailPanel.style.display = 'block';
         document.getElementById('port-detail-name').textContent = `🚢 ${port.name} — ${port.prov}`;
+
+        // Navigate to port on map
+        if (map) {
+            map.flyTo([port.lat, port.lon], 12, { duration: 1.5 });
+        }
 
         // Reset values
         document.getElementById('port-detail-waves').textContent = 'Cargando…';
