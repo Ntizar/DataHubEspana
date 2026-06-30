@@ -1448,54 +1448,73 @@
                     <!-- TEMP. SUELO EXTENDIDO TAB -->
                     <div class="tab-panel" id="tab-tempsuelo">
                         <div class="section-title">🌡️ Temperatura y Humedad del Suelo — España</div>
+                        <div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                            <label for="ts-province-select" style="font-size:13px;color:#64748b;margin-right:4px;">🗺️ Seleccionar provincia:</label>
+                            <select id="ts-province-select" style="padding:4px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;background:#fff;min-width:200px;">
+                                <option value="all">🇪🇸 España (todas)</option>
+                            </select>
+                        </div>
+                        <!-- CLASIFICACIÓN AGRÍCOLA -->
+                        <div class="card" id="ts-classification-card" style="margin-bottom:12px;">
+                            <div class="card-title">🌾 Clasificación Agrícola</div>
+                            <div style="font-size:14px;padding:8px 0;">
+                                <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+                                    <div id="ts-clasificacion-badge" style="font-size:22px;font-weight:700;padding:8px 16px;border-radius:10px;background:#f1f5f9;">—</div>
+                                    <div id="ts-recomendacion" style="font-size:14px;color:#475569;flex:1;min-width:250px;">Selecciona una provincia para ver la clasificación</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:11px;color:#94a3b8;">
+                                <span>❄️ &lt;5°C Helada</span>
+                                <span>🌱 5-15°C Siembra limitada</span>
+                                <span>✅ 15-25°C Óptimo para cultivos</span>
+                                <span>🔥 &gt;25°C Estrés térmico</span>
+                            </div>
+                        </div>
+                        <!-- KPIs extendidos -->
                         <div class="kpi-row">
                             <div class="kpi orange">
                                 <div class="kpi-value" id="ts-temp-0cm">—</div>
                                 <div class="kpi-label">Temp. superficie 0cm (°C)</div>
                             </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="ts-temp-3cm">—</div>
+                                <div class="kpi-label">Temp. 3cm (°C)</div>
+                            </div>
                             <div class="kpi">
-                                <div class="kpi-value" id="ts-temp-6cm">—</div>
-                                <div class="kpi-label">Temp. 6cm (°C)</div>
+                                <div class="kpi-value" id="ts-temp-9cm">—</div>
+                                <div class="kpi-label">Temp. 9cm (°C)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
-                            <div class="kpi">
-                                <div class="kpi-value" id="ts-temp-18cm">—</div>
-                                <div class="kpi-label">Temp. 18cm (°C)</div>
-                            </div>
                             <div class="kpi blue">
                                 <div class="kpi-value" id="ts-humedad-0cm">—</div>
                                 <div class="kpi-label">Humedad 0-1cm (%)</div>
                             </div>
-                        </div>
-                        <div class="kpi-row">
                             <div class="kpi green">
                                 <div class="kpi-value" id="ts-humedad-3cm">—</div>
                                 <div class="kpi-label">Humedad 3-9cm (%)</div>
                             </div>
-                            <div class="kpi">
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
                                 <div class="kpi-value" id="ts-prom-temp">—</div>
                                 <div class="kpi-label">Temp. suelo promedio (°C)</div>
                             </div>
-                        </div>
-                        <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="ts-prom-humedad">—</div>
                                 <div class="kpi-label">Humedad suelo promedio (%)</div>
                             </div>
-                            <div class="kpi orange">
-                                <div class="kpi-value" id="ts-ciudad-max">—</div>
-                                <div class="kpi-label">Ciudad más cálida</div>
-                            </div>
                         </div>
+                        <!-- CHART: perfil temperatura por profundidad -->
                         <div class="card">
-                            <div class="card-title">Perfiles de temperatura por profundidad — 24h</div>
-                            <div class="chart-container" style="height:280px;">
+                            <div class="card-title" id="ts-chart-title">Perfil temperatura suelo por profundidad — 24h (Madrid)</div>
+                            <div class="chart-container" style="height:300px;">
                                 <canvas id="chart-ts-perfil"></canvas>
                             </div>
                         </div>
+                        <!-- MAPA -->
                         <div class="card">
-                            <div class="card-title">Mapa de condiciones del suelo</div>
+                            <div class="card-title">Mapa de condiciones del suelo por ciudad</div>
                             <div id="ts-map-cities" style="font-size:12px;"></div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API (soil_temperature, soil_moisture)</div>
@@ -2938,6 +2957,28 @@
                 }
             });
 
+            // Populate TS province selector
+            const tsProvinceSelect = document.getElementById('ts-province-select');
+            if (tsProvinceSelect) {
+                // Sort by cod for clean ordering
+                const sorted = [...provincesGeo.features].sort((a, b) => (a.properties.cod || '').localeCompare(b.properties.cod || ''));
+                sorted.forEach(f => {
+                    const opt = document.createElement('option');
+                    opt.value = f.properties.cod;
+                    opt.textContent = `${f.properties.cod} — ${f.properties.nombre}`;
+                    tsProvinceSelect.appendChild(opt);
+                });
+                tsProvinceSelect.addEventListener('change', () => {
+                    const val = tsProvinceSelect.value;
+                    if (val === 'all') {
+                        fetchTempSuelo(null);
+                    } else {
+                        const feat = provincesGeo.features.find(f => f.properties.cod === val);
+                        if (feat) fetchTempSuelo(feat);
+                    }
+                });
+            }
+
             renderChoropleth();
             updateKPIs();
             showToast('Provincias cargadas: ' + provincesGeo.features.length, 'success', 2500);
@@ -4366,11 +4407,50 @@
         { name: 'A Coruña', lat: 43.37, lon: -8.41 },
     ];
 
-    async function fetchTempSuelo() {
-        const promises = TS_CITIES.map(async (city) => {
+    // Mapeo nombre ciudad → índice en TS_CITIES
+    const CITY_INDEX = {};
+    TS_CITIES.forEach((c, i) => CITY_INDEX[c.name] = i);
+
+    // Clasificación agrícola según temp suelo superficie (0cm)
+    function clasificacionAgricola(temp) {
+        if (temp == null) return { label: '—', emoji: '❓', color: '#94a3b8', bg: '#f1f5f8', rec: '' };
+        if (temp < 5) return { label: 'Helada', emoji: '❄️', color: '#2563eb', bg: '#dbeafe', rec: '⚠️ Temperatura de suelo por debajo de 5°C. No se recomienda siembra. Proteger cultivos sensibles con cobertores.' };
+        if (temp < 15) return { label: 'Frío — siembra limitada', emoji: '🌱', color: '#d97706', bg: '#fef3c7', rec: '🌱 Temperatura baja. Siembra limitada a cultaciones de clima fresco (espinacas, guisantes, habas). Evitar cultivos mediterráneos.' };
+        if (temp <= 25) return { label: 'Óptimo para cultivos', emoji: '✅', color: '#16a34a', bg: '#dcfce7', rec: '✅ Condiciones ideales. Temperatura de suelo favorable para la mayoría de cultivos. Buena ventana para siembra y trasplante.' };
+        return { label: 'Estrés térmico', emoji: '🔥', color: '#dc2626', bg: '#fee2e2', rec: '🔥 Temperatura elevada. Riesgo de estrés hídrico y térmico. Aumentar riego, considerar sombreado y proteger raíces.' };
+    }
+
+    // Interpolar temperatura/humedad a profundidades deseadas (0, 3, 9 cm)
+    function interpolarProfundidad(profundidades, valores, target) {
+        if (!valores || valores.length === 0) return null;
+        if (target <= profundidades[0]) return valores[0];
+        if (target >= profundidades[profundidades.length - 1]) return valores[valores.length - 1];
+        for (let i = 0; i < profundidades.length - 1; i++) {
+            if (target >= profundidades[i] && target <= profundidades[i + 1]) {
+                const t = (target - profundidades[i]) / (profundidades[i + 1] - profundidades[i]);
+                return valores[i] + t * (valores[i + 1] - valores[i]);
+            }
+        }
+        return valores[valores.length - 1];
+    }
+
+    async function fetchTempSuelo(provinceFeature) {
+        const useProvince = provinceFeature && provinceFeature.properties && provinceCentroids[provinceFeature.properties.cod];
+        let citiesToFetch;
+
+        if (useProvince) {
+            // Fetch from province centroid only
+            const c = provinceCentroids[provinceFeature.properties.cod];
+            citiesToFetch = [{ name: provinceFeature.properties.nombre || 'Provincia', lat: c[0], lon: c[1] }];
+        } else {
+            citiesToFetch = TS_CITIES;
+        }
+
+        // API call: current + hourly para perfiles de profundidad
+        const promises = citiesToFetch.map(async (city) => {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm&hourly=soil_temperature_0cm,soil_temperature_6cm,soil_moisture_0_to_1cm&timezone=Europe/Madrid&forecast_days=1`;
-                const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&hourly=soil_temperature_0cm,soil_temperature_3cm,soil_temperature_9cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&timezone=Europe/Madrid&forecast_days=1`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 const data = await resp.json();
                 return { city, data };
             } catch (err) {
@@ -4380,8 +4460,8 @@
 
         const results = await Promise.all(promises);
 
-        // KPIs: temp promedio suelo, humedad promedio, ciudad más cálida
-        let allTemp0 = [], allTemp6 = [], allTemp18 = [], allHum0 = [], allHum3 = [];
+        // KPIs: temp y humedad a 0, 3, 9cm (interpolados si es necesario)
+        let allTemp0 = [], allTemp3 = [], allTemp9 = [], allHum0 = [], allHum3 = [], allHum9 = [];
         let maxTemp = -Infinity, maxCity = '';
 
         results.forEach(r => {
@@ -4392,50 +4472,95 @@
             const t18 = c.soil_temperature_18cm;
             const h0 = c.soil_moisture_0_to_1cm;
             const h3 = c.soil_moisture_3_to_9cm;
-            if (t0 != null) { allTemp0.push(t0); if (t0 > maxTemp) { maxTemp = t0; maxCity = r.city.name; } }
-            if (t6 != null) allTemp6.push(t6);
-            if (t18 != null) allTemp18.push(t18);
+            const h9 = c.soil_moisture_9_to_27cm;
+
+            if (t0 != null) {
+                allTemp0.push(t0);
+                if (t0 > maxTemp) { maxTemp = t0; maxCity = r.city.name; }
+            }
+            // Interpolar 3cm entre 0cm y 6cm
+            if (t0 != null && t6 != null) {
+                allTemp3.push((t0 + t6) / 2);
+            }
+            // Interpolar 9cm entre 6cm y 18cm
+            if (t6 != null && t18 != null) {
+                allTemp9.push(t6 + (t18 - t6) * (9 - 6) / (18 - 6));
+            }
             if (h0 != null) allHum0.push(h0);
             if (h3 != null) allHum3.push(h3);
+            if (h9 != null) allHum9.push(h9);
         });
 
-        const avg = arr => arr.length ? (arr.reduce((s,v) => s+v, 0) / arr.length).toFixed(1) : '—';
-        const fmt = v => v === '—' ? '—' : v + '°C';
+        const avg = arr => arr.length ? (arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(1) : '—';
 
+        // KPIs de temperatura
         document.getElementById('ts-temp-0cm').textContent = avg(allTemp0);
-        document.getElementById('ts-temp-6cm').textContent = avg(allTemp6);
-        document.getElementById('ts-temp-18cm').textContent = avg(allTemp18);
+        document.getElementById('ts-temp-3cm').textContent = avg(allTemp3);
+        document.getElementById('ts-temp-9cm').textContent = avg(allTemp9);
+
+        // KPIs de humedad
         document.getElementById('ts-humedad-0cm').textContent = avg(allHum0) + '%';
         document.getElementById('ts-humedad-3cm').textContent = avg(allHum3) + '%';
+
+        // Promedios
         document.getElementById('ts-prom-temp').textContent = avg(allTemp0);
         document.getElementById('ts-prom-humedad').textContent = avg([...allHum0, ...allHum3]);
-        document.getElementById('ts-ciudad-max').textContent = maxCity ? `${maxCity} (${maxTemp.toFixed(1)}°C)` : '—';
 
-        // Chart: perfiles de temperatura por profundidad 24h (usando Madrid como referencia)
-        const madrid = results.find(r => r.city.name === 'Madrid' && r.data);
+        // CLASIFICACIÓN AGRÍCOLA
+        const avgTemp0 = allTemp0.length ? allTemp0.reduce((s, v) => s + v, 0) / allTemp0.length : null;
+        const cl = clasificacionAgricola(avgTemp0);
+        const badge = document.getElementById('ts-clasificacion-badge');
+        if (badge) {
+            badge.textContent = `${cl.emoji} ${cl.label}`;
+            badge.style.color = cl.color;
+            badge.style.background = cl.bg;
+        }
+        const recEl = document.getElementById('ts-recomendacion');
+        if (recEl) {
+            if (useProvince) {
+                recEl.textContent = cl.rec;
+            } else {
+                recEl.textContent = `Media España: ${avgTemp0 != null ? avgTemp0.toFixed(1) + '°C' : '—'} → ${cl.label} ${cl.emoji}. ${cl.rec}`;
+            }
+        }
+
+        // CHART: perfil temperatura por profundidad (3 líneas: 0cm, 3cm, 9cm)
+        // Usar Madrid como referencia, o la ciudad principal si es provincia
+        const refCity = useProvince ? citiesToFetch[0] : TS_CITIES.find(c => c.name === 'Madrid');
+        const madrid = results.find(r => r.city.name === (refCity ? refCity.name : 'Madrid') && r.data);
         if (madrid && madrid.data.hourly) {
             const h = madrid.data.hourly;
             const times = h.time || [];
             const last24 = Math.min(times.length, 24);
             const labels = times.slice(-last24).map(t => t.split('T')[1]);
+
+            // Extraer datos de las 3 profundidades
             const t0data = (h.soil_temperature_0cm || []).slice(-last24);
-            const t6data = (h.soil_temperature_6cm || []).slice(-last24);
+            const t3data = (h.soil_temperature_3cm || []).slice(-last24);
+            const t9data = (h.soil_temperature_9cm || []).slice(-last24);
 
             if (charts.tsPerfil) charts.tsPerfil.destroy();
             const ctx = document.getElementById('chart-ts-perfil');
             if (ctx) {
+                const cityName = refCity ? refCity.name : 'Madrid';
+                document.getElementById('ts-chart-title').textContent = `Perfil temperatura suelo por profundidad — 24h (${cityName})`;
                 charts.tsPerfil = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels,
                         datasets: [
-                            { label: '0cm (superficie)', data: t0data, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 1 },
-                            { label: '6cm', data: t6data, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 1 }
+                            { label: '0cm (superficie)', data: t0data, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 1 },
+                            { label: '3cm', data: t3data, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.08)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 1 },
+                            { label: '9cm', data: t9data, borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.08)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 1 }
                         ]
                     },
                     options: {
                         responsive: true,
-                        plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', labels: { font: { size: 11 } } },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
                         scales: {
                             y: { title: { display: true, text: '°C' }, grid: { color: '#f1f5f9' } },
                             x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
@@ -4445,23 +4570,23 @@
             }
         }
 
-        // Mapa de condiciones del suelo
-        let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;">';
+        // Mapa de condiciones del suelo por ciudad
+        let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;">';
         results.forEach(r => {
             if (!r.data || !r.data.current) return;
             const c = r.data.current;
             const t0 = c.soil_temperature_0cm != null ? c.soil_temperature_0cm.toFixed(1) + '°C' : '—';
+            const t3 = c.soil_temperature_6cm != null ? ((c.soil_temperature_0cm + c.soil_temperature_6cm) / 2).toFixed(1) + '°C' : '—';
             const h0 = c.soil_moisture_0_to_1cm != null ? c.soil_moisture_0_to_1cm.toFixed(1) + '%' : '—';
-            const badge = (v) => {
-                const n = parseFloat(v);
-                if (isNaN(n)) return '';
-                if (n > 25) return 'badge-red';
-                if (n > 18) return 'badge-orange';
-                return 'badge-green';
-            };
+            const h3 = c.soil_moisture_3_to_9cm != null ? c.soil_moisture_3_to_9cm.toFixed(1) + '%' : '—';
+            const h9 = c.soil_moisture_9_to_27cm != null ? c.soil_moisture_9_to_27cm.toFixed(1) + '%' : '—';
+            const tempN = parseFloat(t0);
+            const cl = clasificacionAgricola(isNaN(tempN) ? null : tempN);
             html += `<div class="list-item">
                 <div class="list-item-header">${r.city.name}</div>
-                <div class="list-item-sub">🌡️ 0cm: <span class="badge ${badge(t0)}">${t0}</span> | 💧 Humedad: ${h0}</div>
+                <div class="list-item-sub">🌡️ 0cm: <strong>${t0}</strong> | 3cm: <strong>${t3}</strong></div>
+                <div class="list-item-sub">💧 0-1cm: ${h0} | 3-9cm: ${h3} | 9-27cm: ${h9}</div>
+                <div class="list-item-sub"><span style="font-weight:600;color:${cl.color};background:${cl.bg};padding:2px 8px;border-radius:4px;font-size:11px;">${cl.label} ${cl.emoji}</span></div>
             </div>`;
         });
         html += '</div>';
