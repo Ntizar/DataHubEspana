@@ -6009,12 +6009,11 @@
     ];
 
     function calcFireRisk(temp, humidity, wind, cape) {
-        // Fórmula: riesgo = (temp/40) * (1 - humedad/100) * (viento/50) * (cape/1000)
-        const t = Math.min(Math.max(temp, 0), 50) / 40;
-        const h = Math.max(1 - humidity / 100, 0);
-        const w = Math.min(Math.max(wind, 0), 100) / 50;
-        const c = Math.min(Math.max(cape, 0), 2000) / 1000;
-        return Math.min(t * h * w * c, 1);
+        // Fórmula: fireRisk = CAPE × windSpeed / (humidity + 1)
+        // Normalizado a 0-1: max CAPE~2000 J/kg, max wind~100 km/h, humidity 0-100
+        const raw = cape * wind / (humidity + 1);
+        // Normalización: max raw ≈ 2000*100/1 = 200000 → divide por 200000
+        return Math.min(raw / 200000, 1);
     }
 
     function getRiskLevel(risk) {
@@ -9737,10 +9736,10 @@
 
         // ---- Semáforo de visibilidad ----
         function visEstado(visKm) {
-            if (visKm < 1) return { label: 'Niebla', cls: 'badge-red', color: '#dc2626', bg: '#fef2f2', kpi: 'red' };
-            if (visKm < 5) return { label: 'Bruma', cls: 'badge-orange', color: '#f97316', bg: '#fff7ed', kpi: 'orange' };
-            if (visKm < 10) return { label: 'Moderada', cls: 'badge-blue', color: '#2563eb', bg: '#eff6ff', kpi: 'blue' };
-            return { label: 'Excelente', cls: 'badge-green', color: '#16a34a', bg: '#f0fdf4', kpi: 'green' };
+            if (visKm < 2) return { label: 'Reducida', cls: 'badge-red', color: '#dc2626', bg: '#fef2f2', kpi: 'red' };
+            if (visKm < 5) return { label: 'Moderada', cls: 'badge-orange', color: '#f97316', bg: '#fff7ed', kpi: 'orange' };
+            if (visKm < 10) return { label: 'Buena', cls: 'badge-blue', color: '#2563eb', bg: '#eff6ff', kpi: 'blue' };
+            return { label: 'Clara', cls: 'badge-green', color: '#16a34a', bg: '#f0fdf4', kpi: 'green' };
         }
 
         function esCanarias(name) {
@@ -9760,7 +9759,7 @@
                 currentVis.push({ name: VIS_CITIES[idx].name, visKm, data });
                 const est = visEstado(visKm);
                 // El peor estado gana
-                const orden = { 'Niebla': 0, 'Bruma': 1, 'Moderada': 2, 'Excelente': 3 };
+                const orden = { 'Reducida': 0, 'Moderada': 1, 'Buena': 2, 'Clara': 3 };
                 if (orden[est.label] < orden[globalEstado.label]) {
                     globalEstado = est;
                 }
@@ -9794,7 +9793,7 @@
             const vis = data.current.visibility ?? null;
             const city = VIS_CITIES[idx];
             if (esCanarias(city.name)) {
-                if (data.current.weather_code === 11 || (vis !== null && vis < 3000)) {
+                if (data.current.weather_code === 11 || (vis !== null && vis < 2000)) {
                     calimaCiudades.push(city.name);
                 }
             }
@@ -9873,19 +9872,23 @@
                                 const axis = chart.scales.y;
                                 if (axis && axis.top && axis.bottom) {
                                     chart.ctx.save();
-                                    // Niebla < 1km
+                                    // Reducida < 2km
                                     const y1 = axis.getPixelForValue(1);
                                     chart.ctx.fillStyle = '#dc262622';
                                     chart.ctx.fillRect(axis.left, axis.bottom, axis.right - axis.left, axis.top - y1);
-                                    // Bruma 1-5km
-                                    const y5 = axis.getPixelForValue(5);
+                                    // Moderada 1-2km
+                                    const y2 = axis.getPixelForValue(2);
                                     chart.ctx.fillStyle = '#f9731622';
-                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y1 - y5);
-                                    // Moderada 5-10km
-                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillRect(axis.left, y2, axis.right - axis.left, y1 - y2);
+                                    // Buena 2-5km
+                                    const y5 = axis.getPixelForValue(5);
                                     chart.ctx.fillStyle = '#eab30822';
+                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y2 - y5);
+                                    // Clara > 5km
+                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillStyle = '#2563eb22';
                                     chart.ctx.fillRect(axis.left, y10, axis.right - axis.left, y5 - y10);
-                                    // Excelente >10km
+                                    // Excelente > 10km
                                     chart.ctx.fillStyle = '#16a34a22';
                                     chart.ctx.fillRect(axis.left, axis.top, axis.right - axis.left, y10 - axis.top);
                                     chart.ctx.restore();
@@ -9972,15 +9975,23 @@
                                 const axis = chart.scales.y;
                                 if (axis && axis.top && axis.bottom) {
                                     chart.ctx.save();
+                                    // Reducida < 2km
                                     const y1 = axis.getPixelForValue(1);
                                     chart.ctx.fillStyle = '#dc262622';
                                     chart.ctx.fillRect(axis.left, axis.bottom, axis.right - axis.left, axis.top - y1);
-                                    const y5 = axis.getPixelForValue(5);
+                                    // Moderada 1-2km
+                                    const y2 = axis.getPixelForValue(2);
                                     chart.ctx.fillStyle = '#f9731622';
-                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y1 - y5);
-                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillRect(axis.left, y2, axis.right - axis.left, y1 - y2);
+                                    // Buena 2-5km
+                                    const y5 = axis.getPixelForValue(5);
                                     chart.ctx.fillStyle = '#eab30822';
+                                    chart.ctx.fillRect(axis.left, y5, axis.right - axis.left, y2 - y5);
+                                    // Clara > 5km
+                                    const y10 = axis.getPixelForValue(10);
+                                    chart.ctx.fillStyle = '#2563eb22';
                                     chart.ctx.fillRect(axis.left, y10, axis.right - axis.left, y5 - y10);
+                                    // Excelente > 10km
                                     chart.ctx.fillStyle = '#16a34a22';
                                     chart.ctx.fillRect(axis.left, axis.top, axis.right - axis.left, y10 - axis.top);
                                     chart.ctx.restore();
@@ -10145,8 +10156,8 @@
                 if (data && data.current && data.current.wind_gusts_10m != null) {
                     const g = data.current.wind_gusts_10m;
                     gustValues.push(g);
-                    if (g > 70) gustColors.push('#dc2626');
-                    else if (g > 50) gustColors.push('#f97316');
+                    if (g > 80) gustColors.push('#dc2626');
+                    else if (g > 60) gustColors.push('#f97316');
                     else gustColors.push('#2563eb');
                 } else {
                     gustValues.push(0);
@@ -10218,9 +10229,9 @@
                 let gustBadge = 'badge-green';
                 let gustText = 'Tranquilo';
                 if (typeof gust === 'number') {
-                    if (gust > 70) { gustBadge = 'badge-red'; gustText = 'Tormenta'; }
-                    else if (gust > 50) { gustBadge = 'badge-orange'; gustText = 'Fuerte'; }
-                    else if (gust > 30) { gustBadge = 'badge-blue'; gustText = 'Moderado'; }
+                    if (gust > 100) { gustBadge = 'badge-red'; gustText = 'Tormenta'; }
+                    else if (gust > 80) { gustBadge = 'badge-orange'; gustText = 'Muy fuerte'; }
+                    else if (gust > 60) { gustBadge = 'badge-blue'; gustText = 'Fuerte'; }
                 }
 
                 html += `<div class="list-item">
@@ -11041,9 +11052,8 @@
 
                 let statusColor = '#64748b';
                 let statusText = 'Normal';
-                if (parseFloat(pmsl) > 1020) { statusColor = '#16a34a'; statusText = 'Anticiclónica'; }
-                else if (parseFloat(pmsl) < 1005) { statusColor = '#dc2626'; statusText = 'Depresión'; }
-                else if (parseFloat(pmsl) > 1010) { statusColor = '#2563eb'; statusText = 'Alta'; }
+                if (parseFloat(pmsl) > 1020) { statusColor = '#16a34a'; statusText = 'Alta'; }
+                else if (parseFloat(pmsl) < 1000) { statusColor = '#dc2626'; statusText = 'Muy baja (tormentas)'; }
                 else if (parseFloat(pmsl) < 1010) { statusColor = '#f97316'; statusText = 'Baja'; }
 
                 html += `<div class="list-item"><div class="list-item-header">${city.name} <span style="color:${statusColor};font-weight:700;">${pmsl} hPa</span></div><div class="list-item-sub">Temp: ${temp}°C · Alt: ${alt} m · <strong>${statusText}</strong></div></div>`;
