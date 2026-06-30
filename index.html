@@ -121,21 +121,23 @@
         }
         .tabs-row {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 4px;
             padding: 6px 12px;
+            justify-content: flex-start;
         }
         .tab-btn {
-            padding: 4px 9px;
-            border-radius: 16px;
+            padding: 3px 8px;
+            border-radius: 14px;
             border: 1px solid #e2e8f0;
             background: #ffffff;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             color: #64748b;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.15s;
+            flex-shrink: 0;
         }
         .tab-btn:hover { border-color: #2563eb; color: #2563eb; }
         .tab-btn.active {
@@ -639,6 +641,7 @@
                 <button class="tab-btn" data-tab="lluvia">🌧️ Prob. Lluvia</button>
                 <button class="tab-btn" data-tab="presion">📊 Presión</button>
                 <button class="tab-btn" data-tab="fuego">🔥 Índice de Fuego</button>
+                <button class="tab-btn" data-tab="evapo">💧 Evapotranspiración</button>
             </div>
         </div>
 
@@ -1587,6 +1590,42 @@
                             <div id="fuego-zonas-list"></div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo API (CAPE, temperatura, humedad, viento)</div>
+                    </div>
+
+                    <!-- EVAPOTRANSPIRACIÓN TAB -->
+                    <div class="tab-panel" id="tab-evapo">
+                        <div class="section-title">💧 Evapotranspiración y Balance Hídrico</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="evapo-et0-hoy">—</div>
+                                <div class="kpi-label">ET₀ hoy (mm)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="evapo-et0-7d">—</div>
+                                <div class="kpi-label">ET₀ 7 días (mm)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="evapo-balance">—</div>
+                                <div class="kpi-label">Balance hídrico (mm)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="evapo-deficit">—</div>
+                                <div class="kpi-label">Déficit agua (mm)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">ET₀ vs precipitación — 7 días</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-evapo"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Mapa de estrés hídrico por ciudad</div>
+                            <div id="evapo-map-cities" style="font-size:12px;"></div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (et0_fao_evapotranspiration)</div>
                     </div>
                 </div>
             </div>
@@ -3963,6 +4002,321 @@
         }
     }
 
+    // ===== EVAPOTRANSPIRACIÓN =====
+    const EVAPO_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70, cc: 'Castilla-La Mancha' },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00, cc: 'Andalucía' },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17, cc: 'Cataluña' },
+        { name: 'Valencia', lat: 39.45, lon: -0.32, cc: 'Comunidad Valenciana' },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93, cc: 'País Vasco' },
+        { name: 'Málaga', lat: 36.72, lon: -4.42, cc: 'Andalucía' },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88, cc: 'Aragón' },
+        { name: 'Palma', lat: 39.57, lon: 2.65, cc: 'Islas Baleares' },
+    ];
+
+    async function fetchEvapo() {
+        // Fetch all cities in parallel
+        const promises = EVAPO_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&daily=et0_fao_evapotranspiration,precipitation_sum&timezone=Europe/Madrid&forecast_days=7`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Procesar datos
+        let et0Hoy = [];
+        let et0SieteDias = [];
+        let precipHoy = [];
+        let precipSieteDias = [];
+        let et0DailySeries = [];
+        let precipDailySeries = [];
+        let cityLabels = [];
+        let balanceByCity = [];
+        let deficitByCity = [];
+
+        results.forEach((data, idx) => {
+            if (!data || !data.daily) return;
+            cityLabels.push(EVAPO_CITIES[idx].name);
+
+            const et0 = data.daily.et0_fao_evapotranspiration;
+            const precip = data.daily.precipitation_sum;
+
+            if (et0) {
+                et0DailySeries.push(...et0.slice(0, 7));
+                et0Hoy.push(et0[0] ?? 0);
+                et0SieteDias.push(et0.slice(0, 7).reduce((a, b) => a + (b || 0), 0));
+            } else {
+                for (let i = 0; i < 7; i++) et0DailySeries.push(0);
+                et0Hoy.push(0);
+                et0SieteDias.push(0);
+            }
+
+            if (precip) {
+                precipDailySeries.push(...precip.slice(0, 7));
+                precipHoy.push(precip[0] ?? 0);
+                precipSieteDias.push(precip.slice(0, 7).reduce((a, b) => a + (b || 0), 0));
+            } else {
+                for (let i = 0; i < 7; i++) precipDailySeries.push(0);
+                precipHoy.push(0);
+                precipSieteDias.push(0);
+            }
+
+            // Balance por ciudad: precip - ET₀ (7d)
+            const cityBalance = et0SieteDias[idx] - precipSieteDias[idx];
+            balanceByCity.push(cityBalance);
+            deficitByCity.push(cityBalance > 0 ? cityBalance : 0);
+        });
+
+        // KPIs promedio
+        const avgEt0Hoy = et0Hoy.length > 0 ? (et0Hoy.reduce((a, b) => a + b, 0) / et0Hoy.length).toFixed(1) : '—';
+        const totalEt0Siete = et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.filter(v => v > 0).length;
+        const avgEt0Siete = et0SieteDias.length > 0 ? (et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.length).toFixed(1) : '—';
+        const totalPrecipSiete = precipSieteDias.reduce((a, b) => a + b, 0);
+        const totalBalance = totalEt0Siete * et0SieteDias.filter(v => v > 0).length - totalPrecipSiete;
+        const totalDeficit = deficitByCity.reduce((a, b) => a + b, 0);
+
+        // Actualizar KPIs
+        const et0HoyEl = document.getElementById('evapo-et0-hoy');
+        const et0SieteEl = document.getElementById('evapo-et0-7d');
+        const balanceEl = document.getElementById('evapo-balance');
+        const deficitEl = document.getElementById('evapo-deficit');
+
+        if (et0HoyEl) et0HoyEl.textContent = avgEt0Hoy;
+        if (et0SieteEl) et0SieteEl.textContent = avgEt0Siete;
+
+        if (balanceEl) {
+            balanceEl.textContent = totalBalance.toFixed(1);
+            balanceEl.parentElement.className = totalBalance >= 0 ? 'kpi green' : 'kpi red';
+        }
+        if (deficitEl) deficitEl.textContent = totalDeficit.toFixed(1);
+
+        // Chart: ET₀ vs precipitación 7 días
+        const ctxEvapo = document.getElementById('chart-evapo');
+        if (ctxEvapo) {
+            if (window._chartEvapo) window._chartEvapo.destroy();
+
+            const dates = et0DailySeries.length > 0
+                ? data.daily?.time || []
+                : [];
+            // Get dates from first city that succeeded
+            const firstSuccess = results.find(r => r && r.daily && r.daily.time);
+            let chartDates = [];
+            if (firstSuccess) {
+                chartDates = firstSuccess.daily.time.slice(0, 7);
+            }
+
+            window._chartEvapo = new Chart(ctxEvapo, {
+                type: 'bar',
+                data: {
+                    labels: chartDates,
+                    datasets: [
+                        {
+                            label: 'ET₀ (mm)',
+                            data: et0DailySeries.slice(0, 7),
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Precipitación (mm)',
+                            data: precipDailySeries.slice(0, 7),
+                            type: 'line',
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 106, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#16a34a',
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1',
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} mm`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'ET₀ (mm)' },
+                            ticks: { font: { size: 10 } },
+                        },
+                        y1: {
+                            position: 'right',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Precip. (mm)' },
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Mapa de estrés hídrico por ciudad
+        const mapEl = document.getElementById('evapo-map-cities');
+        if (mapEl) {
+            let html = '';
+            results.forEach((data, idx) => {
+                const city = EVAPO_CITIES[idx];
+                if (!data || !data.daily) {
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${city.name}</div>
+                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                    </div>`;
+                    return;
+                }
+
+                const et0 = data.daily.et0_fao_evapotranspiration;
+                const precip = data.daily.precipitation_sum;
+                const et0Today = et0 ? (et0[0] ?? 0) : 0;
+                const precipToday = precip ? (precip[0] ?? 0) : 0;
+                const et0Seven = et0 ? et0.slice(0, 7).reduce((a, b) => a + (b || 0), 0) : 0;
+                const precipSeven = precip ? precip.slice(0, 7).reduce((a, b) => a + (b || 0), 0) : 0;
+                const balance = precipSeven - et0Seven;
+
+                let badgeClass = 'badge-blue';
+                let statusText = 'Balance OK';
+                if (balance < -50) { badgeClass = 'badge-red'; statusText = '⚠️ Déficit severo'; }
+                else if (balance < -20) { badgeClass = 'badge-orange'; statusText = '⚡ Déficit moderado'; }
+                else if (balance < 0) { badgeClass = 'badge-orange'; statusText = 'Déficit leve'; }
+                else if (balance > 50) { badgeClass = 'badge-green'; statusText = '✅ Superávit hídrico'; }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${city.name} <span class="badge ${badgeClass}">${statusText}</span></div>
+                    <div class="list-item-sub">
+                        ET₀ hoy: <strong>${et0Today.toFixed(1)} mm</strong> · ET₀ 7d: <strong>${et0Seven.toFixed(1)} mm</strong> · Precip. 7d: <strong>${precipSeven.toFixed(1)} mm</strong>
+                        <br><span style="color:#64748b;">📍 ${city.cc} · Balance: <strong>${balance.toFixed(1)} mm</strong></span>
+                    </div>
+                </div>`;
+            });
+            mapEl.innerHTML = html;
+        }
+    }
+
+
+    // ===== CCAA AUTO-GENERATION =====
+    const CCAA_CENTROIDS = {
+        '01': { name: 'Andalucía', lat: 37.39, lon: -4.50, caps: ['Sevilla','Cádiz','Málaga','Granada'] },
+        '02': { name: 'Aragón', lat: 41.60, lon: -0.88, caps: ['Zaragoza','Huesca','Teruel'] },
+        '03': { name: 'Asturias', lat: 43.36, lon: -5.85, caps: ['Oviedo','Gijón','Avilés'] },
+        '04': { name: 'Illes Balears', lat: 39.57, lon: 2.65, caps: ['Palma','Ibiza','Menorca'] },
+        '05': { name: 'Canarias', lat: 28.10, lon: -15.41, caps: ['Las Palmas','Santa Cruz Tenerife'] },
+        '06': { name: 'Cantabria', lat: 43.20, lon: -4.00, caps: ['Santander'] },
+        '07': { name: 'Castilla y León', lat: 41.65, lon: -4.73, caps: ['Valladolid','León','Burgos','Salamanca','Zamora','Segovia','Ávila','Soria','Palencia'] },
+        '08': { name: 'Castilla-La Mancha', lat: 39.28, lon: -3.10, caps: ['Toledo','Albacete','Ciudad Real','Guadalajara','Cuenca'] },
+        '09': { name: 'Cataluña', lat: 41.59, lon: 1.52, caps: ['Barcelona','Tarragona','Lleida','Girona'] },
+        '10': { name: 'Extremadura', lat: 39.17, lon: -6.34, caps: ['Badajoz','Cáceres'] },
+        '11': { name: 'Galicia', lat: 42.58, lon: -8.26, caps: ['Santiago','A Coruña','Lugo','Ourense','Pontevedra','Vigo'] },
+        '12': { name: 'La Rioja', lat: 42.30, lon: -2.44, caps: ['Logroño'] },
+        '13': { name: 'Comunidad de Madrid', lat: 40.42, lon: -3.70, caps: ['Madrid'] },
+        '14': { name: 'Región de Murcia', lat: 38.00, lon: -1.13, caps: ['Murcia','Cartagena'] },
+        '15': { name: 'Navarra', lat: 42.69, lon: -1.64, caps: ['Pamplona'] },
+        '16': { name: 'País Vasco', lat: 43.00, lon: -2.75, caps: ['Bilbao','San Sebastián','Vitoria'] },
+        '17': { name: 'C. Valenciana', lat: 39.48, lon: -0.75, caps: ['Valencia','Alicante','Castellón'] },
+        '18': { name: 'Ceuta', lat: 35.89, lon: -5.32, caps: ['Ceuta'] },
+        '19': { name: 'Melilla', lat: 35.29, lon: -2.94, caps: ['Melilla'] },
+    };
+
+    function generateCCAATab(dataType) {
+        const container = document.getElementById('ccaa-' + dataType + '-container');
+        if (!container) return;
+        
+        let html = '<div class="ccaa-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:8px;">';
+        
+        for (const [code, ccaa] of Object.entries(CCAA_CENTROIDS)) {
+            html += `
+                <div class="ccaa-card" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:11px;cursor:pointer;transition:all 0.15s;"
+                     onclick="selectCCAA('${code}', '${dataType}')"
+                     onmouseover="this.style.borderColor='#2563eb';this.style.boxShadow='0 2px 8px rgba(37,99,235,0.15)'"
+                     onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+                    <div style="font-weight:600;color:#1e293b;font-size:12px;">${ccaa.name}</div>
+                    <div style="color:#64748b;font-size:10px;margin-top:2px;">${ccaa.caps.length} ${ccaa.caps.length > 1 ? 'capitales' : 'capital'}</div>
+                    <div id="ccaa-${dataType}-${code}" style="color:#94a3b8;font-size:10px;margin-top:3px;">—</div>
+                </div>`;
+        }
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    async function selectCCAA(code, dataType) {
+        const ccaa = CCAA_CENTROIDS[code];
+        if (!ccaa) return;
+        
+        // Flash effect on card
+        const card = document.querySelector(`[onclick="selectCCAA('${code}', '${dataType}')"]`);
+        if (card) {
+            card.style.borderColor = '#2563eb';
+            card.style.background = '#eff6ff';
+            setTimeout(() => { card.style.background = '#f8fafc'; }, 1000);
+        }
+        
+        const dataEl = document.getElementById(`ccaa-${dataType}-${code}`);
+        if (!dataEl) return;
+        
+        dataEl.innerHTML = '⏳ Cargando...';
+        
+        try {
+            let result = {};
+            
+            switch(dataType) {
+                case 'clima':
+                    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ccaa.lat}&longitude=${ccaa.lon}&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&timezone=Europe/Madrid`);
+                    const wData = await wRes.json();
+                    result = { temp: wData.current.temperature_2m + '°C', desc: WMO_CODES[wData.current.weather_code] || '—', viento: wData.current.wind_speed_10m + ' km/h' };
+                    dataEl.innerHTML = `🌡️${result.temp} 💨${result.viento}`;
+                    break;
+                    
+                case 'aire':
+                    const aRes = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${ccaa.lat}&longitude=${ccaa.lon}&current=pm2_5,pm10,ozone,nitrogen_dioxide&timezone=Europe/Madrid`);
+                    const aData = await aRes.json();
+                    result = { pm25: aData.current.pm2_5, pm10: aData.current.pm10 };
+                    const aqiColor = result.pm25 < 10 ? '#22c55e' : result.pm25 < 20 ? '#eab308' : '#ef4444';
+                    dataEl.innerHTML = `<span style="color:${aqiColor}">PM2.5: ${result.pm25}</span> PM10: ${result.pm10}`;
+                    break;
+                    
+                case 'nieve':
+                    const sRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ccaa.lat}&longitude=${ccaa.lon}&current=snow_depth,snowfall&timezone=Europe/Madrid`);
+                    const sData = await sRes.json();
+                    const depth = Math.round((sData.current.snow_depth || 0) * 100);
+                    const snow = sData.current.snowfall || 0;
+                    dataEl.innerHTML = depth > 0 ? `❄️ ${depth}cm ❄️ ${snow}cm/24h` : 'Sin nieve';
+                    break;
+                    
+                case 'mar':
+                    const mRes = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${ccaa.lat}&longitude=${ccaa.lon}&current=wave_height,wave_direction,wave_period&timezone=Europe/Madrid`);
+                    const mData = await mRes.json();
+                    result = { waves: mData.current.wave_height, dir: mData.current.wave_direction, period: mData.current.wave_period };
+                    dataEl.innerHTML = result.waves != null ? `🌊 ${result.waves}m 📐 ${result.period}s` : 'Sin datos marinos';
+                    break;
+                    
+                default:
+                    dataEl.innerHTML = 'Selecciona una pestaña';
+            }
+        } catch (err) {
+            dataEl.innerHTML = '<span style="color:#ef4444">Error API</span>';
+        }
+    }
+
+
     // ===== MAIN INIT =====
     async function init() {
         initMap();
@@ -3996,10 +4350,16 @@
         renderPorts();
         fetchAirQuality();
         fetchDemography();
-        fetchPollen();
-        fetchFlood();
+fetchPollen();
+        fetchFloods();
         fetchSoil();
         fetchForecast();
+        
+        // Init CCAA grids
+        generateCCAATab('clima');
+        generateCCAATab('aire');
+        generateCCAATab('nieve');
+        generateCCAATab('mar');
         fetchGBFS();
         fetchNieve();
         fetchMar();
@@ -4009,6 +4369,7 @@
         fetchLluvia();
         fetchPresion();
         fetchFuego();
+        fetchEvapo();
     }
 
     // ===== RESIZE HANDLER =====
