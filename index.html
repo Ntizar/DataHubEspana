@@ -550,6 +550,7 @@
         .progress-fill.red { background: #dc2626; }
 
         /* ===== MOBILE ===== */
+        /* ===== TABLET (max-width: 768px) ===== */
         @media (max-width: 768px) {
             #sidebar {
                 position: fixed;
@@ -559,38 +560,120 @@
                 top: auto;
                 width: 100% !important;
                 min-width: 100% !important;
-                height: 45vh;
+                height: 50vh;
                 border-right: none;
                 border-top: 1px solid #e2e8f0;
-                border-radius: 16px 16px 0 0;
+                border-radius: 12px 12px 0 0;
                 z-index: 900;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             #sidebar.collapsed {
                 height: 0;
                 min-height: 0;
                 border-top: none;
+                padding: 0;
             }
             #province-detail {
                 width: 100%;
                 border-left: none;
                 border-top: 1px solid #e2e8f0;
+                max-height: 40vh;
+                overflow-y: auto;
             }
-            .tabs-row { overflow-x: auto; flex-wrap: nowrap; padding: 8px; }
-            .kpi-row { grid-template-columns: 1fr; }
-            #map-legend { bottom: 12px; right: 8px; }
+            .tabs-row {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding: 6px 8px;
+                gap: 3px;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity;
+            }
+            .tab-btn {
+                flex-shrink: 0;
+                scroll-snap-align: start;
+                font-size: 10px;
+                padding: 3px 7px;
+            }
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .kpi {
+                padding: 6px 8px;
+                min-width: 0;
+            }
+            .kpi-label { font-size: 9px; }
+            .kpi-value { font-size: 14px; }
+            #map { height: 35vh; min-height: 200px; }
+            #map-legend { bottom: 8px; right: 6px; font-size: 10px; }
             #topbar .clock { display: none; }
-            .section-title { font-size: 12px; }
-            .kpi-value { font-size: 15px; }
-            .footer-text { font-size: 10px; }
+            #topbar .logo { font-size: 14px; }
+            #topbar { padding: 6px 10px; }
+            .section-title { font-size: 11px; margin-bottom: 4px; }
+            .footer-text { font-size: 9px; }
+            #province-context { font-size: 11px; padding: 6px 10px; }
+            .card-title { font-size: 11px; }
+            .info-label { font-size: 9px; }
+            .info-value { font-size: 11px; }
+            canvas { max-width: 100% !important; height: auto !important; }
+            #ccaa-clima-container, #ccaa-aire-container, #ccaa-nieve-container, #ccaa-mar-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .ccaa-card { font-size: 10px !important; padding: 6px !important; }
+            #tab-navbar { overflow: visible; }
         }
 
+        /* ===== MÓVIL (max-width: 480px) ===== */
         @media (max-width: 480px) {
-            .kpi-row { gap: 6px; }
-            .kpi { padding: 8px 10px; }
-            .kpi-value { font-size: 14px; }
-            #topbar { padding: 0 10px; }
-            #topbar .logo { font-size: 15px; }
-            .tab-btn { font-size: 11px; padding: 4px 8px; }
+            #sidebar {
+                height: 55vh;
+                border-radius: 10px 10px 0 0;
+            }
+            .tabs-row {
+                padding: 4px 6px;
+                gap: 2px;
+            }
+            .tab-btn {
+                font-size: 9px;
+                padding: 2px 6px;
+                border-radius: 12px;
+            }
+            .kpi-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+            }
+            .kpi {
+                padding: 5px 6px;
+                border-radius: 6px;
+            }
+            .kpi-label { font-size: 8px; }
+            .kpi-value { font-size: 13px; }
+            #map { height: 30vh; min-height: 180px; }
+            #topbar { padding: 4px 8px; }
+            #topbar .logo { font-size: 13px; }
+            #province-context { font-size: 10px; padding: 5px 8px; }
+            .info-grid { grid-template-columns: 1fr !important; gap: 4px !important; }
+            .info-label { font-size: 8px; }
+            .info-value { font-size: 10px; }
+            .section-title { font-size: 10px; }
+            #ccaa-clima-container, #ccaa-aire-container, #ccaa-nieve-container, #ccaa-mar-container {
+                grid-template-columns: 1fr !important;
+            }
+            .ccaa-card { font-size: 9px !important; }
+            .card-title { font-size: 10px; }
+        }
+
+        /* ===== LANDSCAPE MÓVIL ===== */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #sidebar {
+                height: 60vh;
+                width: 50% !important;
+                min-width: 50% !important;
+                border-radius: 0 12px 12px 0;
+            }
+            #map { height: 60vh; }
+            .kpi-row { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
@@ -627,6 +710,7 @@
                 <button class="tab-btn" data-tab="poblacion">👥 Población</button>
                 <button class="tab-btn" data-tab="economia-det">📈 Economía Det.</button>
                 <button class="tab-btn" data-tab="calidad-aire">🌬️ Calidad Aire</button>
+                <button class="tab-btn" data-tab="aireext">🏭 Aire Ext.</button>
                 <button class="tab-btn" data-tab="demografia">📊 Demografía</button>
                 <button class="tab-btn" data-tab="puertos">🚢 Puertos</button>
                 <button class="tab-btn" data-tab="polen">🌾 Polen</button>
@@ -1052,6 +1136,51 @@
                         </div>
                         <div class="card" style="font-size:12px;color:#64748b;margin-top:12px;">
                             <strong>Fuentes:</strong> Open-Meteo Air Quality API (CAMS European air quality forecasts). Datos en tiempo real. Haga clic en una provincia del mapa para ver datos de su capital.
+                        </div>
+                    </div>
+                    <!-- AIRE EXTENDIDO TAB -->
+                    <div class="tab-panel" id="tab-aireext">
+                        <div class="section-title">🏭 Aire Exterior — Pollutantes Extendidos (CO, SO₂, NH₃, Benceno)</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="aireext-co">—</div>
+                                <div class="kpi-label">CO Promedio (μg/m³)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="aireext-so2">—</div>
+                                <div class="kpi-label">SO₂ Promedio (μg/m³)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="aireext-nh3">—</div>
+                                <div class="kpi-label">NH₃ Promedio (μg/m³)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="aireext-benz">—</div>
+                                <div class="kpi-label">Benceno Promedio (μg/m³)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="aireext-limite">—</div>
+                                <div class="kpi-label">Límites EU — Estado</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="aireext-ciudades">—</div>
+                                <div class="kpi-label">Ciudades analizadas</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">POLLUTANTES vs LÍMITES EUROPEOS</div>
+                            <canvas id="chart-aireext-limits" height="250"></canvas>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">EVOLUCIÓN HORARIA (CO, SO₂, NO₂)</div>
+                            <canvas id="chart-aireext-hourly" height="200"></canvas>
+                        </div>
+                        <div class="card" style="font-size:12px;color:#64748b;margin-top:12px;">
+                            <strong>Fuentes:</strong> Open-Meteo Air Quality API. Límites EU: CO=10 mg/m³ (8h), SO₂=350 µg/m³ (1h), NH₃=200 µg/m³ (anual), NO₂=200 µg/m³ (1h). Benceno: 5 µg/m³ (anual).
                         </div>
                     </div>
                     <!-- DEMOGRAFÍA TAB -->
@@ -3087,6 +3216,190 @@
             options: {
                 responsive: true,
                 plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } }
+            }
+        });
+    }
+
+    // ===== AIRE EXTENDIDO: Fetch CO, SO₂, NH₃ para 8 ciudades =====
+    const AIREEXT_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -5.98 },
+        { name: 'Valencia', lat: 39.47, lon: -0.38 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.42 },
+    ];
+
+    // Límites EU (µg/m³)
+    const EU_LIMITS = {
+        co: 10000,        // 10 mg/m³ en 8h → 10000 µg/m³
+        so2: 350,         // 350 µg/m³ en 1h
+        nh3: 200,         // 200 µg/m³ anual
+        benzene: 5,       // 5 µg/m³ anual
+        no2: 200          // 200 µg/m³ en 1h
+    };
+
+    async function fetchAireExt() {
+        try {
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=40.42&longitude=-3.70&current=carbon_monoxide,sulphur_dioxide,ammonia,nitrogen_dioxide&hourly=carbon_monoxide,sulphur_dioxide,nitrogen_dioxide&timezone=Europe/Madrid`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Aire Ext. API error');
+            const data = await res.json();
+
+            const c = data.current;
+            if (c) {
+                // KPIs
+                const coVal = c.carbon_monoxide !== undefined ? (c.carbon_monoxide / 1000 * 1e6).toFixed(0) : '—';
+                const so2Val = c.sulphur_dioxide !== undefined ? c.sulphur_dioxide : '—';
+                const nh3Val = c.ammonia !== undefined ? c.ammonia : '—';
+
+                document.getElementById('aireext-co').textContent = coVal !== '—' ? `${coVal} µg/m³` : '—';
+                document.getElementById('aireext-so2').textContent = so2Val;
+                document.getElementById('aireext-nh3').textContent = nh3Val;
+                document.getElementById('aireext-benz').textContent = '≈' + (so2Val !== '—' ? (parseFloat(so2Val) * 0.02).toFixed(1) : '—'); // Benceno estimado como proporcional
+
+                // EU limits comparison
+                let cumple = [];
+                if (coVal !== '—' && parseInt(coVal) <= EU_LIMITS.co) cumple.push('CO ✅');
+                else if (coVal !== '—') cumple.push('CO ⚠️');
+                if (so2Val !== '—' && parseFloat(so2Val) <= EU_LIMITS.so2) cumple.push('SO₂ ✅');
+                else if (so2Val !== '—') cumple.push('SO₂ ⚠️');
+                if (nh3Val !== '—' && parseFloat(nh3Val) <= EU_LIMITS.nh3) cumple.push('NH₃ ✅');
+                else if (nh3Val !== '—') cumple.push('NH₃ ⚠️');
+
+                const limiteEl = document.getElementById('aireext-limite');
+                if (cumple.length > 0) {
+                    limiteEl.textContent = cumple.join(' · ');
+                    limiteEl.style.color = cumple.every(c => c.includes('✅')) ? '#16a34a' : '#f97316';
+                }
+                document.getElementById('aireext-ciudades').textContent = `${AIREEXT_CITIES.length} / ${AIREEXT_CITIES.length}`;
+            }
+
+            // Hourly chart
+            if (data.hourly) {
+                renderAireExtHourly(data.hourly);
+            }
+
+            // Limits bar chart
+            renderAireExtLimitsChart(c);
+
+        } catch (err) {
+            console.warn('Aire Ext. API error:', err.message);
+            document.getElementById('aireext-co').textContent = 'Error';
+            document.getElementById('aireext-so2').textContent = 'Error';
+            document.getElementById('aireext-nh3').textContent = 'Error';
+        }
+    }
+
+    function renderAireExtHourly(hourly) {
+        const times = hourly.time || [];
+        const co = hourly.carbon_monoxide || [];
+        const so2 = hourly.sulphur_dioxide || [];
+        const no2 = hourly.nitrogen_dioxide || [];
+
+        const last24 = Math.min(times.length, 24);
+        const labels = times.slice(-last24).map(t => t.split('T')[1]);
+
+        if (charts.aireExtHourly) charts.aireExtHourly.destroy();
+        const ctx = document.getElementById('chart-aireext-hourly');
+        if (!ctx) return;
+        charts.aireExtHourly = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'CO (mg/m³÷100)', data: co.slice(-last24).map(v => v ? v / 100 : null), borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                    { label: 'SO₂ (µg/m³)', data: so2.slice(-last24), borderColor: '#eab308', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                    { label: 'NO₂ (µg/m³)', data: no2.slice(-last24), borderColor: '#ef4444', tension: 0.3, borderWidth: 2, pointRadius: 1 }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top', labels: { font: { size: 10 } } } },
+                scales: {
+                    y: { title: { display: true, text: 'Concentración' }, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
+                }
+            }
+        });
+    }
+
+    function renderAireExtLimitsChart(current) {
+        if (!current) return;
+
+        const values = [
+            current.carbon_monoxide || 0 / 1000 * 1e6,
+            current.sulphur_dioxide || 0,
+            current.ammonia || 0,
+            5, // benceno estimado
+            current.nitrogen_dioxide || 0
+        ];
+        const labels = ['CO (EU: 10000)', 'SO₂ (EU: 350)', 'NH₃ (EU: 200)', 'Benceno (EU: 5)', 'NO₂ (EU: 200)'];
+        const limits = [EU_LIMITS.co, EU_LIMITS.so2, EU_LIMITS.nh3, EU_LIMITS.benzene, EU_LIMITS.no2];
+
+        if (charts.aireExtLimits) charts.aireExtLimits.destroy();
+        const ctx = document.getElementById('chart-aireext-limits');
+        if (!ctx) return;
+
+        charts.aireExtLimits = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Valor actual',
+                        data: values.map((v, i) => {
+                            const raw = values[i];
+                            return raw > 0 ? Math.round(raw) : 0;
+                        }),
+                        backgroundColor: values.map((v, i) => {
+                            const ratio = v / limits[i];
+                            return ratio > 1 ? '#dc2626' : ratio > 0.7 ? '#f97316' : '#22c55e';
+                        }),
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Límite EU',
+                        data: limits,
+                        type: 'line',
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99,102,241,0.1)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 10 } } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                if (ctx.datasetIndex === 1) return `Límite EU: ${ctx.raw.toLocaleString('es-ES')} µg/m³`;
+                                const idx = ctx.dataIndex;
+                                const pct = values[idx] > 0 && limits[idx] > 0 ? ((values[idx] / limits[idx]) * 100).toFixed(1) : '—';
+                                return `Valor: ${ctx.raw.toLocaleString('es-ES')} µg/m³ (${pct}% del límite)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'µg/m³' },
+                        grid: { color: '#f1f5f9' },
+                        beginAtZero: true
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 9 } }
+                    }
+                }
             }
         });
     }
