@@ -4066,10 +4066,10 @@
                 precipSieteDias.push(0);
             }
 
-            // Balance por ciudad: precip - ET₀ (7d)
-            const cityBalance = et0SieteDias[idx] - precipSieteDias[idx];
+            // Balance hídrico por ciudad: precip - ET₀ (7d) → negativo = déficit
+            const cityBalance = precipSieteDias[idx] - et0SieteDias[idx];
             balanceByCity.push(cityBalance);
-            deficitByCity.push(cityBalance > 0 ? cityBalance : 0);
+            deficitByCity.push(cityBalance < 0 ? Math.abs(cityBalance) : 0);
         });
 
         // KPIs promedio
@@ -4077,7 +4077,7 @@
         const totalEt0Siete = et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.filter(v => v > 0).length;
         const avgEt0Siete = et0SieteDias.length > 0 ? (et0SieteDias.reduce((a, b) => a + b, 0) / et0SieteDias.length).toFixed(1) : '—';
         const totalPrecipSiete = precipSieteDias.reduce((a, b) => a + b, 0);
-        const totalBalance = totalEt0Siete * et0SieteDias.filter(v => v > 0).length - totalPrecipSiete;
+        const totalBalance = totalPrecipSiete - totalEt0Siete * et0SieteDias.filter(v => v > 0).length;
         const totalDeficit = deficitByCity.reduce((a, b) => a + b, 0);
 
         // Actualizar KPIs
@@ -4100,9 +4100,6 @@
         if (ctxEvapo) {
             if (window._chartEvapo) window._chartEvapo.destroy();
 
-            const dates = et0DailySeries.length > 0
-                ? data.daily?.time || []
-                : [];
             // Get dates from first city that succeeded
             const firstSuccess = results.find(r => r && r.daily && r.daily.time);
             let chartDates = [];
