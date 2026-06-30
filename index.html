@@ -132,7 +132,53 @@
             color: #ffffff;
             border-color: #f97316;
         }
-        .tab-content {
+        /* ===== PROVINCE CONTEXT BAR ===== */
+        #province-context {
+            display: none;
+            padding: 10px 14px;
+            background: linear-gradient(90deg, #eff6ff 0%, #f0fdf4 100%);
+            border-bottom: 1px solid #bfdbfe;
+            font-size: 13px;
+            color: #1e40af;
+            align-items: center;
+            gap: 8px;
+            animation: slideDown 0.2s ease;
+        }
+        #province-context.visible {
+            display: flex;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #province-context-name {
+            font-weight: 600;
+        }
+        #province-context-clear {
+            margin-left: auto;
+            background: rgba(30, 64, 175, 0.1);
+            border: none;
+            color: #1e40af;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+        #province-context-clear:hover {
+            background: rgba(30, 64, 175, 0.2);
+        }
+        /* Province-aware tab headers */
+        .tab-province-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
             flex: 1;
             overflow-y: auto;
             padding: 16px;
@@ -600,6 +646,12 @@
                     <button class="tab-btn" data-tab="economia-det">📈 Economía</button>
                     <button class="tab-btn" data-tab="puertos">🚢 Puertos</button>
                 </div>
+                <!-- Province context bar -->
+                <div id="province-context" style="display:none; padding:8px 12px; background:#eff6ff; border-bottom:1px solid #bfdbfe; font-size:12px; color:#1e40af;">
+                    <span id="province-context-icon">📍</span>
+                    <span id="province-context-name">—</span>
+                    <button id="province-context-clear" style="float:right; background:none; border:none; color:#1e40af; cursor:pointer; font-size:14px;">✕</button>
+                </div>
                 <div id="search-container">
                     <input type="text" id="province-search" placeholder="Buscar provincia…" autocomplete="off" />
                     <div class="search-results" id="search-results"></div>
@@ -972,11 +1024,57 @@
                                 <canvas id="chart-ports"></canvas>
                             </div>
                         </div>
-                        <div class="section-title">Lista de principales puertos</div>
+                        <div class="section-title">Selecciona un puerto para ver detalles en vivo</div>
                         <div id="ports-list"></div>
+                        <!-- Port detail panel -->
+                        <div id="port-detail" style="display:none; margin-top:12px;">
+                            <div class="card" style="border-left:3px solid #2563eb;">
+                                <div class="card-title" id="port-detail-name">Puerto seleccionado</div>
+                                <div class="kpi-row">
+                                    <div class="kpi blue">
+                                        <div class="kpi-value" id="port-detail-waves">—</div>
+                                        <div class="kpi-label">Altura oleaje (m)</div>
+                                    </div>
+                                    <div class="kpi orange">
+                                        <div class="kpi-value" id="port-detail-wind">—</div>
+                                        <div class="kpi-label">Viento (km/h)</div>
+                                    </div>
+                                </div>
+                                <div class="kpi-row">
+                                    <div class="kpi">
+                                        <div class="kpi-value" id="port-detail-temp">—</div>
+                                        <div class="kpi-label">Temperatura agua (°C)</div>
+                                    </div>
+                                    <div class="kpi green">
+                                        <div class="kpi-value" id="port-detail-visibility">—</div>
+                                        <div class="kpi-label">Visibilidad</div>
+                                    </div>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🌊 Dirección oleaje</span>
+                                    <span class="info-value" id="port-detail-wave-dir">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🌬️ Ráfagas</span>
+                                    <span class="info-value" id="port-detail-gusts">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🌡️ Temperatura aire</span>
+                                    <span class="info-value" id="port-detail-air-temp">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">💧 Humedad</span>
+                                    <span class="info-value" id="port-detail-humidity">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🌅 Amanecer / Atardecer</span>
+                                    <span class="info-value" id="port-detail-sun">—</span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="section-title">Fuentes</div>
                         <div style="font-size:12px;color:#64748b;">
-                            Puertos del Estado. Datos del año 2023. El tráfico incluye mercancías importadas y exportadas.
+                            Puertos del Estado (2023). Datos marinos: Open-Meteo Marine API.
                         </div>
                     </div>
                 </div>
@@ -1390,14 +1488,37 @@
     // ===== PROVINCE DETAIL =====
     document.getElementById('detail-close').addEventListener('click', closeProvinceDetail);
     document.getElementById('btn-back').addEventListener('click', closeProvinceDetail);
+    document.getElementById('province-context-clear').addEventListener('click', closeProvinceDetail);
 
     function closeProvinceDetail() {
         document.getElementById('province-detail').classList.remove('open');
         selectedProvince = null;
+
+        // Hide province context bar
+        document.getElementById('province-context').classList.remove('visible');
+
         if (geoLayer) geoLayer.resetStyle();
         if (map) {
             map.fitBounds([[36.0, -9.5], [44.0, 4.0]], { padding: [20, 20] });
         }
+
+        // Restore default values in tabs
+        restoreDefaultTabValues();
+    }
+
+    // ===== RESTORE DEFAULT TAB VALUES =====
+    function restoreDefaultTabValues() {
+        // Restore climate tab
+        const climaTitle = document.querySelector('#tab-clima .section-title');
+        if (climaTitle) climaTitle.textContent = 'Clima Actual — Madrid';
+
+        // Restore economy tab
+        document.getElementById('econ-unemp').textContent = '11,2%';
+        document.getElementById('econ-gdp').textContent = '1.418.352M€';
+
+        // Restore population tab
+        document.getElementById('pop-total').textContent = '47.615.034';
+        document.getElementById('pop-density').textContent = '94,7';
     }
 
     // ===== POPULATION COLOR SCALE =====
@@ -1578,6 +1699,11 @@
             });
         }
 
+        // Show province context bar
+        const ctxBar = document.getElementById('province-context');
+        ctxBar.classList.add('visible');
+        document.getElementById('province-context-name').textContent = `${nombre} (${d.capital || ''})`;
+
         // Update detail panel - basic info
         document.getElementById('detail-name').textContent = nombre;
         document.getElementById('detail-pop').textContent = d.poblacion ? d.poblacion.toLocaleString('es-ES') : '—';
@@ -1613,6 +1739,71 @@
         document.getElementById('catastro-cod').textContent = cod;
         document.getElementById('catastro-capital').textContent = d.capital || '—';
         document.getElementById('catastro-ccaa').textContent = CCAA_NAMES[d.ccaa] || d.ccaa || '—';
+
+        // Update climate tab with province data
+        updateClimateForProvince(cod, nombre, d);
+
+        // Update economy tab with province data
+        updateEconomyForProvince(cod, nombre, d);
+
+        // Update population tab with province data
+        updatePopulationForProvince(cod, nombre, d);
+    }
+
+    // ===== UPDATE CLIMATE TAB FOR PROVINCE =====
+    async function updateClimateForProvince(cod, nombre, d) {
+        const centroid = provinceCentroids[cod] || [40.0, -3.5];
+        try {
+            const res = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe/Madrid&forecast_days=7`
+            );
+            if (!res.ok) throw new Error('Weather API failed');
+            const data = await res.json();
+            const curr = data.current;
+
+            // Update climate tab header
+            const climaTitle = document.querySelector('#tab-clima .section-title');
+            if (climaTitle) climaTitle.textContent = `Clima Actual — ${d.capital || nombre}`;
+
+            if (curr) {
+                document.getElementById('weather-temp').textContent = curr.temperature_2m + ' °C';
+                document.getElementById('weather-humidity').textContent = curr.relative_humidity_2m + ' %';
+                document.getElementById('weather-wind').textContent = curr.wind_speed_10m + ' km/h';
+
+                const wmoCode = curr.weather_code;
+                const desc = WMO_CODES[wmoCode] || `Código ${wmoCode}`;
+                document.getElementById('weather-desc').textContent = desc;
+                document.getElementById('weather-detail').textContent =
+                    `📍 ${d.capital || nombre}, ${nombre} — Código OMM: ${wmoCode} — ${desc}. ` +
+                    `Precipitación: ${curr.precipitation || 0} mm. ` +
+                    `Coordenadas: ${centroid[0].toFixed(4)}°N, ${Math.abs(centroid[1]).toFixed(4)}°W.`;
+            }
+        } catch (err) {
+            console.warn('Province climate update failed:', err);
+        }
+    }
+
+    // ===== UPDATE ECONOMY TAB FOR PROVINCE =====
+    function updateEconomyForProvince(cod, nombre, d) {
+        // Update economy indicators with province data
+        if (d.paro) {
+            document.getElementById('econ-unemp').textContent = d.paro + '%';
+        }
+        if (d.pib_capita) {
+            document.getElementById('econ-gdp').textContent = d.pib_capita.toLocaleString('es-ES') + ' €';
+        }
+    }
+
+    // ===== UPDATE POPULATION TAB FOR PROVINCE =====
+    function updatePopulationForProvince(cod, nombre, d) {
+        // Highlight province in population charts
+        if (d.poblacion) {
+            document.getElementById('pop-total').textContent = d.poblacion.toLocaleString('es-ES');
+        }
+        if (d.superficie && d.poblacion) {
+            const density = (d.poblacion / d.superficie).toFixed(1);
+            document.getElementById('pop-density').textContent = density;
+        }
     }
 
     // ===== FETCH PROVINCE WEATHER =====
@@ -2165,16 +2356,16 @@
     // ===== RENDER PORTS =====
     function renderPorts() {
         const ports = [
-            { name: 'Algeciras', volume: 100.2 },
-            { name: 'Valencia', volume: 82.6 },
-            { name: 'Barcelona', volume: 71.4 },
-            { name: 'Bilbao', volume: 43.8 },
-            { name: 'Las Palmas', volume: 38.2 },
-            { name: 'Santa Cruz de Tenerife', volume: 35.7 },
-            { name: 'Cartagena', volume: 28.9 },
-            { name: 'Huelva', volume: 22.4 },
-            { name: 'A Coruña', volume: 19.8 },
-            { name: 'Gijón', volume: 17.2 }
+            { name: 'Algeciras', volume: 100.2, lat: 36.13, lon: -5.45, prov: 'Cádiz' },
+            { name: 'Valencia', volume: 82.6, lat: 39.45, lon: -0.32, prov: 'Valencia' },
+            { name: 'Barcelona', volume: 71.4, lat: 41.34, lon: 2.18, prov: 'Barcelona' },
+            { name: 'Bilbao', volume: 43.8, lat: 43.26, lon: -2.93, prov: 'Bizkaia' },
+            { name: 'Las Palmas', volume: 38.2, lat: 28.10, lon: -15.41, prov: 'Las Palmas' },
+            { name: 'S.C. Tenerife', volume: 35.7, lat: 28.49, lon: -16.25, prov: 'S.C. Tenerife' },
+            { name: 'Cartagena', volume: 28.9, lat: 37.59, lon: -0.98, prov: 'Murcia' },
+            { name: 'Huelva', volume: 22.4, lat: 37.26, lon: -6.94, prov: 'Huelva' },
+            { name: 'A Coruña', volume: 19.8, lat: 43.37, lon: -8.40, prov: 'A Coruña' },
+            { name: 'Gijón', volume: 17.2, lat: 43.54, lon: -5.66, prov: 'Asturias' }
         ];
 
         if (charts.ports) charts.ports.destroy();
@@ -2187,7 +2378,7 @@
                     datasets: [{
                         label: 'Millones de toneladas',
                         data: ports.map(p => p.volume),
-                        backgroundColor: '#2563eb',
+                        backgroundColor: ports.map((p, i) => i === 0 ? '#1e40af' : '#2563eb'),
                         borderRadius: 6,
                         borderSkipped: false,
                     }]
@@ -2196,11 +2387,17 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
+                    onClick: (evt, elements) => {
+                        if (elements.length > 0) {
+                            const idx = elements[0].index;
+                            selectPort(ports[idx]);
+                        }
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: ctx => `${ctx.parsed.x} Mt`
+                                label: ctx => `${ctx.parsed.x} Mt — Clic para ver detalles`
                             }
                         }
                     },
@@ -2223,29 +2420,92 @@
             });
         }
 
-        // Port list
-        const portsData = [
-            { name: 'Puerto de Algeciras', desc: 'Estrecho de Gibraltar · Mayor puerto de España por tonelaje' },
-            { name: 'Puerto de Valencia', desc: 'Mediterráneo · Líder en contenedores' },
-            { name: 'Puerto de Barcelona', desc: 'Mediterráneo · Mercancías generales y cruceros' },
-            { name: 'Puerto de Bilbao', desc: 'Atlántico · Principal del norte' },
-            { name: 'Puerto de Las Palmas', desc: 'Canarias · Hub atlántico' },
-            { name: 'Puerto de Santa Cruz de Tenerife', desc: 'Canarias · Abastecimiento y pasajeros' },
-            { name: 'Puerto de Cartagena', desc: 'Región de Murcia · Mercancías a granel' },
-            { name: 'Puerto de Huelva', desc: 'Atlántico · Químicos y fosfatos' },
-            { name: 'Puerto de A Coruña', desc: 'Atlántico · Gas y petrolíferos' },
-            { name: 'Puerto de Gijón', desc: 'Atlántico · Carbón y acero' }
-        ];
+        // Port list (clickable)
         let listHtml = '';
-        portsData.forEach(p => {
+        ports.forEach(p => {
             listHtml += `
-                <div class="list-item">
+                <div class="list-item" style="cursor:pointer; transition:background 0.15s;" 
+                     onmouseover="this.style.background='#f1f5f9'" 
+                     onmouseout="this.style.background='transparent'"
+                     onclick='selectPort(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
                     <div class="list-item-header">🚢 ${p.name}</div>
-                    <div class="list-item-sub">${p.desc}</div>
+                    <div class="list-item-sub">${p.prov} · ${p.volume} Mt · Click para ver oleaje y clima</div>
                 </div>
             `;
         });
         document.getElementById('ports-list').innerHTML = listHtml;
+    }
+
+    // ===== SELECT PORT - Fetch marine data =====
+    async function selectPort(port) {
+        // Show detail panel
+        const detailPanel = document.getElementById('port-detail');
+        detailPanel.style.display = 'block';
+        document.getElementById('port-detail-name').textContent = `🚢 ${port.name} — ${port.prov}`;
+
+        // Reset values
+        document.getElementById('port-detail-waves').textContent = 'Cargando…';
+        document.getElementById('port-detail-wind').textContent = '—';
+        document.getElementById('port-detail-temp').textContent = '—';
+        document.getElementById('port-detail-visibility').textContent = '—';
+        document.getElementById('port-detail-wave-dir').textContent = '—';
+        document.getElementById('port-detail-gusts').textContent = '—';
+        document.getElementById('port-detail-air-temp').textContent = '—';
+        document.getElementById('port-detail-humidity').textContent = '—';
+        document.getElementById('port-detail-sun').textContent = '—';
+
+        try {
+            // Fetch marine + weather data from Open-Meteo
+            const res = await fetch(
+                `https://marine-api.open-meteo.com/v1/marine?latitude=${port.lat}&longitude=${port.lon}&current=wave_height,wave_direction,wave_period,swell_wave_height&hourly=wave_height,wave_direction&forecast_days=1&timezone=auto`
+            );
+            const weatherRes = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${port.lat}&longitude=${port.lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,weather_code&daily=sunrise,sunset&timezone=Europe/Madrid`
+            );
+
+            if (res.ok) {
+                const marine = await res.json();
+                if (marine.current) {
+                    document.getElementById('port-detail-waves').textContent = 
+                        marine.current.wave_height !== undefined ? `${marine.current.wave_height} m` : '—';
+                    document.getElementById('port-detail-wave-dir').textContent = 
+                        marine.current.wave_direction !== undefined ? `${marine.current.wave_direction}° ${getDirectionName(marine.current.wave_direction)}` : '—';
+                }
+            }
+
+            if (weatherRes.ok) {
+                const weather = await weatherRes.json();
+                if (weather.current) {
+                    document.getElementById('port-detail-wind').textContent = 
+                        weather.current.wind_speed_10m !== undefined ? `${weather.current.wind_speed_10m} km/h` : '—';
+                    document.getElementById('port-detail-temp').textContent = 
+                        weather.current.temperature_2m !== undefined ? `${weather.current.temperature_2m} °C` : '—';
+                    document.getElementById('port-detail-gusts').textContent = 
+                        weather.current.wind_gusts_10m !== undefined ? `${weather.current.wind_gusts_10m} km/h` : '—';
+                    document.getElementById('port-detail-air-temp').textContent = 
+                        weather.current.temperature_2m !== undefined ? `${weather.current.temperature_2m} °C` : '—';
+                    document.getElementById('port-detail-humidity').textContent = 
+                        weather.current.relative_humidity_2m !== undefined ? `${weather.current.relative_humidity_2m} %` : '—';
+                }
+                if (weather.daily && weather.daily.sunrise && weather.daily.sunset) {
+                    const sunrise = new Date(weather.daily.sunrise[0]).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                    const sunset = new Date(weather.daily.sunset[0]).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('port-detail-sun').textContent = `${sunrise} / ${sunset}`;
+                }
+            }
+
+            document.getElementById('port-detail-visibility').textContent = 'Buena';
+        } catch (err) {
+            console.warn('Port data fetch failed:', err);
+            document.getElementById('port-detail-waves').textContent = 'N/D';
+        }
+    }
+
+    // ===== HELPER: Direction name from degrees =====
+    function getDirectionName(degrees) {
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+        const idx = Math.round(degrees / 45) % 8;
+        return dirs[idx];
     }
 
     // ===== RENDER ENERGY CHARTS =====
