@@ -1811,7 +1811,17 @@
                             </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="nieve-nivel">—</div>
-                                <div class="kpi-label">Altitud estación</div>
+                                <div class="kpi-label">Estaciones con datos</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="nieve-temp-max">—</div>
+                                <div class="kpi-label">Temp. máx. estación (°C)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="nieve-nieve-24h">—</div>
+                                <div class="kpi-label">Nieve últimas 24h (cm)</div>
                             </div>
                         </div>
                         <div class="card">
@@ -5523,8 +5533,9 @@
 
         const results = await Promise.all(promises);
 
-        // KPIs: temp y humedad a 0, 3, 9cm (interpolados si es necesario)
-        let allTemp0 = [], allTemp3 = [], allTemp9 = [], allHum0 = [], allHum3 = [], allHum9 = [];
+        // KPIs: temp y humedad a profundidades reales API (0, 6, 18, 54cm)
+        let allTemp0 = [], allTemp6 = [], allTemp18 = [], allTemp54 = [];
+        let allHum0 = [], allHum9 = [];
         let maxTemp = -Infinity, maxCity = '';
 
         results.forEach(r => {
@@ -5533,6 +5544,7 @@
             const t0 = c.soil_temperature_0cm;
             const t6 = c.soil_temperature_6cm;
             const t18 = c.soil_temperature_18cm;
+            const t54 = c.soil_temperature_54cm;
             const h0 = c.soil_moisture_0_to_1cm;
             const h3 = c.soil_moisture_3_to_9cm;
             const h9 = c.soil_moisture_9_to_27cm;
@@ -5541,29 +5553,25 @@
                 allTemp0.push(t0);
                 if (t0 > maxTemp) { maxTemp = t0; maxCity = r.city.name; }
             }
-            // Interpolar 3cm entre 0cm y 6cm
-            if (t0 != null && t6 != null) {
-                allTemp3.push((t0 + t6) / 2);
-            }
-            // Interpolar 9cm entre 6cm y 18cm
-            if (t6 != null && t18 != null) {
-                allTemp9.push(t6 + (t18 - t6) * (9 - 6) / (18 - 6));
-            }
+            if (t6 != null) allTemp6.push(t6);
+            if (t18 != null) allTemp18.push(t18);
+            if (t54 != null) allTemp54.push(t54);
             if (h0 != null) allHum0.push(h0);
-            if (h3 != null) allHum3.push(h3);
+            if (h3 != null) allHum9.push(h3);
             if (h9 != null) allHum9.push(h9);
         });
 
         const avg = arr => arr.length ? (arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(1) : '—';
 
-        // KPIs de temperatura
+        // KPIs de temperatura por profundidad
         document.getElementById('ts-temp-0cm').textContent = avg(allTemp0);
-        document.getElementById('ts-temp-3cm').textContent = avg(allTemp3);
-        document.getElementById('ts-temp-9cm').textContent = avg(allTemp9);
+        document.getElementById('ts-temp-6cm').textContent = avg(allTemp6);
+        document.getElementById('ts-temp-18cm').textContent = avg(allTemp18);
+        document.getElementById('ts-temp-54cm').textContent = avg(allTemp54);
 
-        // KPIs de humedad
+        // KPIs de humedad por capas
         document.getElementById('ts-humedad-0cm').textContent = avg(allHum0) + '%';
-        document.getElementById('ts-humedad-3cm').textContent = avg(allHum3) + '%';
+        document.getElementById('ts-humedad-9cm').textContent = avg(allHum9) + '%';
 
         // Promedios
         document.getElementById('ts-prom-temp').textContent = avg(allTemp0);
@@ -5639,7 +5647,9 @@
             if (!r.data || !r.data.current) return;
             const c = r.data.current;
             const t0 = c.soil_temperature_0cm != null ? c.soil_temperature_0cm.toFixed(1) + '°C' : '—';
-            const t3 = c.soil_temperature_6cm != null ? ((c.soil_temperature_0cm + c.soil_temperature_6cm) / 2).toFixed(1) + '°C' : '—';
+            const t6 = c.soil_temperature_6cm != null ? c.soil_temperature_6cm.toFixed(1) + '°C' : '—';
+            const t18 = c.soil_temperature_18cm != null ? c.soil_temperature_18cm.toFixed(1) + '°C' : '—';
+            const t54 = c.soil_temperature_54cm != null ? c.soil_temperature_54cm.toFixed(1) + '°C' : '—';
             const h0 = c.soil_moisture_0_to_1cm != null ? c.soil_moisture_0_to_1cm.toFixed(1) + '%' : '—';
             const h3 = c.soil_moisture_3_to_9cm != null ? c.soil_moisture_3_to_9cm.toFixed(1) + '%' : '—';
             const h9 = c.soil_moisture_9_to_27cm != null ? c.soil_moisture_9_to_27cm.toFixed(1) + '%' : '—';
@@ -5647,7 +5657,8 @@
             const cl = clasificacionAgricola(isNaN(tempN) ? null : tempN);
             html += `<div class="list-item">
                 <div class="list-item-header">${r.city.name}</div>
-                <div class="list-item-sub">🌡️ 0cm: <strong>${t0}</strong> | 3cm: <strong>${t3}</strong></div>
+                <div class="list-item-sub">🌡️ 0cm: <strong>${t0}</strong> | 6cm: <strong>${t6}</strong></div>
+                <div class="list-item-sub">🌡️ 18cm: <strong>${t18}</strong> | 54cm: <strong>${t54}</strong></div>
                 <div class="list-item-sub">💧 0-1cm: ${h0} | 3-9cm: ${h3} | 9-27cm: ${h9}</div>
                 <div class="list-item-sub"><span style="font-weight:600;color:${cl.color};background:${cl.bg};padding:2px 8px;border-radius:4px;font-size:11px;">${cl.label} ${cl.emoji}</span></div>
             </div>`;
@@ -8033,6 +8044,13 @@
                 }
             }
 
+            // Max temp from hourly (last 24h)
+            let maxTempStation = null;
+            if (data.hourly && data.hourly.time && data.hourly.temperature_2m) {
+                const temps = data.hourly.temperature_2m.slice(-24);
+                maxTempStation = Math.max(...temps.map(t => t !== null ? t : -999));
+            }
+
             nieveStationData.push({
                 name: SKI_RESORTS[i].name,
                 cc: SKI_RESORTS[i].cc,
@@ -8045,6 +8063,7 @@
                 hourlyDepth: hourlyDepth,
                 hourlyLabels: hourlyLabels,
                 hasNieve: depthCm > 0,
+                maxTemp: maxTempStation,
             });
         });
 
@@ -8054,6 +8073,7 @@
         const avgCurrent = activeStations.length > 0 ? Math.round(activeStations.reduce((s, d) => s + d.depthCm, 0) / activeStations.length) : 0;
         const maxCurrent = activeStations.length > 0 ? Math.max(...activeStations.map(d => d.depthCm)) : 0;
         const total7d = activeStations.reduce((s, d) => s + d.snow7d, 0);
+        const totalSnowfall24h = activeStations.reduce((s, d) => s + d.snowfall24h, 0);
 
         // Riesgo aludes basado en nieve actual
         let riesgoText = 'Bajo';
@@ -8067,6 +8087,9 @@
         document.getElementById('nieve-7d').textContent = total7d > 0 ? `${total7d} cm` : '—';
         document.getElementById('nieve-riesgo').innerHTML = `<span class="badge ${riesgoClass}">${riesgoText}</span>`;
         document.getElementById('nieve-nivel').textContent = `${activeStations.length} estaciones`;
+        const maxTempAll = activeStations.length > 0 ? Math.max(...activeStations.map(d => d.maxTemp !== null ? d.maxTemp : -999)) : null;
+        document.getElementById('nieve-temp-max').textContent = maxTempAll !== null ? `${maxTempAll.toFixed(1)}°C` : '—';
+        document.getElementById('nieve-nieve-24h').textContent = totalSnowfall24h > 0 ? `${totalSnowfall24h} cm` : '—';
 
         // Update chart for selected station
         updateNieveChart();
@@ -8080,7 +8103,7 @@
         const station = nieveStationData[selectedStationIdx];
         if (!station) return;
 
-        document.getElementById('nieve-chart-title').textContent = `❄️ ${station.name} — Nieve por hora`;
+        document.getElementById('nieve-chart-title').textContent = `❄️ ${station.name} — Evolución 24h`;
 
         const ctxNieve = document.getElementById('chart-nieve');
         if (!ctxNieve) return;
@@ -8155,7 +8178,7 @@
         // Fetch marine data for all coastal points
         const promises = MAR_POINTS.map(async (point) => {
             try {
-                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${point.lat}&longitude=${point.lon}&current=wave_height,wave_direction,wave_period,wave_period_swell,ocean_current_velocity,water_temperature&hourly=wave_height,wave_direction&forecast_days=2&timezone=auto`;
+                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${point.lat}&longitude=${point.lon}&current=wave_height,wave_direction,wave_period,wave_period_swell,swell_wave_height,swell_wave_direction,ocean_current_velocity,water_temperature&hourly=wave_height,wave_direction&forecast_days=2&timezone=auto`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
                 return await resp.json();
             } catch (err) {
@@ -8235,7 +8258,7 @@
         results.forEach((data) => {
             if (!data || !data.current) return;
             const wh = data.current.wave_height ?? 0;
-            const sh = data.current.swell_wave_height ?? 0;
+            const sh = data.current.swell_wave_height ?? data.current.wave_height ?? 0;
             const cv = data.current.ocean_current_velocity ?? 0;
             const wt = data.current.water_temperature ?? null;
             const wd = data.current.wave_direction ?? null;
@@ -8295,8 +8318,8 @@
                 html += `<div class="list-item" style="cursor:pointer;" onclick="document.getElementById('mar-coast-select').value='${idx}';document.getElementById('mar-coast-select').dispatchEvent(new Event('change'));">
                     <div class="list-item-header">${point.name} <span class="badge ${condBadge}">${condText}</span></div>
                     <div class="list-item-sub">
-                        🌊 Altura: ${wh.toFixed(2)} m · 🌊 Fondo: ${sw.toFixed(2)} m · ⏱️ Per: ${wp} s
-                        <br>🌊 Fondo Per: ${sp} s · 💧 Temp. agua: ${wt} °C · 💨 Corriente: ${cv.toFixed(2)} m/s
+                        🌊 Altura: ${wh.toFixed(2)} m · 🌊 Swell: ${sw.toFixed(2)} m · ⏱️ Per: ${wp}s · S.Per: ${sp}s
+                        <br>🧭 Dir: ${wd}° · 💧 Temp. agua: ${wt} °C · 💨 Corriente: ${cv.toFixed(2)} m/s
                     </div>
                 </div>`;
             });
@@ -9216,11 +9239,13 @@
         if (!alertsContainer) return;
         let html = '';
 
-        if (avgUV > 8 || parseFloat(maxUV) > 8) {
+        const maxUVNum = maxUV !== '—' ? parseFloat(maxUV) : 0;
+
+        if (avgUV > 8 || maxUVNum > 8) {
             html += `<div class="alert-banner alert-critical">
                 <strong>⛔ ¡UV extremo!</strong> La radiación alcanza niveles peligrosos (${maxUV} máx). Evita exposición directa entre las 12:00 y 16:00h. SPF 50+, sombra obligatoria, ropa protectora.
             </div>`;
-        } else if (avgUV > 6 || parseFloat(maxUV) > 6) {
+        } else if (avgUV > 6 || maxUVNum > 6) {
             html += `<div class="alert-banner alert-warning">
                 <strong>⚠️ UV alto detectado (${maxUV} máx).</strong> Usa protección solar SPF 50+, sombrero y gafas. Limita la exposición entre las 11:00 y 15:00h.
             </div>`;
@@ -9237,9 +9262,9 @@
         // KPI de alerta
         const alertEl = document.getElementById('uv-alert');
         if (alertEl) {
-            if (avgUV > 8 || parseFloat(maxUV) > 8) {
+            if (avgUV > 8 || maxUVNum > 8) {
                 alertEl.textContent = '🔴 ¡UV extremo! Protección máxima';
-            } else if (avgUV > 6 || parseFloat(maxUV) > 6) {
+            } else if (avgUV > 6 || maxUVNum > 6) {
                 alertEl.textContent = '🟠 UV alto — Protección solar necesaria';
             } else if (avgUV > 2) {
                 alertEl.textContent = '🟡 UV moderado — SPF 30+ recomendado';
@@ -9592,6 +9617,10 @@
     }
 
     function renderGBFSChart(filtered) {
+        // Update chart title with station count
+        const totalStations = filtered.reduce((s, d) => s + (d.error ? 0 : d.stations), 0);
+        const titleEl = document.querySelector('#tab-gbfs .card:first-of-type .card-title');
+        if (titleEl) titleEl.textContent = `Bicis disponibles por sistema (${totalStations} estaciones)`;
         const ctx = document.getElementById('chart-gbfs');
         if (!ctx) return;
         if (window._chartGBFS) window._chartGBFS.destroy();
