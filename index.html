@@ -1449,6 +1449,12 @@
                             <canvas id="chart-demo-ccaa" height="250"></canvas>
                         </div>
                         <div class="card">
+                            <div class="card-title">PIRÁMIDE POBLACIONAL</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-demo-pyramid"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
                             <div class="card-title">DISTRIBUCIÓN POR SEXO</div>
                             <canvas id="chart-demo-sexo" height="200"></canvas>
                         </div>
@@ -1531,6 +1537,7 @@
                                     <span class="info-label">🌅 Amanecer / Atardecer</span>
                                     <span class="info-value" id="port-detail-sun">—</span>
                                 </div>
+                                <button class="btn-back" onclick="document.getElementById('port-detail').style.display='none'" style="margin-top:12px;">✕ Cerrar detalle</button>
                             </div>
                         </div>
                         <div class="section-title">Fuentes</div>
@@ -1574,6 +1581,24 @@
                             <div class="card-title">Distribución de polen</div>
                             <div class="chart-container" style="height:250px;">
                                 <canvas id="chart-pollen"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                Evolución 24h
+                                <select id="pollen-city-select" style="float:right;padding:3px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#fff;cursor:pointer;">
+                                    <option value="40.42,-3.70">Madrid</option>
+                                    <option value="41.39,2.17">Barcelona</option>
+                                    <option value="37.39,-5.98">Sevilla</option>
+                                    <option value="39.47,-0.38">Valencia</option>
+                                    <option value="43.26,-2.93">Bilbao</option>
+                                    <option value="41.65,-0.88">Zaragoza</option>
+                                    <option value="36.72,-4.42">Málaga</option>
+                                    <option value="43.37,-8.41">A Coruña</option>
+                                </select>
+                            </div>
+                            <div class="chart-container" style="height:250px;">
+                                <canvas id="chart-pollen-evolution"></canvas>
                             </div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Air Quality API</div>
@@ -1647,6 +1672,12 @@
                             <div class="card-title">Temperatura del suelo</div>
                             <div class="chart-container" style="height:200px;">
                                 <canvas id="chart-soil-temp"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Humedad del suelo</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-soil-moisture"></canvas>
                             </div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
@@ -4106,6 +4137,7 @@
             
             renderDemographyChart(ccaaData);
             renderGenderChart(national, hombres, mujeres);
+            renderPyramidChart(data);
             
         } catch (err) {
             console.warn('Demography API error:', err.message);
@@ -4172,6 +4204,96 @@
             options: {
                 responsive: true,
                 plugins: { legend: { position: 'right', labels: { font: { size: 12 } } } }
+            }
+        });
+    }
+
+    // ===== POPULATION PYRAMID =====
+    function renderPyramidChart(allData) {
+        // Extract age groups with male/female data
+        const ageGroups = {};
+        allData.forEach(d => {
+            const m = d.Nombre.match(/^(.+?)\.\s*(\d+-\d+)?\s*(.*)$/);
+            if (!m) return;
+            const region = m[1];
+            const age = m[2];
+            const sex = m[3];
+            if (!age || !sex) return;
+            if (!ageGroups[age]) ageGroups[age] = {};
+            if (d.Data && d.Data.length > 0) {
+                if (sex.includes('Hombres')) ageGroups[age].men = Math.round(d.Data[0].Valor);
+                else if (sex.includes('Mujeres')) ageGroups[age].women = Math.round(d.Data[0].Valor);
+            }
+        });
+
+        // Only keep national-level data (Total Nacional)
+        const pyramid = [];
+        // Age groups in order (young to old)
+        const ageOrder = ['0-4','5-9','10-14','15-19','20-24','25-29','30-34','35-39','40-44','45-49','50-54','55-59','60-64','65-69','70-74','75-79','80-84','85-89','90+'];
+        ageOrder.forEach(age => {
+            if (ageGroups[age]) {
+                pyramid.push({
+                    age: age,
+                    men: ageGroups[age].men || 0,
+                    women: ageGroups[age].women || 0
+                });
+            }
+        });
+
+        if (charts.demoPyramid) charts.demoPyramid.destroy();
+        const ctx = document.getElementById('chart-demo-pyramid');
+        if (!ctx) return;
+
+        const menData = pyramid.map(p => -p.men);
+        const womenData = pyramid.map(p => p.women);
+
+        charts.demoPyramid = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: pyramid.map(p => p.age),
+                datasets: [
+                    {
+                        label: 'Hombres',
+                        data: menData,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 2
+                    },
+                    {
+                        label: 'Mujeres',
+                        data: womenData,
+                        backgroundColor: '#ec4899',
+                        borderRadius: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 11 } } },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const val = Math.abs(ctx.parsed.x);
+                                return ctx.dataset.label + ': ' + val.toLocaleString('es-ES') + ' mil';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            callback: v => Math.abs(v) + ' mil',
+                            font: { size: 10 }
+                        }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10, weight: '500' } }
+                    }
+                }
             }
         });
     }
@@ -5129,7 +5251,7 @@
     async function fetchPollen(lat, lon) {
         lat = lat || 40.4168; lon = lon || -3.7038;
         try {
-            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&hourly=grass_pollen,olive_pollen,birch_pollen&past_days=1`;
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&hourly=grass_pollen,olive_pollen,birch_pollen,alder_pollen,mugwort_pollen,ragweed_pollen&past_days=1`;
             const res = await fetch(url);
             if (!res.ok) throw new Error('Pollen API error');
             const data = await res.json();
@@ -5142,7 +5264,10 @@
                 document.getElementById('pollen-mugwort').textContent = c.mugwort_pollen ?? '—';
                 document.getElementById('pollen-ragweed').textContent = c.ragweed_pollen ?? '—';
             }
-            if (data.hourly) renderPollenChart(data.hourly);
+            if (data.hourly) {
+                renderPollenChart(data.hourly);
+                renderPollenEvolution(data.hourly);
+            }
         } catch (err) { console.warn('Pollen API error:', err.message); }
     }
 
@@ -5164,6 +5289,63 @@
         });
     }
 
+    function renderPollenEvolution(hourly) {
+        const types = [
+            { key: 'grass_pollen', label: 'Gramen', color: '#16a34a' },
+            { key: 'olive_pollen', label: 'Olivo', color: '#eab308' },
+            { key: 'birch_pollen', label: 'Abedul', color: '#f97316' },
+            { key: 'alder_pollen', label: 'Aliso', color: '#ef4444' },
+            { key: 'mugwort_pollen', label: 'Artemisa', color: '#8b5cf6' },
+            { key: 'ragweed_pollen', label: 'Ambrosía', color: '#06b6d4' }
+        ];
+        const times = hourly.time || [];
+        const last24 = Math.min(times.length, 24);
+        const labels = times.slice(-last24).map(t => t.split('T')[1]);
+
+        if (charts.pollenEvolution) charts.pollenEvolution.destroy();
+        const ctx = document.getElementById('chart-pollen-evolution');
+        if (!ctx) return;
+
+        const datasets = types.map(t => ({
+            label: t.label,
+            data: (hourly[t.key] || []).slice(-last24),
+            borderColor: t.color,
+            backgroundColor: t.color + '20',
+            fill: false,
+            tension: 0.4,
+            borderWidth: 2,
+            pointRadius: 2
+        }));
+
+        charts.pollenEvolution = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 10 } } },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'gr/m³' }, grid: { color: '#f1f5f9' }, beginAtZero: true },
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    // City selector for pollen
+    document.addEventListener('DOMContentLoaded', () => {
+        const pollenSelect = document.getElementById('pollen-city-select');
+        if (pollenSelect) {
+            pollenSelect.addEventListener('change', () => {
+                const [lat, lon] = pollenSelect.value.split(',').map(Number);
+                fetchPollen(lat, lon);
+            });
+        }
+    });
+
     // ===== FLOOD DATA =====
     async function fetchFlood(lat, lon) {
         lat = lat || 40.4168; lon = lon || -3.7038;
@@ -5175,6 +5357,13 @@
             const daily = data.daily;
             if (daily) {
                 const d = daily.river_discharge || [];
+                if (d.length === 0) {
+                    document.getElementById('flood-current').textContent = 'N/D';
+                    document.getElementById('flood-max').textContent = 'N/D';
+                    document.getElementById('flood-min').textContent = 'N/D';
+                    document.getElementById('flood-avg').textContent = 'N/D';
+                    return;
+                }
                 const cur = d[7] || d[d.length-1] || 0;
                 document.getElementById('flood-current').textContent = cur.toFixed(1);
                 document.getElementById('flood-max').textContent = Math.max(...d).toFixed(1);
@@ -5218,6 +5407,7 @@
                 document.getElementById('soil-moisture-3').textContent = gl(h.soil_moisture_3_to_9cm);
                 document.getElementById('soil-moisture-9').textContent = gl(h.soil_moisture_9_to_27cm);
                 renderSoilChart(h);
+                renderSoilMoistureChart(h);
             }
         } catch (err) { console.warn('Soil API error:', err.message); }
     }
@@ -5239,6 +5429,32 @@
             options: { responsive: true, plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
                 scales: { y: { title: { display: true, text: '°C' }, grid: { color: '#f1f5f9' } },
                     x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } } } }
+        });
+    }
+
+    function renderSoilMoistureChart(hourly) {
+        const times = hourly.time || [];
+        const last24 = Math.min(times.length, 24);
+        const labels = times.slice(-last24).map(t => t.split('T')[1]);
+        if (charts.soilMoisture) charts.soilMoisture.destroy();
+        const ctx = document.getElementById('chart-soil-moisture');
+        if (!ctx) return;
+        charts.soilMoisture = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [
+                { label: '0-1cm', data: (hourly.soil_moisture_0_to_1cm||[]).slice(-last24), borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, borderWidth: 2 },
+                { label: '3-9cm', data: (hourly.soil_moisture_3_to_9cm||[]).slice(-last24), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.3, borderWidth: 2 },
+                { label: '9-27cm', data: (hourly.soil_moisture_9_to_27cm||[]).slice(-last24), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3, borderWidth: 2 }
+            ] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                scales: {
+                    y: { title: { display: true, text: '%' }, grid: { color: '#f1f5f9' }, min: 0, max: 100 },
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
+                }
+            }
         });
     }
 
