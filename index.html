@@ -2486,15 +2486,15 @@
                         <div class="kpi-row">
                             <div class="kpi orange">
                                 <div class="kpi-value" id="eolica-energia">—</div>
-                                <div class="kpi-label">Energía estimada (MW)</div>
+                                <div class="kpi-label">Energía anual/turbina (MWh)</div>
                             </div>
-                            <div class="kpi">
+                            <div class="kpi purple">
                                 <div class="kpi-value" id="eolica-turbinas">—</div>
                                 <div class="kpi-label">Turbinas activas (est.)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
-                            <div class="kpi purple">
+                            <div class="kpi red">
                                 <div class="kpi-value" id="eolica-rafaga">—</div>
                                 <div class="kpi-label">Ráfaga máx (km/h)</div>
                             </div>
@@ -2503,8 +2503,18 @@
                                 <div class="kpi-label">Potencial eólico (MW)</div>
                             </div>
                         </div>
+                        <div class="kpi-row">
+                            <div class="kpi" style="background:linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);">
+                                <div class="kpi-value" id="eolica-ranking-pos">—</div>
+                                <div class="kpi-label">🏆 Ranking posición (#/10)</div>
+                            </div>
+                            <div class="kpi" style="background:linear-gradient(135deg, #ede9fe 0%, #ffffff 100%);">
+                                <div class="kpi-value" id="eolica-factor-cap">—</div>
+                                <div class="kpi-label">Factor capacidad medio</div>
+                            </div>
+                        </div>
                         <div class="card">
-                            <div class="card-title">Potencial eólico por ciudad — barras de capacidad instalada + línea de energía</div>
+                            <div class="card-title">📊 Potencial eólico por ciudad — capacidad instalada (MW) + energía anual (MWh/turbina) + factor capacidad</div>
                             <div class="chart-container" style="height:300px;">
                                 <canvas id="chart-eolica"></canvas>
                             </div>
@@ -7736,7 +7746,12 @@ fetchPollen();
     const TURBINA_AREA = Math.PI * TURBINA_RADIO * TURBINA_RADIO; // m²
 
     async function fetchEolica() {
-        const promises = EOLICA_CITIES.map(async (city) => {
+        const selectedCity = document.getElementById('eolica-city-select').value;
+        const citiesToFetch = selectedCity === 'all'
+            ? EOLICA_CITIES
+            : EOLICA_CITIES.filter(c => c.name === selectedCity);
+
+        const promises = citiesToFetch.map(async (city) => {
             try {
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=wind_speed_10m,wind_gusts_10m&daily=wind_speed_10m_max,wind_gusts_10m_max&timezone=Europe/Madrid&forecast_days=7`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
@@ -7768,16 +7783,27 @@ fetchPollen();
             return 0.42;
         }
 
+        // Fetch ALL cities in background for ranking (always)
+        const allPromises = EOLICA_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=wind_speed_10m&timezone=Europe/Madrid&forecast_days=1`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+        const allResults = await Promise.all(allPromises);
+
         let speeds = [];
         let gustsAll = [];
         let capacities = [];
         let energies = [];
-        let dailySpeeds = [];
-        let dailyLabels = [];
+        let capFactorsAll = [];
         const cityData = [];
 
         results.forEach((data, i) => {
-            const city = EOLICA_CITIES[i];
+            const city = citiesToFetch[i];
             if (!data || !data.current || data.current.wind_speed_10m === undefined) {
                 cityData.push({ name: city.name, speed: '—', power: '—', gusts: '—', direction: '—', capFactor: '—', annualEnergy: '—', turbines: 0, mwPotential: 0, class: 'no-data' });
                 return;
@@ -7794,27 +7820,8 @@ fetchPollen();
             speeds.push(currentSpeed);
             if (typeof currentGusts === 'number') gustsAll.push(currentGusts);
             capacities.push(power);
-            energies.push(power);
-
-            if (data.hourly && data.hourly.time && data.hourly.wind_speed_10m) {
-                const limit = Math.min(data.hourly.time.length, 24);
-                for (let h = 0; h < limit; h++) {
-                    const t = new Date(data.hourly.time[h]);
-                    const label = `${t.getDate()}/${t.getMonth() + 1} ${t.getHours().toString().padStart(2, '0')}h`;
-                    dailyLabels.push(label);
-                    dailySpeeds.push({ label: label, speed: data.hourly.wind_speed_10m[h] ?? 0, city: city.name });
-                }
-            }
-
-            if (data.daily && data.daily.time && data.daily.wind_speed_10m_max) {
-                for (let d = 0; d < data.daily.time.length; d++) {
-                    const t = new Date(data.daily.time[d]);
-                    const label = `${t.getDate()}/${t.getMonth() + 1}`;
-                    const maxSpeed = data.daily.wind_speed_10m_max[d] ?? 0;
-                    dailyLabels.push(label);
-                    dailySpeeds.push({ label: label, speed: maxSpeed, city: city.name, max: true });
-                }
-            }
+            energies.push(annualEnergy);
+            capFactorsAll.push(capFactor);
 
             cityData.push({
                 name: city.name,
@@ -7830,12 +7837,20 @@ fetchPollen();
             });
         });
 
+        // Ranking global (siempre con las 10 ciudades)
+        const rankingAll = allResults.map((data, i) => {
+            const city = EOLICA_CITIES[i];
+            const speed = data && data.current && data.current.wind_speed_10m !== undefined ? data.current.wind_speed_10m : 0;
+            return { name: city.name, speed, lat: city.lat, lon: city.lon };
+        }).sort((a, b) => b.speed - a.speed);
+
         // KPIs globales
         const avgSpeed = speeds.length > 0 ? (speeds.reduce((a, b) => a + b, 0) / speeds.length).toFixed(1) : '—';
         const maxGust = gustsAll.length > 0 ? Math.max(...gustsAll).toFixed(1) : '—';
         const totalCapacity = capacities.reduce((a, b) => a + b, 0);
-        const avgEnergy = energies.length > 0 ? (energies.reduce((a, b) => a + b, 0) / energies.length).toFixed(2) : '—';
+        const avgEnergy = energies.length > 0 ? (energies.reduce((a, b) => a + b, 0) / energies.length).toFixed(0) : '—';
         const turbinesEst = totalCapacity > 0 ? Math.round(totalCapacity / TURBINA_POTENCIA) : 0;
+        const avgCapFactor = capFactorsAll.length > 0 ? (capFactorsAll.reduce((a, b) => a + b, 0) / capFactorsAll.length).toFixed(2) : '—';
 
         document.getElementById('eolica-velocidad').textContent = avgSpeed;
         document.getElementById('eolica-capacidad').textContent = totalCapacity.toFixed(1);
@@ -7844,12 +7859,37 @@ fetchPollen();
         document.getElementById('eolica-rafaga').textContent = maxGust;
         document.getElementById('eolica-potencial').textContent = totalCapacity.toFixed(1);
 
+        // Nuevo KPI: ranking posición
+        const rankingPosEl = document.getElementById('eolica-ranking-pos');
+        if (rankingPosEl) {
+            if (selectedCity === 'all') {
+                rankingPosEl.textContent = '🇪🇸 Nacional';
+            } else {
+                const rank = rankingAll.findIndex(r => r.name === selectedCity) + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                const selCity = rankingAll.find(r => r.name === selectedCity);
+                rankingPosEl.textContent = `${medal} / 10`;
+                rankingPosEl.title = `${selectedCity}: ${selCity ? selCity.speed : '?'} km/h — Posición: #${rank} de 10 ciudades`;
+            }
+        }
+
+        // Nuevo KPI: factor capacidad
+        const factorCapEl = document.getElementById('eolica-factor-cap');
+        if (factorCapEl) {
+            if (avgCapFactor !== '—') {
+                factorCapEl.textContent = `${(parseFloat(avgCapFactor) * 100).toFixed(0)}%`;
+                factorCapEl.title = `Factor capacidad medio: ${avgCapFactor}`;
+            } else {
+                factorCapEl.textContent = '—';
+            }
+        }
+
         // ===== CHART: barras de capacidad + línea de energía estimada =====
         const ctxEolica = document.getElementById('chart-eolica');
         if (ctxEolica) {
             if (window._chartEolica) window._chartEolica.destroy();
 
-            // Preparar datos por ciudad
+            // Preparar datos por ciudad (siempre las 10 para el chart)
             const cityNames = cityData.map(c => c.name);
             const barData = cityData.map(c => {
                 const val = parseFloat(c.mwPotential);
@@ -7863,6 +7903,8 @@ fetchPollen();
                 const val = parseFloat(c.capFactor);
                 return isNaN(val) ? 0 : val;
             });
+
+            const chartTitle = selectedCity === 'all' ? '🇪🇸 España completa' : `📍 ${selectedCity}`;
 
             window._chartEolica = new Chart(ctxEolica, {
                 type: 'bar',
@@ -7969,9 +8011,11 @@ fetchPollen();
             let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
             sorted.forEach((c, idx) => {
                 const rank = idx + 1;
-                const capColor = parseFloat(c.capFactor) >= 0.35 ? '#16a34a' : parseFloat(c.capFactor) >= 0.25 ? '#f97316' : '#dc2626';
+                const capColor = parseFloat(c.capFactor) >= 0.35 ? '#16a31a' : parseFloat(c.capFactor) >= 0.25 ? '#f97316' : '#dc2626';
+                const rankingPos = rankingAll.findIndex(r => r.name === c.name) + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
                 html += `<div class="list-item">
-                    <div class="list-item-header">#${rank} ${c.name}</div>
+                    <div class="list-item-header">${medal} #${rank} ${c.name} <span style="font-size:10px;color:#64748b;">(ventosa #${rankingPos})</span></div>
                     <div class="list-item-sub">
                         🏭 ${c.turbines} turbinas × ${TURBINA_POTENCIA}MW = <b>${c.mwPotential} MW</b><br>
                         ⚡ Energía anual: ${c.annualEnergy} MWh/turbina · Factor: <span style="color:${capColor};font-weight:700;">${(parseFloat(c.capFactor) * 100).toFixed(0)}%</span><br>
@@ -7993,12 +8037,12 @@ fetchPollen();
         // Ranking ciudades más ventosas (con posición)
         const rankingEl = document.getElementById('eolica-ranking');
         if (rankingEl) {
-            const sorted = cityData.filter(c => c.speed !== '—').sort((a, b) => b.speed - a.speed);
+            const sorted = rankingAll.sort((a, b) => b.speed - a.speed);
             let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
             sorted.forEach((c, idx) => {
                 const rank = idx + 1;
                 const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${rank}.`;
-                html += `<div class="list-item"><div class="list-item-header">${medal} ${c.name} <span style="color:#2563eb;font-weight:700;">${c.speed} km/h</span></div><div class="list-item-sub">Ranking: #${rank} · Potencia: ${c.power} MW · Ráfagas: ${c.gusts} km/h · Dir: ${c.direction}° · Turbinas: ${c.turbines}</div></div>`;
+                html += `<div class="list-item"><div class="list-item-header">${medal} ${c.name} <span style="color:#2563eb;font-weight:700;">${c.speed} km/h</span></div><div class="list-item-sub">Posición: #${rank}/10 · Potencia est.: ${calcWindPower(c.speed).toFixed(2)} MW</div></div>`;
             });
             html += '</div>';
             rankingEl.innerHTML = html;
