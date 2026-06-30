@@ -632,6 +632,7 @@
                 <button class="tab-btn" data-tab="suelo">🌡️ Suelo</button>
                 <button class="tab-btn" data-tab="gbfs">🚲 Bicicletas</button>
                 <button class="tab-btn" data-tab="nieve">❄️ Nieve</button>
+                <button class="tab-btn" data-tab="mar">🌊 Mar y Oleaje</button>
             </div>
         </div>
 
@@ -1322,6 +1323,40 @@
                         <div class="section-title">Estaciones de esquí cercanas</div>
                         <div id="nieve-stations"></div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- MAR Y OLEAJE TAB -->
+                    <div class="tab-panel" id="tab-mar">
+                        <div class="section-title">🌊 Mar y Oleaje — Costas de España</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="mar-oleaje">—</div>
+                                <div class="kpi-label">Oleaje medio (m)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="mar-oleaje-fondo">—</div>
+                                <div class="kpi-label">Oleaje fondo (m)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="mar-temp-agua">—</div>
+                                <div class="kpi-label">Temp. agua media (°C)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="mar-corriente">—</div>
+                                <div class="kpi-label">Corriente media (m/s)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Oleaje por costa (últimas 48h)</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-mar"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Datos por costa</div>
+                        <div id="mar-coasts"></div>
+                        <div class="section-title">Fuente: Open-Meteo Marine API</div>
                     </div>
                 </div>
             </div>
@@ -3441,6 +3476,7 @@
         fetchForecast();
         fetchGBFS();
         fetchNieve();
+        fetchMar();
     }
 
     // ===== RESIZE HANDLER =====
@@ -3604,6 +3640,174 @@
         }
 
         stationsEl.innerHTML = stationsHtml;
+    }
+
+    // ===== MAR Y OLEAJE =====
+    const MAR_POINTS = [
+        { name: 'Cádiz', lat: 36.53, lon: -6.29 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Bilbao', lat: 43.37, lon: -3.05 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.40 },
+    ];
+
+    async function fetchMar() {
+        const promises = MAR_POINTS.map(async (point) => {
+            try {
+                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${point.lat}&longitude=${point.lon}&current=wave_height,wave_direction,wave_period,ocean_current_velocity,water_temperature&hourly=wave_height,wave_direction&forecast_days=2&timezone=auto`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // KPIs
+        let waveHeights = [];
+        let swellHeights = [];
+        let currents = [];
+        let waterTemps = [];
+
+        results.forEach((data) => {
+            if (!data || !data.current) return;
+            const wh = data.current.wave_height ?? 0;
+            const sh = data.current.swell_wave_height ?? 0;
+            const cv = data.current.ocean_current_velocity ?? 0;
+            const wt = data.current.water_temperature ?? null;
+
+            waveHeights.push(wh);
+            swellHeights.push(sh);
+            currents.push(cv);
+            if (wt !== null) waterTemps.push(wt);
+        });
+
+        const avgWave = waveHeights.length > 0 ? (waveHeights.reduce((a, b) => a + b, 0) / waveHeights.length).toFixed(2) : '—';
+        const avgSwell = swellHeights.length > 0 ? (swellHeights.reduce((a, b) => a + b, 0) / swellHeights.length).toFixed(2) : '—';
+        const avgCurrent = currents.length > 0 ? (currents.reduce((a, b) => a + b, 0) / currents.length).toFixed(2) : '—';
+        const avgTemp = waterTemps.length > 0 ? (waterTemps.reduce((a, b) => a + b, 0) / waterTemps.length).toFixed(1) : '—';
+
+        document.getElementById('mar-oleaje').textContent = avgWave;
+        document.getElementById('mar-oleaje-fondo').textContent = avgSwell;
+        document.getElementById('mar-temp-agua').textContent = avgTemp !== '—' ? `${avgTemp} °C` : '—';
+        document.getElementById('mar-corriente').textContent = avgCurrent;
+
+        // Chart: oleaje por costa (48h)
+        const ctxMar = document.getElementById('chart-mar');
+        if (ctxMar) {
+            if (window._chartMar) window._chartMar.destroy();
+
+            const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2'];
+            const datasets = [];
+
+            results.forEach((data, idx) => {
+                if (!data || !data.hourly) return;
+                const labels = data.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+                const wh = data.hourly.wave_height.slice(0, 48);
+
+                datasets.push({
+                    label: MAR_POINTS[idx].name,
+                    data: wh,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '33',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                });
+            });
+
+            // Labels compartidas
+            const firstData = results.find(d => d && d.hourly);
+            let chartLabels = [];
+            if (firstData) {
+                chartLabels = firstData.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+            }
+
+            window._chartMar = new Chart(ctxMar, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} m`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Tiempo' },
+                            ticks: { maxTicksLimit: 8, font: { size: 10 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Oleaje (m)' },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Lista de costas
+        const coastsEl = document.getElementById('mar-coasts');
+        if (coastsEl) {
+            let html = '';
+            results.forEach((data, idx) => {
+                const point = MAR_POINTS[idx];
+                if (!data || !data.current) {
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${point.name}</div>
+                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                    </div>`;
+                    return;
+                }
+                const wh = data.current.wave_height ?? 0;
+                const wd = data.current.wave_direction ?? '—';
+                const wp = data.current.wave_period ?? '—';
+                const sw = data.current.swell_wave_height ?? 0;
+                const swd = data.current.swell_wave_direction ?? '—';
+                const sp = data.current.swell_wave_period ?? '—';
+                const cv = data.current.ocean_current_velocity ?? 0;
+                const ct = data.current.current_direction ?? '—';
+                const wt = data.current.water_temperature ?? '—';
+
+                let condBadge = 'badge-blue';
+                let condText = 'Oleaje moderado';
+                if (wh >= 4) { condBadge = 'badge-red'; condText = 'Oleaje fuerte'; }
+                else if (wh >= 2) { condBadge = 'badge-orange'; condText = 'Oleaje moderado-alto'; }
+                else if (wh < 0.5) { condBadge = 'badge-green'; condText = 'Oleaje en calma'; }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${point.name} <span class="badge ${condBadge}">${condText}</span></div>
+                    <div class="list-item-sub">
+                        🌊 Altura: ${wh.toFixed(2)} m · 🌊 Fondo: ${sw.toFixed(2)} m · ⏱️ Período: ${wp} s
+                        <br>💧 Temp. agua: ${wt} °C · 💨 Corriente: ${cv.toFixed(2)} m/s
+                    </div>
+                </div>`;
+            });
+            coastsEl.innerHTML = html;
+        }
     }
 
     // ===== GBFS BICYCLES =====
