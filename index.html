@@ -3283,6 +3283,12 @@
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             const tab = btn.getAttribute('data-tab');
             document.getElementById('tab-' + tab).classList.add('active');
+            // Lazy-render charts only when tab is shown
+            if (tab === 'ambiente' && !window.__ambienteRendered) { window.__ambienteRendered = true; renderParks(); }
+            if (tab === 'catastro' && !window.__catastroRendered) { window.__catastroRendered = true; renderCatastro(); }
+            if (tab === 'poblacion' && !window.__poblacionRendered) { window.__poblacionRendered = true; renderPopulation(); }
+            if (tab === 'economia-det' && !window.__economiaDetRendered) { window.__economiaDetRendered = true; renderEconomyDetail(); }
+            if (tab === 'calidad-aire' && !window.__calidadAireRendered) { window.__calidadAireRendered = true; fetchAirQuality(); }
             // Resize charts when switching tabs
             setTimeout(() => {
                 Object.values(charts).forEach(c => { if (c && c.resize) c.resize(); });
@@ -4785,6 +4791,14 @@
                 nextEl.innerHTML = '<div style="font-size:12px;color:#64748b;">Datos procedentes del BOE y BORME. La actividad mercantil refleja la creación y disolución de sociedades mercantiles en España. <span style="color:#f97316;font-weight:500;">⚠️ Datos BORME Q2 2026 — valores de referencia.</span></div>';
             }
         }
+    }
+
+    // ===== RENDER CATASTRO =====
+    function renderCatastro() {
+        // Catastro card is populated on province click (lines 3637-3650).
+        // This function just ensures the card is visible when tab is first opened.
+        const card = document.getElementById('catastro-card');
+        if (card) card.style.display = 'block';
     }
 
     // ===== RENDER NATIONAL PARKS (OAPN) =====
@@ -7580,14 +7594,11 @@
         // Render static content immediately
         renderWater();
         renderEconomy();
-        renderParks();
-        renderPopulation();
-        renderEconomyDetail();
+        // renderPopulation, renderEconomyDetail, renderParks, fetchAirQuality are lazy-rendered on tab click
         renderPorts();
-        fetchAirQuality();
         fetchAireExt('all');
         fetchDemography();
-fetchPollen();
+        fetchPollen();
         fetchFlood();
         fetchSoil();
         fetchTempSuelo();
