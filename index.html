@@ -2227,6 +2227,70 @@
                         <div id="eolica-ranking"></div>
                         <div class="section-title">Fuente: Open-Meteo API · Modelo: turbina 100m rotor (50m radio)</div>
                     </div>
+
+                    <!-- ☁️ NUBOSIDAD TAB -->
+                    <div class="tab-panel" id="tab-nubosidad">
+                        <div class="section-title">
+                            ☁️ Nubosidad — España
+                            <select id="nubo-city-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                                <option value="Málaga">Málaga</option>
+                                <option value="Las Palmas">Las Palmas</option>
+                            </select>
+                        </div>
+
+                        <!-- KPIs principales -->
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="nubo-cobertura">—</div>
+                                <div class="kpi-label">Cobertura total (%)</div>
+                            </div>
+                            <div class="kpi" id="nubo-estado-kpi">
+                                <div class="kpi-value" id="nubo-estado">—</div>
+                                <div class="kpi-label">Estado</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="nubo-baja">—</div>
+                                <div class="kpi-label">☁️ Baja (0-2 km) (%)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="nubo-media">—</div>
+                                <div class="kpi-label">☁️ Media (2-6 km) (%)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="nubo-alta">—</div>
+                                <div class="kpi-label">☁️ Alta (6 km+) (%)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="nubo-sol">—</div>
+                                <div class="kpi-label">☀️ Horas de sol estimadas</div>
+                            </div>
+                        </div>
+
+                        <!-- Chart: cobertura 24h apilada por alturas -->
+                        <div class="card">
+                            <div class="card-title">Cobertura nubosa 24h por alturas</div>
+                            <div class="chart-container" style="height:280px;">
+                                <canvas id="chart-nubosidad"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Detail por ciudad -->
+                        <div class="section-title">Detalle por ciudad</div>
+                        <div id="nubo-cities"></div>
+
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high)</div>
+                    </div>
                 </div>
             </div>
 
@@ -6095,6 +6159,13 @@ fetchPollen();
                 fetchVisibilidad(e.target.value);
             });
         }
+        // Nubosidad selector event
+        const nuboCitySelect = document.getElementById('nubo-city-select');
+        if (nuboCitySelect) {
+            nuboCitySelect.addEventListener('change', (e) => {
+                fetchNubosidad(e.target.value);
+            });
+        }
         fetchNieve();
         fetchMar();
         fetchUV();
@@ -6125,6 +6196,7 @@ fetchPollen();
         fetchTermica();
         fetchMareas();
         fetchEolica();
+        fetchNubosidad();
     }
 
     // ===== RESIZE HANDLER =====
@@ -9067,6 +9139,198 @@ fetchPollen();
             });
             html += '</div>';
             mapEl.innerHTML = html;
+        }
+    }
+
+    // ===== NUBOSIDAD =====
+    const NUBO_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -5.99 },
+        { name: 'Valencia', lat: 39.47, lon: -0.38 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
+    ];
+
+    function nuboIcon(cobertura) {
+        if (cobertura <= 10) return { emoji: '☀️', label: 'Despejado', cls: 'badge-green', kpi: 'green' };
+        if (cobertura <= 30) return { emoji: '🌤️', label: 'Poco nuboso', cls: 'badge-green', kpi: 'green' };
+        if (cobertura <= 60) return { emoji: '⛅', label: 'Parcialmente nuboso', cls: 'badge-blue', kpi: 'blue' };
+        if (cobertura <= 80) return { emoji: '🌥️', label: 'Muy nuboso', cls: 'badge-orange', kpi: 'orange' };
+        return { emoji: '☁️', label: 'Cubierto', cls: 'badge-red', kpi: 'red' };
+    }
+
+    function nuboHoursSol(cobertura) {
+        // Estimación: día de 12h en promedio, proporcional inversa a cobertura
+        const ratio = Math.max(0, (100 - cobertura) / 100);
+        return (ratio * 12).toFixed(1);
+    }
+
+    async function fetchNubosidad(selectedCity) {
+        // Filtrar ciudades si hay selección
+        const cities = (selectedCity && selectedCity !== 'all')
+            ? NUBO_CITIES.filter(c => c.name === selectedCity)
+            : NUBO_CITIES;
+
+        // Fetch all cities in parallel
+        const promises = cities.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&hourly=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&timezone=Europe/Madrid&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // ---- KPIs ----
+        let currentCobertura = [];
+        let bajaValues = [];
+        let mediaValues = [];
+        let altaValues = [];
+
+        results.forEach((data, idx) => {
+            if (!data || !data.current) return;
+            const total = data.current.cloud_cover ?? 0;
+            const baja = data.current.cloud_cover_low ?? 0;
+            const media = data.current.cloud_cover_mid ?? 0;
+            const alta = data.current.cloud_cover_high ?? 0;
+
+            currentCobertura.push({ name: NUBO_CITIES[idx].name, cobertura: total, data });
+            bajaValues.push(baja);
+            mediaValues.push(media);
+            altaValues.push(alta);
+        });
+
+        // Calcular promedios
+        const avgCobertura = currentCobertura.length > 0
+            ? Math.round(currentCobertura.reduce((a, b) => a + b.cobertura, 0) / currentCobertura.length)
+            : 0;
+        const avgBaja = bajaValues.length > 0
+            ? Math.round(bajaValues.reduce((a, b) => a + b, 0) / bajaValues.length)
+            : 0;
+        const avgMedia = mediaValues.length > 0
+            ? Math.round(mediaValues.reduce((a, b) => a + b, 0) / mediaValues.length)
+            : 0;
+        const avgAlta = altaValues.length > 0
+            ? Math.round(altaValues.reduce((a, b) => a + b, 0) / altaValues.length)
+            : 0;
+        const hoursSol = nuboHoursSol(avgCobertura);
+        const estado = nuboIcon(avgCobertura);
+
+        // Aplicar KPIs
+        document.getElementById('nubo-cobertura').textContent = avgCobertura + '%';
+        document.getElementById('nubo-estado').textContent = estado.emoji + ' ' + estado.label;
+        document.getElementById('nubo-estado-kpi').className = `kpi ${estado.kpi}`;
+        document.getElementById('nubo-baja').textContent = avgBaja + '%';
+        document.getElementById('nubo-media').textContent = avgMedia + '%';
+        document.getElementById('nubo-alta').textContent = avgAlta + '%';
+        document.getElementById('nubo-sol').textContent = hoursSol + ' h';
+
+        // ---- Chart: cobertura 24h apilada por alturas ----
+        const ctxNubo = document.getElementById('chart-nubosidad');
+        if (ctxNubo) {
+            if (window._chartNubosidad) window._chartNubosidad.destroy();
+
+            // Tomar datos de la primera ciudad para el chart (o promedio de todas)
+            const cityData = currentCobertura[0];
+            if (cityData && cityData.data && cityData.data.hourly) {
+                const hourly = cityData.data.hourly;
+                const labels = [];
+                const bajaSeries = [];
+                const mediaSeries = [];
+                const altaSeries = [];
+
+                // Últimas 24h
+                const times = hourly.time;
+                const low = hourly.cloud_cover_low;
+                const mid = hourly.cloud_cover_mid;
+                const high = hourly.cloud_cover_high;
+                const startIdx = Math.max(0, times.length - 24);
+
+                for (let i = startIdx; i < times.length; i++) {
+                    const t = new Date(times[i]);
+                    labels.push(`${t.getDate()}/${t.getMonth() + 1} ${t.getHours().toString().padStart(2, '0')}h`);
+                    bajaSeries.push(low[i] ?? 0);
+                    mediaSeries.push(mid[i] ?? 0);
+                    altaSeries.push(high[i] ?? 0);
+                }
+
+                window._chartNubosidad = new Chart(ctxNubo, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '☁️ Alta (6 km+)',
+                                data: altaSeries,
+                                backgroundColor: '#7c3aed99',
+                                borderColor: '#7c3aed',
+                                borderWidth: 1,
+                                borderRadius: 2,
+                            },
+                            {
+                                label: '☁️ Media (2-6 km)',
+                                data: mediaSeries,
+                                backgroundColor: '#f9731699',
+                                borderColor: '#f97316',
+                                borderWidth: 1,
+                                borderRadius: 2,
+                            },
+                            {
+                                label: '☁️ Baja (0-2 km)',
+                                data: bajaSeries,
+                                backgroundColor: '#2563eb99',
+                                borderColor: '#2563eb',
+                                borderWidth: 1,
+                                borderRadius: 2,
+                            },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 }, padding: 8 } },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return ctx.dataset.label + ': ' + ctx.parsed.y + '%';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { stacked: true, display: true, ticks: { maxTicksLimit: 12, font: { size: 9 } } },
+                            y: {
+                                stacked: true,
+                                display: true,
+                                max: 100,
+                                title: { display: true, text: 'Cobertura (%)' },
+                                ticks: { callback: v => v + '%' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ---- Detalle por ciudad ----
+        const citiesEl = document.getElementById('nubo-cities');
+        if (citiesEl) {
+            let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+            currentCobertura.forEach(c => {
+                const est = nuboIcon(c.cobertura);
+                const hSol = nuboHoursSol(c.cobertura);
+                html += `<div class="list-item"><div class="list-item-header">${est.emoji} ${c.name} <span style="color:#2563eb;font-weight:700;">${c.cobertura}%</span></div><div class="list-item-sub">${est.label} · <span class="badge ${est.cls}">${est.label}</span> · ☀️ ${hSol}h sol · Baja: ${c.data.current.cloud_cover_low ?? '—'}% · Media: ${c.data.current.cloud_cover_mid ?? '—'}% · Alta: ${c.data.current.cloud_cover_high ?? '—'}%</div></div>`;
+            });
+            html += '</div>';
+            citiesEl.innerHTML = html;
         }
     }
 
