@@ -614,6 +614,10 @@
                     <button class="tab-btn" data-tab="calidad-aire">🌬️ Calidad Aire</button>
                 <button class="tab-btn" data-tab="demografia">📊 Demografía</button>
                 <button class="tab-btn" data-tab="puertos">🚢 Puertos</button>
+                    <button class="tab-btn" data-tab="polen">🌾 Polen</button>
+                    <button class="tab-btn" data-tab="inundaciones">🌊 Inundaciones</button>
+                    <button class="tab-btn" data-tab="suelo">🌡️ Suelo</button>
+                    <button class="tab-btn" data-tab="pronostico">🔮 Pronóstico</button>
                 </div>
                 <!-- Province context bar -->
                 <div id="province-context" style="display:none; padding:8px 12px; background:#eff6ff; border-bottom:1px solid #bfdbfe; font-size:12px; color:#1e40af;">
@@ -1144,6 +1148,133 @@
                         <div style="font-size:12px;color:#64748b;">
                             Puertos del Estado (2023). Datos marinos: Open-Meteo Marine API.
                         </div>
+                    </div>
+                    <div class="tab-panel" id="tab-polen">
+                        <div class="section-title">🌾 Niveles de Polen en España</div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="pollen-grass">—</div>
+                                <div class="kpi-label">Gramen (gr/m³)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="pollen-olive">—</div>
+                                <div class="kpi-label">Olivo (gr/m³)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="pollen-birch">—</div>
+                                <div class="kpi-label">Abedul (gr/m³)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="pollen-alder">—</div>
+                                <div class="kpi-label">Aliso (gr/m³)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="pollen-mugwort">—</div>
+                                <div class="kpi-label">Artemisa (gr/m³)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="pollen-ragweed">—</div>
+                                <div class="kpi-label">Ambrosía (gr/m³)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Distribución de polen</div>
+                            <div class="chart-container" style="height:250px;">
+                                <canvas id="chart-pollen"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Air Quality API</div>
+                    </div>
+                    <div class="tab-panel" id="tab-inundaciones">
+                        <div class="section-title">🌊 Riesgo de Inundación</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="flood-current">—</div>
+                                <div class="kpi-label">Caudal actual (m³/s)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="flood-max">—</div>
+                                <div class="kpi-label">Caudal máx. 7d</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="flood-min">—</div>
+                                <div class="kpi-label">Caudal mín. 7d</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="flood-avg">—</div>
+                                <div class="kpi-label">Caudal medio</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Caudal del río — 14 días</div>
+                            <div class="chart-container" style="height:250px;">
+                                <canvas id="chart-flood"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Flood API</div>
+                    </div>
+                    <div class="tab-panel" id="tab-suelo">
+                        <div class="section-title">🌡️ Condiciones del Suelo</div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="soil-temp-6">—</div>
+                                <div class="kpi-label">Temp. 6cm (°C)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="soil-temp-18">—</div>
+                                <div class="kpi-label">Temp. 18cm (°C)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="soil-temp-54">—</div>
+                                <div class="kpi-label">Temp. 54cm (°C)</div>
+                            </div>
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="soil-moisture-0">—</div>
+                                <div class="kpi-label">Humedad 0-1cm</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi">
+                                <div class="kpi-value" id="soil-moisture-3">—</div>
+                                <div class="kpi-label">Humedad 3-9cm</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="soil-moisture-9">—</div>
+                                <div class="kpi-label">Humedad 9-27cm</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Temperatura del suelo</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-soil-temp"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+                    <div class="tab-panel" id="tab-pronostico">
+                        <div class="section-title">🔮 Previsión 7 Días</div>
+                        <div id="forecast-days"></div>
+                        <div class="card">
+                            <div class="card-title">Temperaturas</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-forecast-temp"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Precipitación y probabilidad</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-forecast-precip"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API</div>
                     </div>
                 </div>
             </div>
@@ -1761,6 +1892,11 @@
 
         // Update population tab with province data
         updatePopulationForProvince(cod, nombre, d);
+        // Update new tabs with province data
+        updatePollenForProvince(feature);
+        updateFloodForProvince(feature);
+        updateSoilForProvince(feature);
+        updateForecastForProvince(feature);
     }
 
     // ===== UPDATE CLIMATE TAB FOR PROVINCE =====
@@ -2667,6 +2803,197 @@
         document.getElementById('ports-list').innerHTML = listHtml;
     }
 
+
+    // ===== POLLEN DATA =====
+    async function fetchPollen(lat, lon) {
+        lat = lat || 40.4168; lon = lon || -3.7038;
+        try {
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&hourly=grass_pollen,olive_pollen,birch_pollen&past_days=1`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Pollen API error');
+            const data = await res.json();
+            const c = data.current;
+            if (c) {
+                document.getElementById('pollen-grass').textContent = c.grass_pollen ?? '—';
+                document.getElementById('pollen-olive').textContent = c.olive_pollen ?? '—';
+                document.getElementById('pollen-birch').textContent = c.birch_pollen ?? '—';
+                document.getElementById('pollen-alder').textContent = c.alder_pollen ?? '—';
+                document.getElementById('pollen-mugwort').textContent = c.mugwort_pollen ?? '—';
+                document.getElementById('pollen-ragweed').textContent = c.ragweed_pollen ?? '—';
+            }
+            if (data.hourly) renderPollenChart(data.hourly);
+        } catch (err) { console.warn('Pollen API error:', err.message); }
+    }
+
+    function renderPollenChart(hourly) {
+        const types = ['Gramen', 'Olivo', 'Abedul', 'Aliso', 'Artemisa', 'Ambrosía'];
+        const values = [hourly.grass_pollen?.slice(-1)[0]||0, hourly.olive_pollen?.slice(-1)[0]||0,
+            hourly.birch_pollen?.slice(-1)[0]||0, hourly.alder_pollen?.slice(-1)[0]||0,
+            hourly.mugwort_pollen?.slice(-1)[0]||0, hourly.ragweed_pollen?.slice(-1)[0]||0];
+        if (charts.pollen) charts.pollen.destroy();
+        const ctx = document.getElementById('chart-pollen');
+        if (!ctx) return;
+        charts.pollen = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: types, datasets: [{ label: 'gr/m³', data: values,
+                backgroundColor: ['#16a34a','#eab308','#f97316','#ef4444','#8b5cf6','#06b6d4'],
+                borderRadius: 6, borderSkipped: false }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+        });
+    }
+
+    // ===== FLOOD DATA =====
+    async function fetchFlood(lat, lon) {
+        lat = lat || 40.4168; lon = lon || -3.7038;
+        try {
+            const url = `https://flood-api.open-meteo.com/v1/flood?latitude=${lat}&longitude=${lon}&daily=river_discharge&past_days=7&forecast_days=7`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Flood API error');
+            const data = await res.json();
+            const daily = data.daily;
+            if (daily) {
+                const d = daily.river_discharge || [];
+                const cur = d[7] || d[d.length-1] || 0;
+                document.getElementById('flood-current').textContent = cur.toFixed(1);
+                document.getElementById('flood-max').textContent = Math.max(...d).toFixed(1);
+                document.getElementById('flood-min').textContent = Math.min(...d).toFixed(1);
+                document.getElementById('flood-avg').textContent = (d.reduce((a,b)=>a+b,0)/d.length).toFixed(1);
+                renderFloodChart(daily);
+            }
+        } catch (err) { console.warn('Flood API error:', err.message); }
+    }
+
+    function renderFloodChart(daily) {
+        if (charts.flood) charts.flood.destroy();
+        const ctx = document.getElementById('chart-flood');
+        if (!ctx) return;
+        charts.flood = new Chart(ctx, {
+            type: 'line',
+            data: { labels: daily.time || [], datasets: [{ label: 'Caudal (m³/s)',
+                data: daily.river_discharge || [], borderColor: '#2563eb',
+                backgroundColor: 'rgba(37,99,235,0.1)', fill: true, tension: 0.3, borderWidth: 2 }] },
+            options: { responsive: true, plugins: { legend: { display: false } },
+                scales: { y: { title: { display: true, text: 'm³/s' }, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false } } } }
+        });
+    }
+
+    // ===== SOIL DATA =====
+    async function fetchSoil(lat, lon) {
+        lat = lat || 40.4168; lon = lon || -3.7038;
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&past_days=1`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Soil API error');
+            const data = await res.json();
+            const h = data.hourly;
+            if (h) {
+                const gl = arr => arr?.slice(-1)[0] ?? '—';
+                document.getElementById('soil-temp-6').textContent = gl(h.soil_temperature_6cm);
+                document.getElementById('soil-temp-18').textContent = gl(h.soil_temperature_18cm);
+                document.getElementById('soil-temp-54').textContent = gl(h.soil_temperature_54cm);
+                document.getElementById('soil-moisture-0').textContent = gl(h.soil_moisture_0_to_1cm);
+                document.getElementById('soil-moisture-3').textContent = gl(h.soil_moisture_3_to_9cm);
+                document.getElementById('soil-moisture-9').textContent = gl(h.soil_moisture_9_to_27cm);
+                renderSoilChart(h);
+            }
+        } catch (err) { console.warn('Soil API error:', err.message); }
+    }
+
+    function renderSoilChart(hourly) {
+        const times = hourly.time || [];
+        const last24 = Math.min(times.length, 24);
+        const labels = times.slice(-last24).map(t => t.split('T')[1]);
+        if (charts.soil) charts.soil.destroy();
+        const ctx = document.getElementById('chart-soil-temp');
+        if (!ctx) return;
+        charts.soil = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [
+                { label: '6cm', data: (hourly.soil_temperature_6cm||[]).slice(-last24), borderColor: '#ef4444', tension: 0.3, borderWidth: 2 },
+                { label: '18cm', data: (hourly.soil_temperature_18cm||[]).slice(-last24), borderColor: '#f97316', tension: 0.3, borderWidth: 2 },
+                { label: '54cm', data: (hourly.soil_temperature_54cm||[]).slice(-last24), borderColor: '#8b5cf6', tension: 0.3, borderWidth: 2 }
+            ] },
+            options: { responsive: true, plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                scales: { y: { title: { display: true, text: '°C' }, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } } } }
+        });
+    }
+
+    // ===== FORECAST DATA =====
+    async function fetchForecast(lat, lon) {
+        lat = lat || 40.4168; lon = lon || -3.7038;
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,weather_code&timezone=Europe/Madrid`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Forecast API error');
+            const data = await res.json();
+            if (data.daily) renderForecast(data.daily);
+        } catch (err) { console.warn('Forecast API error:', err.message); }
+    }
+
+    const WMO_EMOJI = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',
+        61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+
+    function renderForecast(daily) {
+        const days = daily.time || [];
+        let html = '<div class="kpi-row" style="flex-wrap:wrap;">';
+        for (let i = 0; i < days.length; i++) {
+            const dt = new Date(days[i]);
+            const name = i===0?'Hoy':i===1?'Mañana':dt.toLocaleDateString('es-ES',{weekday:'short'});
+            const emoji = WMO_EMOJI[daily.weather_code?.[i]] || '❓';
+            html += `<div class="kpi blue" style="min-width:110px;flex:1;">
+                <div style="font-weight:600;font-size:12px;">${name} ${dt.toLocaleDateString('es-ES',{day:'numeric',month:'short'})}</div>
+                <div style="font-size:18px;margin:4px 0;">${emoji}</div>
+                <div style="font-size:14px;">${daily.temperature_2m_max?.[i]?.toFixed(0)||'—'}° / ${daily.temperature_2m_min?.[i]?.toFixed(0)||'—'}°</div>
+                <div style="font-size:11px;color:#64748b;">💧${daily.precipitation_probability_max?.[i]||0}% 🌧️${daily.precipitation_sum?.[i]?.toFixed(1)||0}mm</div>
+            </div>`;
+        }
+        html += '</div>';
+        document.getElementById('forecast-days').innerHTML = html;
+
+        if (charts.forecastTemp) charts.forecastTemp.destroy();
+        const ctx1 = document.getElementById('chart-forecast-temp');
+        if (ctx1) charts.forecastTemp = new Chart(ctx1, {
+            type: 'line', data: { labels: days, datasets: [
+                { label: 'Máx', data: daily.temperature_2m_max||[], borderColor: '#ef4444', fill: true, backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, borderWidth: 2 },
+                { label: 'Mín', data: daily.temperature_2m_min||[], borderColor: '#2563eb', fill: true, backgroundColor: 'rgba(37,99,235,0.1)', tension: 0.3, borderWidth: 2 }
+            ] }, options: { responsive: true, plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                scales: { y: { title: { display: true, text: '°C' }, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+        });
+
+        if (charts.forecastPrecip) charts.forecastPrecip.destroy();
+        const ctx2 = document.getElementById('chart-forecast-precip');
+        if (ctx2) charts.forecastPrecip = new Chart(ctx2, {
+            type: 'bar', data: { labels: days, datasets: [
+                { label: 'Precip (mm)', data: daily.precipitation_sum||[], backgroundColor: '#2563eb', borderRadius: 6, borderSkipped: false, yAxisID: 'y' },
+                { label: 'Prob %', data: daily.precipitation_probability_max||[], type: 'line', borderColor: '#f97316', tension: 0.3, borderWidth: 2, yAxisID: 'y1' }
+            ] }, options: { responsive: true, plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'mm' }, grid: { color: '#f1f5f9' } },
+                    y1: { position: 'right', beginAtZero: true, max: 100, title: { display: true, text: '%' }, grid: { display: false } },
+                    x: { grid: { display: false } } } }
+        });
+    }
+
+    // ===== PROVINCE UPDATES FOR NEW TABS =====
+    function updatePollenForProvince(feature) {
+        const c = provinceCentroids[feature.properties.cod];
+        if (c) fetchPollen(c[0], c[1]);
+    }
+    function updateFloodForProvince(feature) {
+        const c = provinceCentroids[feature.properties.cod];
+        if (c) fetchFlood(c[0], c[1]);
+    }
+    function updateSoilForProvince(feature) {
+        const c = provinceCentroids[feature.properties.cod];
+        if (c) fetchSoil(c[0], c[1]);
+    }
+    function updateForecastForProvince(feature) {
+        const c = provinceCentroids[feature.properties.cod];
+        if (c) fetchForecast(c[0], c[1]);
+    }
+
     // ===== SELECT PORT - Fetch marine data =====
     async function selectPort(port) {
         // Show detail panel
@@ -2903,6 +3230,10 @@
         renderPorts();
         fetchAirQuality();
         fetchDemography();
+        fetchPollen();
+        fetchFlood();
+        fetchSoil();
+        fetchForecast();
     }
 
     // ===== RESIZE HANDLER =====
