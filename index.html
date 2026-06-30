@@ -1167,35 +1167,91 @@
                     </div>
                     <!-- AIRE EXTENDIDO TAB -->
                     <div class="tab-panel" id="tab-aireext">
-                        <div class="section-title">🏭 Aire Exterior — Pollutantes Extendidos (CO, SO₂, NH₃, Benceno)</div>
+                        <!-- SELECTOR CIUDAD -->
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+                            <label style="font-size:12px;font-weight:600;color:#64748b;">🌆 Ciudad:</label>
+                            <select id="aireext-city-select" style="padding:5px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España (media nacional)</option>
+                                <option value="40.42,-3.70">Madrid</option>
+                                <option value="41.39,2.16">Barcelona</option>
+                                <option value="39.47,-0.38">Valencia</option>
+                                <option value="37.39,-5.98">Sevilla</option>
+                                <option value="41.65,-0.88">Zaragoza</option>
+                                <option value="43.26,-2.93">Bilbao</option>
+                                <option value="36.72,-4.42">Málaga</option>
+                                <option value="43.37,-8.41">A Coruña</option>
+                            </select>
+                            <span id="aireext-city-label" style="font-size:11px;color:#2563eb;font-weight:500;"></span>
+                        </div>
+                        <!-- ALERTE SENSIBLE -->
+                        <div id="aireext-sensitive-alert" style="display:none;margin-bottom:8px;"></div>
+                        <!-- AQI OMS KPI DESTACADO -->
+                        <div class="kpi-row">
+                            <div class="kpi" id="aireext-aqi-card" style="grid-column: span 2;">
+                                <div class="kpi-value" id="aireext-aqi" style="font-size:28px;">—</div>
+                                <div class="kpi-label" id="aireext-aqi-label">AQI OMS — Calidad Aire Global</div>
+                            </div>
+                        </div>
+                        <!-- KPIs POLUTANTES -->
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="aireext-pm25">—</div>
+                                <div class="kpi-label">PM2.5 (μg/m³)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="aireext-pm10">—</div>
+                                <div class="kpi-label">PM10 (μg/m³)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi yellow">
+                                <div class="kpi-value" id="aireext-o3">—</div>
+                                <div class="kpi-label">O₃ (μg/m³)</div>
+                            </div>
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="aireext-no2">—</div>
+                                <div class="kpi-label">NO₂ (μg/m³)</div>
+                            </div>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="aireext-co">—</div>
-                                <div class="kpi-label">CO Promedio (μg/m³)</div>
+                                <div class="kpi-label">CO (mg/m³)</div>
                             </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="aireext-so2">—</div>
-                                <div class="kpi-label">SO₂ Promedio (μg/m³)</div>
+                                <div class="kpi-label">SO₂ (μg/m³)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
                             <div class="kpi orange">
                                 <div class="kpi-value" id="aireext-nh3">—</div>
-                                <div class="kpi-label">NH₃ Promedio (μg/m³)</div>
+                                <div class="kpi-label">NH₃ (μg/m³)</div>
                             </div>
                             <div class="kpi red">
                                 <div class="kpi-value" id="aireext-benz">—</div>
-                                <div class="kpi-label">Benceno Promedio (μg/m³)</div>
+                                <div class="kpi-label">Benceno (μg/m³) ≈</div>
                             </div>
                         </div>
-                        <div class="kpi-row">
+                        <!-- CLASIFICACIÓN OMS -->
+                        <div class="card" style="margin-bottom:8px;">
+                            <div class="card-title">📋 CLASIFICACIÓN SALUD — OMS</div>
+                            <div id="aireext-oms-class">
+                                <div class="info-row"><span class="info-label">PM2.5</span><span class="info-value" id="aireext-pm25-status">—</span></div>
+                                <div class="info-row"><span class="info-label">PM10</span><span class="info-value" id="aireext-pm10-status">—</span></div>
+                                <div class="info-row"><span class="info-label">O₃</span><span class="info-value" id="aireext-o3-status">—</span></div>
+                                <div class="info-row"><span class="info-label">NO₂</span><span class="info-value" id="aireext-no2-status">—</span></div>
+                                <div class="info-row"><span class="info-label">CO</span><span class="info-value" id="aireext-co-status">—</span></div>
+                            </div>
+                        </div>
+                        <div class="kpi-row" style="grid-template-columns:1fr 1fr;">
                             <div class="kpi green">
                                 <div class="kpi-value" id="aireext-limite">—</div>
-                                <div class="kpi-label">Límites EU — Estado</div>
+                                <div class="kpi-label">Límites EU</div>
                             </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="aireext-ciudades">—</div>
-                                <div class="kpi-label">Ciudades analizadas</div>
+                                <div class="kpi-label">Ciudades</div>
                             </div>
                         </div>
                         <div class="card">
@@ -1203,11 +1259,11 @@
                             <canvas id="chart-aireext-limits" height="250"></canvas>
                         </div>
                         <div class="card">
-                            <div class="card-title">EVOLUCIÓN HORARIA (CO, SO₂, NO₂)</div>
+                            <div class="card-title">EVOLUCIÓN 24H — PM2.5 · PM10 · O₃</div>
                             <canvas id="chart-aireext-hourly" height="200"></canvas>
                         </div>
                         <div class="card" style="font-size:12px;color:#64748b;margin-top:12px;">
-                            <strong>Fuentes:</strong> Open-Meteo Air Quality API. Límites EU: CO=10 mg/m³ (8h), SO₂=350 µg/m³ (1h), NH₃=200 µg/m³ (anual), NO₂=200 µg/m³ (1h). Benceno: 5 µg/m³ (anual).
+                            <strong>Fuentes:</strong> Open-Meteo Air Quality API. Umbral sensible AQI OMS &gt; 3 (niveles 4+). Límites EU: CO=10 mg/m³ (8h), SO₂=350 µg/m³ (1h), NH₃=200 µg/m³ (anual), NO₂=200 µg/m³ (1h). Benceno: 5 µg/m³ (anual). Clasificación salud: OMS guidelines 2021.
                         </div>
                     </div>
                     <!-- DEMOGRAFÍA TAB -->
@@ -2254,33 +2310,62 @@
                     <!-- TERMICA TAB -->
                     <div class="tab-panel" id="tab-termica">
                         <div class="section-title">🤒 Sensación Térmica y Riesgo de Golpe de Calor — España</div>
+                        <!-- Selector de ciudad -->
+                        <span style="margin:12px 0 16px;">
+                            <label style="font-weight:600;font-size:14px;margin-right:8px;">Ciudad:</label>
+                            <select id="term-city-select" style="padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;font-size:14px;cursor:pointer;">
+                                <option value="0">Madrid</option>
+                                <option value="1">Barcelona</option>
+                                <option value="2">Sevilla</option>
+                                <option value="3">Valencia</option>
+                                <option value="4">Málaga</option>
+                                <option value="5">Bilbao</option>
+                                <option value="6">Zaragoza</option>
+                                <option value="7">Alicante</option>
+                            </select>
+                        </span>
+                        <!-- Alertas -->
+                        <div id="term-alerts" style="margin-bottom:8px;"></div>
+                        <!-- KPIs -->
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="term-sensacion">—</div>
+                                <div class="kpi-label">Sensación Térmica (°C)</div>
+                            </div>
+                            <div class="kpi blue" id="term-confort-box">
+                                <div class="kpi-value" id="term-confort">—</div>
+                                <div class="kpi-label">Nivel de Confort</div>
+                            </div>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi orange">
                                 <div class="kpi-value" id="term-real">—</div>
-                                <div class="kpi-label">Temp. Real Promedio (°C)</div>
+                                <div class="kpi-label">Temp. Real (°C)</div>
                             </div>
-                            <div class="kpi red">
-                                <div class="kpi-value" id="term-sensacion">—</div>
-                                <div class="kpi-label">Sensación Térmica Promedio (°C)</div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="term-diferencia">—</div>
+                                <div class="kpi-label">Diferencia Real − Sensación (°C)</div>
                             </div>
                         </div>
                         <div class="kpi-row">
-                            <div class="kpi blue">
-                                <div class="kpi-value" id="term-diferencia">—</div>
-                                <div class="kpi-label">Diferencia Promedio (°C)</div>
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="term-uv">—</div>
+                                <div class="kpi-label">Contribución UV / Viento / Humedad</div>
                             </div>
-                            <div class="kpi green" id="term-riesgo-box">
+                            <div class="kpi" id="term-riesgo-box">
                                 <div class="kpi-value" id="term-riesgo">—</div>
-                                <div class="kpi-label">Riesgo Golpe de Calor</div>
+                                <div class="kpi-label">Riesgo</div>
                             </div>
                         </div>
+                        <!-- Chart -->
                         <div class="card">
-                            <div class="card-title">Temp. Real vs Sensación Térmica — Próximas 24h (Madrid)</div>
+                            <div class="card-title">Temp. Real vs Sensación Térmica — Próximas 24h</div>
                             <div class="chart-container" style="height:250px;">
                                 <canvas id="chart-termica"></canvas>
                             </div>
                         </div>
-                        <div class="section-title">Mapa de confort térmico por ciudades</div>
+                        <!-- Ranking -->
+                        <div class="section-title">Ranking sensación térmica por ciudades</div>
                         <div id="term-ranking" style="font-size:13px;"></div>
                         <div class="section-title">Fuente: Open-Meteo API (temperature_2m, apparent_temperature)</div>
                     </div>
@@ -6501,6 +6586,33 @@
         { name: 'Alicante', lat: 38.34, lon: -0.48 },
     ];
 
+    // ===== ESCALA DE CONFORT =====
+    function getConfortEscala(temp) {
+        if (temp < 0) return { label: 'Congelación', emoji: '❄️', color: '#3b82f6', bgClass: 'blue' };
+        if (temp < 10) return { label: 'Muy frío', emoji: '🥶', color: '#6366f1', bgClass: 'purple' };
+        if (temp < 18) return { label: 'Frío', emoji: '🌬️', color: '#8b5cf6', bgClass: 'purple' };
+        if (temp < 24) return { label: 'Confortable', emoji: '😊', color: '#16a34a', bgClass: 'green' };
+        if (temp < 30) return { label: 'Cálido', emoji: '🥵', color: '#ea580c', bgClass: 'orange' };
+        if (temp < 38) return { label: 'Caliente', emoji: '🔥', color: '#dc2626', bgClass: 'red' };
+        return { label: 'Peligroso', emoji: '🚨', color: '#991b1b', bgClass: 'red' };
+    }
+
+    // ===== ALERTAS DE SENSACIÓN TÉRMICA =====
+    function getTermicaAlerts(cityData) {
+        let alerts = [];
+        cityData.forEach(c => {
+            if (c.sensacion != null) {
+                if (c.sensacion > 40) {
+                    alerts.push({ type: 'critical', text: `🚨 Alerta ola de calor en ${c.name}: sensación térmica ${c.sensacion.toFixed(1)}°C` });
+                }
+                if (c.sensacion < -10) {
+                    alerts.push({ type: 'warning', text: `🥶 Alerta frío extremo en ${c.name}: sensación térmica ${c.sensacion.toFixed(1)}°C` });
+                }
+            }
+        });
+        return alerts;
+    }
+
     async function fetchTermica() {
         // Fetch all cities in parallel
         const promises = TERMICA_CITIES.map(async (city) => {
@@ -6520,8 +6632,7 @@
         let currentSensacion = [];
         let cityTermData = [];
 
-        // Collect hourly data for chart (Madrid)
-        let madridData = null;
+        // Collect hourly data for chart (Madrid, index 0)
         let hourlyLabels = [];
         let hourlyReal = [];
         let hourlySensacion = [];
@@ -6543,8 +6654,8 @@
                 }
             }
 
-            // Hourly data for Madrid (index 0 = Madrid)
-            if (idx === 0 && data.hourly && data.hourly.time) {
+            // Hourly data for chart
+            if (data.hourly && data.hourly.time) {
                 data.hourly.time.forEach((time, i) => {
                     hourlyLabels.push(time);
                     hourlyReal.push(data.hourly.temperature_2m?.[i] ?? null);
@@ -6553,26 +6664,43 @@
             }
         });
 
-        // KPIs
+        // KPIs — usar datos de TODAS las ciudades (promedio nacional)
         const avgReal = currentReal.length > 0 ? currentReal.reduce((a, b) => a + b, 0) / currentReal.length : 0;
         const avgSensacion = currentSensacion.length > 0 ? currentSensacion.reduce((a, b) => a + b, 0) / currentSensacion.length : 0;
         const avgDiff = currentReal.length > 0 ? currentReal.reduce((a, b, i) => a + (b - currentSensacion[i]), 0) / currentReal.length : 0;
 
-        // Max sensación for heat risk
-        const maxSensacion = Math.max(...currentSensacion);
-        const maxSensacionCity = cityTermData.find(c => c.sensacion === maxSensacion)?.name || '';
+        // Confort escala
+        const confort = getConfortEscala(avgSensacion);
+
+        // Riesgo
         const riesgoGlobal = getRiesgoCalor(avgSensacion, avgSensacion);
 
-        // Update KPIs
-        document.getElementById('term-real').textContent = avgReal.toFixed(1);
-        document.getElementById('term-sensacion').textContent = avgSensacion.toFixed(1);
-        document.getElementById('term-diferencia').textContent = avgDiff.toFixed(1);
+        // Alertas
+        const alerts = getTermicaAlerts(cityTermData);
 
+        // Actualizar KPIs
+        const sensEl = document.getElementById('term-sensacion');
+        sensEl.textContent = avgSensacion.toFixed(1) + '°C';
+        sensEl.style.color = confort.color;
+
+        const confortEl = document.getElementById('term-confort');
+        confortEl.textContent = confort.emoji + ' ' + confort.label;
+        const confortBox = document.getElementById('term-confort-box');
+        confortBox.className = 'kpi ' + confort.bgClass;
+
+        document.getElementById('term-real').textContent = avgReal.toFixed(1) + '°C';
+        document.getElementById('term-diferencia').textContent = (avgDiff > 0 ? '+' : '') + avgDiff.toFixed(1) + '°C';
+
+        // Contribución UV/viento/humedad (estimar basada en diff + humedad + viento)
+        const avgHumidity = cityTermData.reduce((s, c) => s + (c.humidity || 0), 0) / Math.max(cityTermData.length, 1);
+        const avgWind = cityTermData.reduce((s, c) => s + (c.wind || 0), 0) / Math.max(cityTermData.length, 1);
+        const uvText = `Δ=${(avgDiff > 0 ? '+' : '')}${avgDiff.toFixed(1)}°C · H=${avgHumidity.toFixed(0)}% · V=${avgWind.toFixed(0)}km/h`;
+        document.getElementById('term-uv').textContent = uvText;
+
+        // Riesgo
         const riesgoEl = document.getElementById('term-riesgo');
         const riesgoBox = document.getElementById('term-riesgo-box');
         riesgoEl.textContent = riesgoGlobal;
-
-        // Color code risk
         riesgoBox.className = 'kpi';
         if (riesgoGlobal === 'Alto' || riesgoGlobal === 'Muy alto') {
             riesgoBox.classList.add('red');
@@ -6582,12 +6710,23 @@
             riesgoBox.classList.add('green');
         }
 
-        // Chart: Madrid real vs sensación 24h
+        // Alertas banner
+        const alertsEl = document.getElementById('term-alerts');
+        if (alerts.length > 0) {
+            let html = '';
+            alerts.forEach(a => {
+                html += `<div class="alert-banner ${a.type === 'critical' ? 'alert-critical' : 'alert-warning'}">${a.text}</div>`;
+            });
+            alertsEl.innerHTML = html;
+        } else {
+            alertsEl.innerHTML = '';
+        }
+
+        // Chart: Real vs Sensación 24h (todas las ciudades)
         const ctxTerm = document.getElementById('chart-termica');
         if (ctxTerm) {
             if (charts._chartTermica) charts._chartTermica.destroy();
 
-            // Filter out null values for chart
             const validIndices = hourlyReal.map((v, i) => (v != null && hourlySensacion[i] != null) ? i : -1).filter(i => i >= 0);
             const chartLabels = validIndices.map(i => {
                 const d = new Date(hourlyLabels[i]);
@@ -6665,10 +6804,11 @@
             cityTermData.forEach((c, i) => {
                 const medal = i < 3 ? medals[i] : `${i + 1}.`;
                 const riesgoBadge = c.riesgo === 'Alto' || c.riesgo === 'Muy alto' ? 'badge-red' : c.riesgo === 'Medio' ? 'badge-orange' : 'badge-green';
+                const cConfort = getConfortEscala(c.sensacion);
                 html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #f1f5f9;align-items:center;">
                     <span style="font-weight:600;">${medal} ${c.name}</span>
-                    <span style="color:#ef4444;font-weight:700;">${c.sensacion.toFixed(1)}°C sensación</span>
-                    <span style="color:#64748b;font-size:11px;">diferencia: ${c.diff > 0 ? '+' : ''}${c.diff.toFixed(1)}°C</span>
+                    <span style="color:${cConfort.color};font-weight:700;">${cConfort.emoji} ${c.sensacion.toFixed(1)}°C</span>
+                    <span style="color:#64748b;font-size:11px;">real: ${c.real.toFixed(1)}°C · Δ: ${c.diff > 0 ? '+' : ''}${c.diff.toFixed(1)}°C</span>
                     <span class="badge ${riesgoBadge}">${c.riesgo}</span>
                 </div>`;
             });
@@ -6817,6 +6957,11 @@ fetchPollen();
             rocioCitySelect.addEventListener('change', (e) => {
                 fetchRocio(e.target.value);
             });
+        }
+        // Termica selector event
+        const termCitySelect = document.getElementById('term-city-select');
+        if (termCitySelect) {
+            termCitySelect.addEventListener('change', () => fetchTermica());
         }
         fetchRocio();
         fetchRadiacion();
