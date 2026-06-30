@@ -465,7 +465,28 @@
         .badge-blue { background: #dbeafe; color: #1e40af; }
         .badge-orange { background: #fff7ed; color: #c2410c; }
 
-
+        /* ===== UV SELECTOR & ALERTS ===== */
+        .alert-banner {
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #fed7aa 0%, #fff7ed 100%);
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+        .alert-critical {
+            background: linear-gradient(135deg, #fecaca 0%, #fef2f2 100%);
+            border: 1px solid #dc2626;
+            color: #7f1d1d;
+        }
+        .kpi.purple {
+            background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%);
+        }
 
         /* ===== NOTIFICATION TOAST ===== */
         #toast-container {
@@ -1599,10 +1620,28 @@
                     <!-- UV Y RADIACIÓN TAB -->
                     <div class="tab-panel" id="tab-uv">
                         <div class="section-title">☀️ Índice UV y Radiación Solar — España</div>
+
+                        <!-- Selector de ciudad -->
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:11px;color:#64748b;font-weight:600;margin-right:6px;">Ciudad:</label>
+                            <select id="uv-city-select" style="padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#f8fafc;color:#1e293b;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Palma">Palma</option>
+                                <option value="Las Palmas">Las Palmas</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                            </select>
+                        </div>
+
+                        <!-- KPIs -->
                         <div class="kpi-row">
-                            <div class="kpi orange">
+                            <div class="kpi orange" id="uv-current-card">
                                 <div class="kpi-value" id="uv-current">—</div>
-                                <div class="kpi-label">UV promedio actual</div>
+                                <div class="kpi-label">UV actual</div>
                             </div>
                             <div class="kpi red">
                                 <div class="kpi-value" id="uv-max">—</div>
@@ -1612,23 +1651,38 @@
                         <div class="kpi-row">
                             <div class="kpi green">
                                 <div class="kpi-value" id="uv-radiation">—</div>
-                                <div class="kpi-label">Radiación solar máx. (MJ/m²)</div>
+                                <div class="kpi-label">Radiación máx. (MJ/m²)</div>
                             </div>
                             <div class="kpi blue">
                                 <div class="kpi-value" id="uv-sun-hours">—</div>
                                 <div class="kpi-label">Horas sol promedio</div>
                             </div>
                         </div>
+                        <div class="kpi-row" style="grid-template-columns:1fr;">
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="uv-alert" style="font-size:14px;">—</div>
+                                <div class="kpi-label">Alerta UV</div>
+                            </div>
+                        </div>
+
+                        <!-- Alertas -->
+                        <div id="uv-alerts-container"></div>
+
+                        <!-- Chart UV 24h con bandas -->
                         <div class="card">
-                            <div class="card-title">Índice UV por ciudad (próximas 24h)</div>
-                            <div class="chart-container" style="height:220px;">
+                            <div class="card-title">Evolución UV 24h con escala de colores</div>
+                            <div class="chart-container" style="height:260px;">
                                 <canvas id="chart-uv"></canvas>
                             </div>
                         </div>
+
+                        <!-- Escala de protección UV -->
                         <div class="card">
-                            <div class="card-title">Escala de protección UV recomendada</div>
+                            <div class="card-title">Escala de protección UV</div>
                             <div id="uv-scale" style="font-size:12px;color:#475569;"></div>
                         </div>
+
+                        <!-- Datos por ciudad -->
                         <div class="section-title">Datos por ciudad</div>
                         <div id="uv-cities"></div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
@@ -6855,6 +6909,9 @@ fetchPollen();
         { name: 'Barcelona', lat: 41.39, lon: 2.17 },
         { name: 'Palma', lat: 39.57, lon: 2.65 },
         { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
     ];
 
     async function fetchUV() {
@@ -6900,181 +6957,299 @@ fetchPollen();
         const maxRadiation = radiationValues.length > 0 ? Math.max(...radiationValues).toFixed(1) : '—';
         const avgSunHours = sunHoursValues.length > 0 ? (sunHoursValues.reduce((a, b) => a + b, 0) / sunHoursValues.length).toFixed(1) : '—';
 
+        const avgCurrentUVNum = avgCurrentUV !== '—' ? parseFloat(avgCurrentUV) : 0;
+
         document.getElementById('uv-current').textContent = avgCurrentUV !== '—' ? `${avgCurrentUV}` : '—';
         document.getElementById('uv-max').textContent = avgMaxUV;
         document.getElementById('uv-radiation').textContent = maxRadiation;
         document.getElementById('uv-sun-hours').textContent = avgSunHours !== '—' ? `${avgSunHours} h` : '—';
 
-        // Chart: UV por ciudad (24h)
-        const ctxUV = document.getElementById('chart-uv');
-        if (ctxUV) {
-            if (window._chartUV) window._chartUV.destroy();
+        // Color del KPI actual UV según nivel
+        const currentCard = document.getElementById('uv-current-card');
+        if (currentCard) {
+            currentCard.classList.remove('orange', 'green', 'purple');
+            if (avgCurrentUVNum <= 2) currentCard.classList.add('green');
+            else if (avgCurrentUVNum <= 5) currentCard.classList.add('orange');
+            else currentCard.classList.add('purple');
+        }
 
-            const colors = ['#f97316', '#ef4444', '#2563eb', '#16a34a', '#7c3aed'];
-            const datasets = [];
+        // Alertas UV
+        renderUVAlerts(avgCurrentUVNum, avgMaxUV);
 
-            results.forEach((data, idx) => {
-                if (!data || !data.hourly) return;
-                const labels = data.hourly.time.slice(0, 24).map(t => {
-                    const d = new Date(t);
-                    return `${d.getHours().toString().padStart(2, '0')}:00`;
-                });
-                const uv = data.hourly.uv_index.slice(0, 24);
+        // Chart: UV 24h con bandas de color por umbral
+        renderUVChart(results);
 
-                datasets.push({
-                    label: UV_CITIES[idx].name,
-                    data: uv,
-                    borderColor: colors[idx % colors.length],
-                    backgroundColor: colors[idx % colors.length] + '22',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0.3,
-                });
-            });
+        // Escala de protección UV
+        renderUVScale(avgCurrentUVNum);
 
-            const firstData = results.find(d => d && d.hourly);
-            let chartLabels = [];
-            if (firstData) {
-                chartLabels = firstData.hourly.time.slice(0, 24).map(t => {
-                    const d = new Date(t);
-                    return `${d.getHours().toString().padStart(2, '0')}:00`;
-                });
+        // Datos por ciudad
+        renderUVCities(results);
+    }
+
+    // ===== HELPERS UV =====
+
+    function getUVColorLevel(uv) {
+        if (uv <= 2) return { level: 0, label: 'Bajo', color: '#16a34a', bg: '#dcfce7' };
+        if (uv <= 5) return { level: 1, label: 'Moderado', color: '#ca8a04', bg: '#fef9c3' };
+        if (uv <= 7) return { level: 2, label: 'Alto', color: '#ea580c', bg: '#fed7aa' };
+        if (uv <= 10) return { level: 3, label: 'Muy alto', color: '#dc2626', bg: '#fecaca' };
+        return { level: 4, label: 'Extremo', color: '#7c3aed', bg: '#f3e8ff' };
+    }
+
+    function renderUVAlerts(avgUV, maxUV) {
+        const alertsContainer = document.getElementById('uv-alerts-container');
+        if (!alertsContainer) return;
+        let html = '';
+
+        if (avgUV > 8 || parseFloat(maxUV) > 8) {
+            html += `<div class="alert-banner alert-critical">
+                <strong>⛔ ¡UV extremo!</strong> La radiación alcanza niveles peligrosos (${maxUV} máx). Evita exposición directa entre las 12:00 y 16:00h. SPF 50+, sombra obligatoria, ropa protectora.
+            </div>`;
+        } else if (avgUV > 6 || parseFloat(maxUV) > 6) {
+            html += `<div class="alert-banner alert-warning">
+                <strong>⚠️ UV alto detectado (${maxUV} máx).</strong> Usa protección solar SPF 50+, sombrero y gafas. Limita la exposición entre las 11:00 y 15:00h.
+            </div>`;
+        } else if (avgUV > 2) {
+            html += `<div class="alert-banner alert-warning" style="background:linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);border-color:#22c55e;color:#166534;">
+                <strong>✅ UV moderado (${avgUV.toFixed(1)}).</strong> Protección básica: SPF 30+ entre las 10:00 y 16:00h. Sombrero y gafas recomendados.
+            </div>`;
+        } else {
+            html += `<div class="alert-banner alert-warning" style="background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);border-color:#86efac;color:#14532d;">
+                <strong>🌿 UV bajo (${avgUV.toFixed(1)}).</strong> Riesgo mínimo. Protección solar opcional. Disfruta del sol con moderación.
+            </div>`;
+        }
+
+        // KPI de alerta
+        const alertEl = document.getElementById('uv-alert');
+        if (alertEl) {
+            if (avgUV > 8 || parseFloat(maxUV) > 8) {
+                alertEl.textContent = '🔴 ¡UV extremo! Protección máxima';
+            } else if (avgUV > 6 || parseFloat(maxUV) > 6) {
+                alertEl.textContent = '🟠 UV alto — Protección solar necesaria';
+            } else if (avgUV > 2) {
+                alertEl.textContent = '🟡 UV moderado — SPF 30+ recomendado';
+            } else {
+                alertEl.textContent = '🟢 UV bajo — Riesgo mínimo';
             }
+        }
 
-            window._chartUV = new Chart(ctxUV, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: datasets,
+        alertsContainer.innerHTML = html;
+    }
+
+    function renderUVChart(results) {
+        const ctxUV = document.getElementById('chart-uv');
+        if (!ctxUV) return;
+        if (window._chartUV) window._chartUV.destroy();
+
+        // Build UV bands background (rect data for Chart.js)
+        // We'll use the plugin system for colored bands
+        const uvColors = ['#16a34a', '#ca8a04', '#ea580c', '#dc2626', '#7c3aed'];
+        const uvBgColors = ['#16a34a22', '#ca8a0422', '#ea580c22', '#dc262622', '#7c3aed22'];
+        const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2', '#dc2626', '#ea580c', '#60a5fa'];
+        const datasets = [];
+
+        results.forEach((data, idx) => {
+            if (!data || !data.hourly) return;
+            const labels = data.hourly.time.slice(0, 24).map(t => {
+                const d = new Date(t);
+                return `${d.getHours().toString().padStart(2, '0')}:00`;
+            });
+            const uv = data.hourly.uv_index.slice(0, 24);
+
+            datasets.push({
+                label: UV_CITIES[idx].name,
+                data: uv,
+                borderColor: colors[idx % colors.length],
+                backgroundColor: colors[idx % colors.length] + '22',
+                borderWidth: 2,
+                pointRadius: 2,
+                pointHoverRadius: 4,
+                fill: false,
+                tension: 0.3,
+            });
+        });
+
+        const firstData = results.find(d => d && d.hourly);
+        let chartLabels = [];
+        if (firstData) {
+            chartLabels = firstData.hourly.time.slice(0, 24).map(t => {
+                const d = new Date(t);
+                return `${d.getHours().toString().padStart(2, '0')}:00`;
+            });
+        }
+
+        window._chartUV = new Chart(ctxUV, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(ctx) {
-                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`;
-                                },
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const val = ctx.parsed.y;
+                                const info = getUVColorLevel(val);
+                                return `${ctx.dataset.label}: ${val.toFixed(1)} (${info.label})`;
                             },
                         },
                     },
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Hora' },
-                            ticks: { maxTicksLimit: 8, font: { size: 10 } },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Índice UV' },
-                            ticks: { font: { size: 10 } },
-                        },
+                    // Custom plugin: colored background bands for UV levels
+                    afterDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        const area = chart.chartArea;
+                        if (!area) return;
+
+                        // Draw vertical bands per UV level
+                        const bands = [
+                            { min: 0, max: 3, color: '#16a34a15' },   // Bajo
+                            { min: 3, max: 6, color: '#ca8a0415' },    // Moderado
+                            { min: 6, max: 8, color: '#ea580c15' },    // Alto
+                            { min: 8, max: 11, color: '#dc262615' },   // Muy alto
+                            { min: 11, max: 15, color: '#7c3aed15' },  // Extremo
+                        ];
+
+                        const yScale = chart.scales.y;
+                        const yMin = yScale.getPixelForValue(0);
+                        const yMax = yScale.getPixelForValue(15);
+
+                        bands.forEach(band => {
+                            const y1 = yScale.getPixelForValue(band.min);
+                            const y2 = yScale.getPixelForValue(band.max);
+                            ctx.fillStyle = band.color;
+                            ctx.fillRect(area.left, y1, area.right - area.left, y2 - y1);
+                        });
+
+                        // Horizontal threshold lines
+                        const thresholds = [
+                            { val: 3, color: '#16a34a66', label: '3' },
+                            { val: 6, color: '#ca8a0466', label: '6' },
+                            { val: 8, color: '#ea580c66', label: '8' },
+                            { val: 11, color: '#7c3aed66', label: '11' },
+                        ];
+
+                        thresholds.forEach(th => {
+                            const y = yScale.getPixelForValue(th.val);
+                            ctx.strokeStyle = th.color;
+                            ctx.lineWidth = 1;
+                            ctx.setLineDash([5, 5]);
+                            ctx.beginPath();
+                            ctx.moveTo(area.left, y);
+                            ctx.lineTo(area.right, y);
+                            ctx.stroke();
+
+                            // Label
+                            ctx.setLineDash([]);
+                            ctx.fillStyle = th.color;
+                            ctx.font = '9px sans-serif';
+                            ctx.fillText(`UV ${th.label}`, area.right - 25, y - 3);
+                        });
+                        ctx.setLineDash([]);
                     },
                 },
-            });
-        }
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Hora' },
+                        ticks: { maxTicksLimit: 8, font: { size: 10 } },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 15,
+                        title: { display: true, text: 'Índice UV' },
+                        ticks: { font: { size: 10 } },
+                    },
+                },
+            },
+        });
+    }
 
-        // Escala de protección UV
+    function renderUVScale(avgUV) {
         const scaleEl = document.getElementById('uv-scale');
-        if (scaleEl) {
-            const uvLevel = parseFloat(avgCurrentUV) || 0;
-            let protection = '';
-            if (uvLevel <= 2) {
-                protection = `
-                    <div style="padding:8px;background:#dcfce7;border-radius:6px;margin-bottom:6px;">
-                        <strong>✅ UV bajo (${uvLevel.toFixed(1)})</strong><br>
-                        Protección mínima necesaria. Sombrero y gafas de sol recomendados.
-                    </div>`;
-            } else if (uvLevel <= 5) {
-                protection = `
-                    <div style="padding:8px;background:#fef9c3;border-radius:6px;margin-bottom:6px;">
-                        <strong>⚠️ UV moderado (${uvLevel.toFixed(1)})</strong><br>
-                        Use protección SPF 30+ entre las 10:00 y 16:00. Sombrero y gafas de sol.
-                    </div>`;
-            } else if (uvLevel <= 7) {
-                protection = `
-                    <div style="padding:8px;background:#fed7aa;border-radius:6px;margin-bottom:6px;">
-                        <strong>🔶 UV alto (${uvLevel.toFixed(1)})</strong><br>
-                        Protección esencial: SPF 50+, sombrero, gafas. Evite exposición directa 11:00–15:00.
-                    </div>`;
-            } else if (uvLevel <= 10) {
-                protection = `
-                    <div style="padding:8px;background:#fecaca;border-radius:6px;margin-bottom:6px;">
-                        <strong>🔴 UV muy alto (${uvLevel.toFixed(1)})</strong><br>
-                        ¡Máxima precaución! SPF 50+, sombra obligatoria 10:00–16:00. Ropa protectora.
-                    </div>`;
-            } else {
-                protection = `
-                    <div style="padding:8px;background:#fee2e2;border-radius:6px;margin-bottom:6px;">
-                        <strong>⛔ UV extremo (${uvLevel.toFixed(1)})</strong><br>
-                        ¡Peligro! Evite exposición solar. SPF 50+, ropa cubriente, sombra total.
-                    </div>`;
-            }
-            // Escala completa
-            const scaleRows = [
-                { min: 0, max: 2, label: 'Bajo', color: '#dcfce7', bg: '#16a34a' },
-                { min: 3, max: 5, label: 'Moderado', color: '#fef9c3', bg: '#ca8a04' },
-                { min: 6, max: 7, label: 'Alto', color: '#fed7aa', bg: '#ea580c' },
-                { min: 8, max: 10, label: 'Muy alto', color: '#fecaca', bg: '#dc2626' },
-                { min: 11, max: 99, label: 'Extremo', color: '#fee2e2', bg: '#991b1b' },
-            ];
-            let scaleHtml = '<div style="margin-top:8px;"><div class="card-title">Escala UV completa</div>';
-            scaleRows.forEach(row => {
-                const isActive = uvLevel >= row.min && uvLevel <= row.max;
-                scaleHtml += `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:4px;margin-bottom:3px;background:${isActive ? row.color : '#f8fafc'};border:1px solid ${isActive ? row.bg : '#e2e8f0'};">
-                    <div style="width:12px;height:12px;border-radius:3px;background:${row.bg};flex-shrink:0;"></div>
-                    <span style="font-size:11px;font-weight:${isActive ? '700' : '400'};color:#1e293b;">${row.label} (${row.min}–${row.max})</span>
-                    ${isActive ? '<span style="margin-left:auto;font-size:10px;color:#64748b;">← Actual</span>' : ''}
-                </div>`;
-            });
-            scaleHtml += '</div>';
-            scaleEl.innerHTML = protection + scaleHtml;
-        }
+        if (!scaleEl) return;
 
-        // Datos por ciudad
-        const citiesEl = document.getElementById('uv-cities');
-        if (citiesEl) {
-            let html = '';
-            results.forEach((data, idx) => {
-                const city = UV_CITIES[idx];
-                if (!data) {
-                    html += `<div class="list-item">
-                        <div class="list-item-header">${city.name}</div>
-                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
-                    </div>`;
-                    return;
-                }
-                const currentUV = data.current?.uv_index ?? '—';
-                const maxToday = data.daily?.uv_index_max?.[0] ?? '—';
-                const radToday = data.daily?.shortwave_radiation_sum?.[0] ?? '—';
-                const sunHrs = data.daily?.sunshine_duration?.[0] !== undefined ? (data.daily.sunshine_duration[0] / 3600).toFixed(1) : '—';
+        const levels = [
+            { min: 0, max: 2, label: 'Bajo', emoji: '🟢', color: '#16a34a', bg: '#dcfce7' },
+            { min: 3, max: 5, label: 'Moderado', emoji: '🟡', color: '#ca8a04', bg: '#fef9c3' },
+            { min: 6, max: 7, label: 'Alto', emoji: '🟠', color: '#ea580c', bg: '#fed7aa' },
+            { min: 8, max: 10, label: 'Muy alto', emoji: '🔴', color: '#dc2626', bg: '#fecaca' },
+            { min: 11, max: 15, label: 'Extremo', emoji: '🟣', color: '#7c3aed', bg: '#f3e8ff' },
+        ];
 
-                let uvBadge = 'badge-green';
-                let uvText = 'Bajo';
-                const uvVal = parseFloat(currentUV);
-                if (!isNaN(uvVal)) {
-                    if (uvVal <= 2) { uvBadge = 'badge-green'; uvText = 'Bajo'; }
-                    else if (uvVal <= 5) { uvBadge = 'badge-orange'; uvText = 'Moderado'; }
-                    else if (uvVal <= 7) { uvBadge = 'badge-orange'; uvText = 'Alto'; }
-                    else if (uvVal <= 10) { uvBadge = 'badge-red'; uvText = 'Muy alto'; }
-                    else { uvBadge = 'badge-red'; uvText = 'Extremo'; }
-                }
+        const protections = [
+            'Mínima necesaria. Gafas y sombrero opcionales.',
+            'SPF 30+ entre 10:00-16:00. Sombrero y gafas.',
+            'SPF 50+, sombrero, gafas. Evitar sol 11:00-15:00.',
+            'Máxima precaución. Sombra obligatoria 10:00-16:00.',
+            'Peligro. Evitar exposición. Ropa cubriente, SPF 50+.',
+        ];
 
-                html += `<div class="list-item">
-                    <div class="list-item-header">${city.name} <span class="badge ${uvBadge}">UV: ${currentUV} (${uvText})</span></div>
-                    <div class="list-item-sub">
-                        ☀️ Máx hoy: ${maxToday} · ☢️ Radiación: ${radToday} MJ/m² · ☀️ Sol: ${sunHrs} h
+        const uvLevel = avgUV || 0;
+        let html = '';
+
+        levels.forEach((lvl, i) => {
+            const isActive = uvLevel >= lvl.min && uvLevel <= lvl.max;
+            const isHighlighted = isActive;
+            html += `<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;margin-bottom:4px;background:${isHighlighted ? lvl.bg : '#f8fafc'};border:2px solid ${isHighlighted ? lvl.color : '#e2e8f0'};">
+                <span style="font-size:16px;flex-shrink:0;">${lvl.emoji}</span>
+                <div style="flex:1;">
+                    <div style="font-size:12px;font-weight:${isHighlighted ? '700' : '500'};color:#1e293b;">
+                        ${lvl.label} (${lvl.min}–${lvl.max})
+                        ${isHighlighted ? '<span style="margin-left:8px;font-size:10px;color:#64748b;font-weight:400;">← Actual</span>' : ''}
                     </div>
+                    <div style="font-size:10px;color:#64748b;margin-top:2px;">${protections[i]}</div>
+                </div>
+            </div>`;
+        });
+
+        scaleEl.innerHTML = html;
+    }
+
+    function renderUVCities(results) {
+        const citiesEl = document.getElementById('uv-cities');
+        if (!citiesEl) return;
+        let html = '';
+
+        results.forEach((data, idx) => {
+            const city = UV_CITIES[idx];
+            if (!data) {
+                html += `<div class="list-item">
+                    <div class="list-item-header">${city.name}</div>
+                    <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
                 </div>`;
-            });
-            citiesEl.innerHTML = html;
-        }
+                return;
+            }
+            const currentUV = data.current?.uv_index ?? '—';
+            const maxToday = data.daily?.uv_index_max?.[0] ?? '—';
+            const radToday = data.daily?.shortwave_radiation_sum?.[0] ?? '—';
+            const sunHrs = data.daily?.sunshine_duration?.[0] !== undefined ? (data.daily.sunshine_duration[0] / 3600).toFixed(1) : '—';
+
+            let uvBadge = 'badge-green';
+            let uvText = 'Bajo';
+            const uvVal = parseFloat(currentUV);
+            if (!isNaN(uvVal)) {
+                if (uvVal <= 2) { uvBadge = 'badge-green'; uvText = 'Bajo'; }
+                else if (uvVal <= 5) { uvBadge = 'badge-orange'; uvText = 'Moderado'; }
+                else if (uvVal <= 7) { uvBadge = 'badge-orange'; uvText = 'Alto'; }
+                else if (uvVal <= 10) { uvBadge = 'badge-red'; uvText = 'Muy alto'; }
+                else { uvBadge = 'badge-red'; uvText = 'Extremo'; }
+            }
+
+            html += `<div class="list-item">
+                <div class="list-item-header">${city.name} <span class="badge ${uvBadge}">UV: ${currentUV} (${uvText})</span></div>
+                <div class="list-item-sub">
+                    ☀️ Máx hoy: ${maxToday} · ☢️ Radiación: ${radToday} MJ/m² · ☀️ Sol: ${sunHrs} h
+                </div>
+            </div>`;
+        });
+        citiesEl.innerHTML = html;
     }
 
     // ===== GBFS BICYCLES =====
