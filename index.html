@@ -4245,6 +4245,210 @@
         }
     }
 
+    // ===== CAPE — TORRENTES Y RIESGO DE TORMENTAS =====
+    const CAPE_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.40 },
+    ];
+
+    async function fetchCAPE() {
+        // Fetch all cities in parallel
+        const promises = CAPE_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=cape,freezing_level_height&hourly=cape,freezing_level_height&timezone=Europe/Madrid&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Procesar datos
+        let capeCurrent = [];
+        let freezingLevels = [];
+        let capeSeries = [];
+        let labels = [];
+        let riskByCity = [];
+
+        results.forEach((data, idx) => {
+            if (!data) return;
+            labels.push(CAPE_CITIES[idx].name);
+
+            // Current values
+            const cape = data.current?.cape ?? 0;
+            const freezing = data.current?.freezing_level_height ?? null;
+            capeCurrent.push(cape);
+            if (freezing !== null && freezing !== undefined) freezingLevels.push(freezing);
+
+            // Hourly series (48h)
+            if (data.hourly && data.hourly.time && data.hourly.cape) {
+                const times = data.hourly.time.slice(0, 48);
+                const capes = data.hourly.cape.slice(0, 48);
+                const cityCapes = capes.map(c => c ?? 0);
+                capeSeries.push({ name: CAPE_CITIES[idx].name, times, values: cityCapes });
+            }
+
+            // Risk classification
+            let risk = 'bajo';
+            if (cape > 1000) risk = 'alto';
+            else if (cape >= 500) risk = 'medio';
+            riskByCity.push({ name: CAPE_CITIES[idx].name, cape, risk });
+        });
+
+        // KPIs
+        const avgCape = capeCurrent.length > 0 ? Math.round(capeCurrent.reduce((a, b) => a + b, 0) / capeCurrent.length) : 0;
+        const maxCape = capeCurrent.length > 0 ? Math.max(...capeCurrent) : 0;
+        const avgFreezing = freezingLevels.length > 0 ? Math.round(freezingLevels.reduce((a, b) => a + b, 0) / freezingLevels.length) : 0;
+        const totalEnergy = capeCurrent.reduce((a, b) => a + b, 0) / 1000; // J/kg → kJ/kg
+
+        // Risk level
+        let riskText = 'Sin riesgo';
+        let riskClass = 'kpi green';
+        if (avgCape > 1000) { riskText = '🔴 Riesgo alto'; riskClass = 'kpi red'; }
+        else if (avgCape >= 500) { riskText = '🟠 Riesgo medio'; riskClass = 'kpi orange'; }
+        else { riskText = '🟢 Riesgo bajo'; riskClass = 'kpi green'; }
+
+        // Actualizar KPIs
+        const capeAvgEl = document.getElementById('cape-avg');
+        const capeRiskEl = document.getElementById('cape-risk');
+        const capeFreezingEl = document.getElementById('cape-freezing');
+        const capeEnergyEl = document.getElementById('cape-energy');
+
+        if (capeAvgEl) capeAvgEl.textContent = avgCape.toLocaleString('es-ES');
+        if (capeRiskEl) {
+            capeRiskEl.textContent = riskText;
+            capeRiskEl.parentElement.className = riskClass;
+        }
+        if (capeFreezingEl) capeFreezingEl.textContent = avgFreezing > 0 ? `${avgFreezing} m` : '—';
+        if (capeEnergyEl) capeEnergyEl.textContent = totalEnergy.toFixed(1);
+
+        // Chart: CAPE 48h por ciudad
+        const ctxCape = document.getElementById('chart-cape');
+        if (ctxCape) {
+            if (window._chartCape) window._chartCape.destroy();
+
+            const colors = ['#ef4444', '#f97316', '#eab308', '#2563eb', '#16a34a', '#7c3aed', '#0891b2', '#ec4899'];
+            const datasets = [];
+
+            capeSeries.forEach((series, idx) => {
+                const labels48 = series.times.map(t => {
+                    const d = new Date(t);
+                    return `${d.getDate()}/${d.getMonth()+1} ${d.getHours().toString().padStart(2,'0')}:00`;
+                });
+                datasets.push({
+                    label: series.name,
+                    data: series.values,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '22',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                });
+            });
+
+            // Línea umbral de riesgo (500 J/kg)
+            const firstSeries = capeSeries.length > 0 ? capeSeries[0] : null;
+            let chartLabels = [];
+            if (firstSeries) {
+                chartLabels = firstSeries.times.map(t => {
+                    const d = new Date(t);
+                    return `${d.getDate()}/${d.getMonth()+1} ${d.getHours().toString().padStart(2,'0')}:00`;
+                });
+            }
+
+            datasets.push({
+                label: 'Umbral riesgo (500 J/kg)',
+                data: new Array(chartLabels.length).fill(500),
+                borderColor: '#dc2626',
+                borderWidth: 2,
+                borderDash: [8, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+
+            // Umbral alto (1000 J/kg)
+            datasets.push({
+                label: 'Umbral alto (1000 J/kg)',
+                data: new Array(chartLabels.length).fill(1000),
+                borderColor: '#b91c1c',
+                borderWidth: 2,
+                borderDash: [4, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+
+            window._chartCape = new Chart(ctxCape, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    if (ctx.dataset.label.includes('Umbral')) {
+                                        return `${ctx.dataset.label}: ${ctx.parsed.y} J/kg`;
+                                    }
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y} J/kg`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: { maxTicksLimit: 8, font: { size: 9 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'CAPE (J/kg)' },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Mapa de riesgo de tormentas por ciudad
+        const mapEl = document.getElementById('cape-city-map');
+        if (mapEl) {
+            let html = '';
+            riskByCity.forEach((item) => {
+                let badgeClass = 'badge-green';
+                let statusText = '🟢 Riesgo bajo';
+                if (item.risk === 'medio') { badgeClass = 'badge-orange'; statusText = '🟠 Riesgo medio'; }
+                else if (item.risk === 'alto') { badgeClass = 'badge-red'; statusText = '🔴 Riesgo alto'; }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${item.name} <span class="badge ${badgeClass}">${statusText}</span></div>
+                    <div class="list-item-sub">
+                        ⚡ CAPE: <strong>${item.cape} J/kg</strong>
+                        ${item.cape > 1000 ? '<br>⚠️ <em>Alta energía convectiva — posible tormenta eléctrica</em>' : ''}
+                        ${item.cape >= 500 && item.cape <= 1000 ? '<br>⚡ <em>Energía moderada — posible actividad convectiva</em>' : ''}
+                    </div>
+                </div>`;
+            });
+            mapEl.innerHTML = html;
+        }
+    }
+
 
     // ===== CCAA AUTO-GENERATION =====
     const CCAA_CENTROIDS = {
