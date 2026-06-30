@@ -3760,26 +3760,168 @@
         no2: 200          // 200 µg/m³ en 1h
     };
 
-    async function fetchAireExt() {
+    // ===== AIRE EXTENDIDO: Configuración de ciudades =====
+    const AIREEXT_CITY_NAMES = {
+        '40.42,-3.70': 'Madrid',
+        '41.39,2.16': 'Barcelona',
+        '39.47,-0.38': 'Valencia',
+        '37.39,-5.98': 'Sevilla',
+        '41.65,-0.88': 'Zaragoza',
+        '43.26,-2.93': 'Bilbao',
+        '36.72,-4.42': 'Málaga',
+        '43.37,-8.41': 'A Coruña',
+    };
+
+    // ===== CLASIFICACIÓN OMS — Salud =====
+    function omsClassifPM25(v) {
+        if (v <= 10) return { nivel: 'Bueno', color: '#16a34a' };
+        if (v <= 20) return { nivel: 'Regular', color: '#ca8a04' };
+        if (v <= 25) return { nivel: 'Malo', color: '#ea580c' };
+        return { nivel: 'Muy malo', color: '#dc2626' };
+    }
+    function omsClassifPM10(v) {
+        if (v <= 20) return { nivel: 'Bueno', color: '#16a34a' };
+        if (v <= 40) return { nivel: 'Regular', color: '#ca8a04' };
+        if (v <= 50) return { nivel: 'Malo', color: '#ea580c' };
+        return { nivel: 'Muy malo', color: '#dc2626' };
+    }
+    function omsClassifO3(v) {
+        if (v <= 100) return { nivel: 'Bueno', color: '#16a34a' };
+        if (v <= 180) return { nivel: 'Regular', color: '#ca8a04' };
+        return { nivel: 'Malo', color: '#ea580c' };
+    }
+    function omsClassifNO2(v) {
+        if (v <= 40) return { nivel: 'Bueno', color: '#16a34a' };
+        if (v <= 100) return { nivel: 'Regular', color: '#ca8a04' };
+        return { nivel: 'Malo', color: '#ea580c' };
+    }
+    function omsClassifCO(v) {
+        if (v <= 4) return { nivel: 'Bueno', color: '#16a34a' };
+        return { nivel: 'Malo', color: '#ea580c' };
+    }
+    function omsStatusHTML(pol, cls) {
+        const badgeCls = cls.color === '#16a34a' ? 'badge-green' :
+                         cls.color === '#ca8a04' ? 'badge-yellow' :
+                         cls.color === '#ea580c' ? 'badge-orange' : 'badge-red';
+        return `<span class="badge ${badgeCls}">${cls.nivel}</span> ${pol} ${cls.nivel} (${v2str(pol)})`;
+    }
+    function v2str(v) { return v !== '—' ? v + ' µg/m³' : '—'; }
+
+    // ===== AQI OMS (0–5) =====
+    // 0=Bueno, 1=Regular, 2=Malo, 3=Muy malo, 4=Peligroso, 5=Extremo
+    function calcAQIOSM(pm25, pm10, o3, no2, co) {
+        let maxAQI = 0;
+        // PM2.5: thresholds OMS 2021
+        if (pm25 !== '—') {
+            const n = parseFloat(pm25);
+            maxAQI = Math.max(maxAQI, n <= 5 ? 0 : n <= 10 ? 1 : n <= 15 ? 2 : n <= 20 ? 3 : n <= 30 ? 4 : 5);
+        }
+        // PM10
+        if (pm10 !== '—') {
+            const n = parseFloat(pm10);
+            maxAQI = Math.max(maxAQI, n <= 15 ? 0 : n <= 20 ? 1 : n <= 30 ? 2 : n <= 50 ? 3 : n <= 75 ? 4 : 5);
+        }
+        // O3
+        if (o3 !== '—') {
+            const n = parseFloat(o3);
+            maxAQI = Math.max(maxAQI, n <= 50 ? 0 : n <= 100 ? 1 : n <= 160 ? 2 : n <= 240 ? 3 : n <= 380 ? 4 : 5);
+        }
+        // NO2
+        if (no2 !== '—') {
+            const n = parseFloat(no2);
+            maxAQI = Math.max(maxAQI, n <= 10 ? 0 : n <= 20 ? 1 : n <= 40 ? 2 : n <= 100 ? 3 : n <= 200 ? 4 : 5);
+        }
+        // CO (mg/m³)
+        if (co !== '—') {
+            const n = parseFloat(co);
+            maxAQI = Math.max(maxAQI, n <= 4 ? 0 : n <= 8 ? 1 : n <= 12 ? 2 : n <= 16 ? 3 : n <= 24 ? 4 : 5);
+        }
+        return maxAQI;
+    }
+    const AQI_LABELS = ['Bueno', 'Regular', 'Malo', 'Muy malo', 'Peligroso', 'Extremo'];
+    const AQI_COLORS = ['#16a34a', '#ca8a04', '#ea580c', '#dc2626', '#991b1b', '#4a0000'];
+
+    async function fetchAireExt(cityKey) {
         try {
-            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=40.42&longitude=-3.70&current=carbon_monoxide,sulphur_dioxide,ammonia,nitrogen_dioxide&hourly=carbon_monoxide,sulphur_dioxide,nitrogen_dioxide&timezone=Europe/Madrid`;
+            let lat = 40.42, lon = -3.70;
+            if (cityKey && cityKey !== 'all') {
+                const [la, lo] = cityKey.split(',').map(Number);
+                if (!isNaN(la) && !isNaN(lo)) { lat = la; lon = lo; }
+            }
+            const cityLabel = cityKey === 'all' ? 'España (media)' : (AIREEXT_CITY_NAMES[cityKey] || 'Ciudad');
+            const labelEl = document.getElementById('aireext-city-label');
+            if (labelEl) labelEl.textContent = `— ${cityLabel}`;
+
+            // API con todos los contaminantes actuales y horarios
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,ammonia,carbon_monoxide&hourly=pm10,pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,ammonia,carbon_monoxide&timezone=Europe/Madrid`;
             const res = await fetch(url);
             if (!res.ok) throw new Error('Aire Ext. API error');
             const data = await res.json();
 
             const c = data.current;
             if (c) {
-                // KPIs
+                // Valores actuales
+                const pm25Val = c.pm2_5 !== undefined ? parseFloat(c.pm2_5).toFixed(1) : '—';
+                const pm10Val = c.pm10 !== undefined ? parseFloat(c.pm10).toFixed(1) : '—';
+                const o3Val = c.ozone !== undefined ? parseFloat(c.ozone).toFixed(0) : '—';
+                const no2Val = c.nitrogen_dioxide !== undefined ? parseFloat(c.nitrogen_dioxide).toFixed(0) : '—';
                 const coVal = c.carbon_monoxide !== undefined ? (c.carbon_monoxide * 1000).toFixed(0) : '—';
-                const so2Val = c.sulphur_dioxide !== undefined ? c.sulphur_dioxide : '—';
-                const nh3Val = c.ammonia !== undefined ? c.ammonia : '—';
+                const so2Val = c.sulphur_dioxide !== undefined ? parseFloat(c.sulphur_dioxide).toFixed(0) : '—';
+                const nh3Val = c.ammonia !== undefined ? parseFloat(c.ammonia).toFixed(0) : '—';
+                const benzVal = so2Val !== '—' ? (parseFloat(so2Val) * 0.02).toFixed(1) : '—';
 
+                // KPIs
+                document.getElementById('aireext-pm25').textContent = pm25Val !== '—' ? `${pm25Val} µg/m³` : '—';
+                document.getElementById('aireext-pm10').textContent = pm10Val !== '—' ? `${pm10Val} µg/m³` : '—';
+                document.getElementById('aireext-o3').textContent = o3Val !== '—' ? `${o3Val} µg/m³` : '—';
+                document.getElementById('aireext-no2').textContent = no2Val !== '—' ? `${no2Val} µg/m³` : '—';
                 document.getElementById('aireext-co').textContent = coVal !== '—' ? `${coVal} µg/m³` : '—';
                 document.getElementById('aireext-so2').textContent = so2Val;
                 document.getElementById('aireext-nh3').textContent = nh3Val;
-                document.getElementById('aireext-benz').textContent = '≈' + (so2Val !== '—' ? (parseFloat(so2Val) * 0.02).toFixed(1) : '—'); // Benceno estimado como proporcional
+                document.getElementById('aireext-benz').textContent = '≈' + benzVal;
 
-                // EU limits comparison
+                // AQI OMS
+                const aqi = calcAQIOSM(pm25Val, pm10Val, o3Val, no2Val, coVal);
+                const aqiEl = document.getElementById('aireext-aqi');
+                const aqiCard = document.getElementById('aireext-aqi-card');
+                const aqiLabel = document.getElementById('aireext-aqi-label');
+                aqiEl.textContent = aqi;
+                aqiEl.style.color = AQI_COLORS[aqi];
+                aqiLabel.textContent = `AQI OMS — ${AQI_LABELS[aqi]}`;
+                aqiCard.style.borderLeft = `4px solid ${AQI_COLORS[aqi]}`;
+
+                // Clasificación OMS detalle
+                const pm25Cls = omsClassifPM25(parseFloat(pm25Val) || 0);
+                const pm10Cls = omsClassifPM10(parseFloat(pm10Val) || 0);
+                const o3Cls = omsClassifO3(parseFloat(o3Val) || 0);
+                const no2Cls = omsClassifNO2(parseFloat(no2Val) || 0);
+                const coCls = omsClassifCO(parseFloat(coVal) || 0);
+
+                function statusLine(pol, cls, val) {
+                    const bc = cls.color === '#16a34a' ? 'badge-green' :
+                               cls.color === '#ca8a04' ? 'badge-yellow' :
+                               cls.color === '#ea580c' ? 'badge-orange' : 'badge-red';
+                    return `<div class="info-row"><span class="info-label">${pol}</span><span class="info-value">${val !== '—' ? val + ' µg/m³' : '—'} <span class="badge ${bc}">${cls.nivel}</span></span></div>`;
+                }
+                document.getElementById('aireext-pm25-status').innerHTML = statusLine('PM2.5', pm25Cls, pm25Val);
+                document.getElementById('aireext-pm10-status').innerHTML = statusLine('PM10', pm10Cls, pm10Val);
+                document.getElementById('aireext-o3-status').innerHTML = statusLine('O₃', o3Cls, o3Val);
+                document.getElementById('aireext-no2-status').innerHTML = statusLine('NO₂', no2Cls, no2Val);
+                document.getElementById('aireext-co-status').innerHTML = statusLine('CO', coCls, coVal);
+
+                // Detección grupos sensibles (AQI > 3)
+                const alertEl = document.getElementById('aireext-sensitive-alert');
+                if (aqi > 3) {
+                    alertEl.style.display = 'block';
+                    alertEl.innerHTML = `<div class="alert-banner alert-critical">⚠️ <strong>AQI OMS ${aqi} (${AQI_LABELS[aqi]})</strong> — Grupos sensibles (niños, ancianos, asmáticos) deben evitar actividad exterior prolongada. Calidad del aire peligrosa.</div>`;
+                } else if (aqi === 3) {
+                    alertEl.style.display = 'block';
+                    alertEl.innerHTML = `<div class="alert-banner alert-warning">⚠️ <strong>AQI OMS ${aqi} (${AQI_LABELS[aqi]})</strong> — Calidad del aire mala. Grupos sensibles reducir actividad exterior.</div>`;
+                } else {
+                    alertEl.style.display = 'none';
+                }
+
+                // EU limits
                 let cumple = [];
                 if (coVal !== '—' && parseInt(coVal) <= EU_LIMITS.co) cumple.push('CO ✅');
                 else if (coVal !== '—') cumple.push('CO ⚠️');
@@ -3787,6 +3929,8 @@
                 else if (so2Val !== '—') cumple.push('SO₂ ⚠️');
                 if (nh3Val !== '—' && parseFloat(nh3Val) <= EU_LIMITS.nh3) cumple.push('NH₃ ✅');
                 else if (nh3Val !== '—') cumple.push('NH₃ ⚠️');
+                if (pm25Val !== '—' && parseFloat(pm25Val) <= 15) cumple.push('PM2.5 ✅');
+                else if (pm25Val !== '—') cumple.push('PM2.5 ⚠️');
 
                 const limiteEl = document.getElementById('aireext-limite');
                 if (cumple.length > 0) {
@@ -3796,7 +3940,7 @@
                 document.getElementById('aireext-ciudades').textContent = `${AIREEXT_CITIES.length} / ${AIREEXT_CITIES.length}`;
             }
 
-            // Hourly chart
+            // Hourly chart (PM2.5, PM10, O3)
             if (data.hourly) {
                 renderAireExtHourly(data.hourly);
             }
@@ -3806,17 +3950,16 @@
 
         } catch (err) {
             console.warn('Aire Ext. API error:', err.message);
-            document.getElementById('aireext-co').textContent = 'Error';
-            document.getElementById('aireext-so2').textContent = 'Error';
-            document.getElementById('aireext-nh3').textContent = 'Error';
+            const els = ['aireext-co','aireext-so2','aireext-nh3','aireext-pm25','aireext-pm10','aireext-o3','aireext-no2','aireext-benz','aireext-aqi'];
+            els.forEach(id => { try { document.getElementById(id).textContent = 'Error'; } catch(e){} });
         }
     }
 
     function renderAireExtHourly(hourly) {
         const times = hourly.time || [];
-        const co = hourly.carbon_monoxide || [];
-        const so2 = hourly.sulphur_dioxide || [];
-        const no2 = hourly.nitrogen_dioxide || [];
+        const pm25 = hourly.pm2_5 || [];
+        const pm10 = hourly.pm10 || [];
+        const o3 = hourly.ozone || [];
 
         const last24 = Math.min(times.length, 24);
         const labels = times.slice(-last24).map(t => t.split('T')[1]);
@@ -3829,16 +3972,16 @@
             data: {
                 labels: labels,
                 datasets: [
-                    { label: 'CO (mg/m³÷100)', data: co.slice(-last24).map(v => v ? v / 100 : null), borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 1 },
-                    { label: 'SO₂ (µg/m³)', data: so2.slice(-last24), borderColor: '#eab308', tension: 0.3, borderWidth: 2, pointRadius: 1 },
-                    { label: 'NO₂ (µg/m³)', data: no2.slice(-last24), borderColor: '#ef4444', tension: 0.3, borderWidth: 2, pointRadius: 1 }
+                    { label: 'PM2.5 (µg/m³)', data: pm25.slice(-last24), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                    { label: 'PM10 (µg/m³)', data: pm10.slice(-last24), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                    { label: 'O₃ (µg/m³)', data: o3.slice(-last24), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 1 }
                 ]
             },
             options: {
                 responsive: true,
                 plugins: { legend: { position: 'top', labels: { font: { size: 10 } } } },
                 scales: {
-                    y: { title: { display: true, text: 'Concentración' }, grid: { color: '#f1f5f9' } },
+                    y: { title: { display: true, text: 'µg/m³' }, grid: { color: '#f1f5f9' } },
                     x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
                 }
             }
@@ -6855,13 +6998,21 @@
         renderEconomyDetail();
         renderPorts();
         fetchAirQuality();
-        fetchAireExt();
+        fetchAireExt('all');
         fetchDemography();
 fetchPollen();
         fetchFloods();
         fetchSoil();
         fetchTempSuelo();
         fetchForecast();
+        
+        // Aire Ext. city selector event
+        const aireextCitySelect = document.getElementById('aireext-city-select');
+        if (aireextCitySelect) {
+            aireextCitySelect.addEventListener('change', (e) => {
+                fetchAireExt(e.target.value);
+            });
+        }
         
         // Init CCAA grids
         generateCCAATab('clima');
