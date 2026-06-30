@@ -638,6 +638,7 @@
                 <button class="tab-btn" data-tab="rafagas">💨 Ráfagas</button>
                 <button class="tab-btn" data-tab="lluvia">🌧️ Prob. Lluvia</button>
                 <button class="tab-btn" data-tab="presion">📊 Presión</button>
+                <button class="tab-btn" data-tab="fuego">🔥 Índice de Fuego</button>
             </div>
         </div>
 
@@ -1550,6 +1551,42 @@
                             <div id="presion-map-cities" style="font-size:12px;"></div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- ÍNDICE DE FUEGO TAB -->
+                    <div class="tab-panel" id="tab-fuego">
+                        <div class="section-title">🔥 Índice de Fuego — España</div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="fuego-cape">—</div>
+                                <div class="kpi-label">CAPE promedio (J/kg)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="fuego-tormenta">—</div>
+                                <div class="kpi-label">Prob. tormenta (%)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi red">
+                                <div class="kpi-value" id="fuego-temp-max">—</div>
+                                <div class="kpi-label">Temp. máx (°C)</div>
+                            </div>
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="fuego-viento-seco">—</div>
+                                <div class="kpi-label">Viento seco (km/h)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Riesgo de incendio — 7 días</div>
+                            <div class="chart-container" style="height:220px;">
+                                <canvas id="chart-fuego"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Zonas de riesgo por comunidad</div>
+                            <div id="fuego-zonas-list"></div>
+                        </div>
+                        <div class="section-title">Fuente: Open-Meteo API (CAPE, temperatura, humedad, viento)</div>
                     </div>
                 </div>
             </div>
@@ -3630,6 +3667,302 @@
         }
     }
 
+    // ===== ÍNDICE DE FUEGO (CAPE + riesgo incendio) =====
+    const FUEGO_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70, cc: 'Comunidad de Madrid' },
+        { name: 'Sevilla', lat: 37.39, lon: -5.98, cc: 'Andalucía' },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88, cc: 'Aragón' },
+        { name: 'Valencia', lat: 39.47, lon: -0.38, cc: 'Comunidad Valenciana' },
+        { name: 'Málaga', lat: 36.72, lon: -4.42, cc: 'Andalucía' },
+        { name: 'Murcia', lat: 37.99, lon: -1.13, cc: 'Región de Murcia' },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17, cc: 'Cataluña' },
+        { name: 'Cáceres', lat: 39.47, lon: -6.37, cc: 'Extremadura' },
+    ];
+
+    const CCAA_RIESGO = {
+        '01': 'Andalucía',
+        '02': 'Aragón',
+        '03': 'Principado de Asturias',
+        '04': 'Illes Balears',
+        '05': 'Canarias',
+        '06': 'Cantabria',
+        '07': 'Castilla y León',
+        '08': 'Castilla-La Mancha',
+        '09': 'Cataluña',
+        '10': 'Extremadura',
+        '11': 'Galicia',
+        '12': 'La Rioja',
+        '13': 'Comunidad de Madrid',
+        '14': 'Región de Murcia',
+        '15': 'Comunidad Foral de Navarra',
+        '16': 'País Vasco',
+        '17': 'Comunidad Valenciana',
+    };
+
+    function getRiesgoColor(cape, tempMax, humidity, wind) {
+        if (cape > 1000 && tempMax > 35 && humidity < 30) return { label: 'Extremo', color: '#dc2626', badge: 'badge-red' };
+        if (cape > 800 && tempMax > 32 && humidity < 35) return { label: 'Alto', color: '#ea580c', badge: 'badge-orange' };
+        if (cape > 500 && tempMax > 30) return { label: 'Moderado', color: '#ca8a04', badge: 'badge-orange' };
+        if (cape > 300) return { label: 'Bajo', color: '#16a34a', badge: 'badge-green' };
+        return { label: 'Mínimo', color: '#16a34a', badge: 'badge-green' };
+    }
+
+    function getDayRiesgo(dayData) {
+        const capeVal = dayData.cape != null ? dayData.cape : 0;
+        const tempMax = dayData.temp_max != null ? dayData.temp_max : 15;
+        const humidity = dayData.humidity_avg != null ? dayData.humidity_avg : 60;
+        const wind = dayData.wind_max != null ? dayData.wind_max : 5;
+
+        const capeAvg = dayData.cape_values.length > 0
+            ? dayData.cape_values.filter(v => v != null).reduce((a, b) => a + b, 0) / dayData.cape_values.filter(v => v != null).length
+            : 0;
+
+        if (capeAvg > 1000 && tempMax > 35 && humidity < 30) return '#dc2626';
+        if (capeAvg > 500 && tempMax > 30) return '#ca8a04';
+        return '#16a34a';
+    }
+
+    async function fetchFuego() {
+        // Fetch all cities in parallel
+        const promises = FUEGO_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,cape&hourly=cape,temperature_2m&daily=temperature_2m_max,precipitation_sum,wind_speed_10m_max&timezone=Europe/Madrid&forecast_days=7`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                const data = await resp.json();
+                return { city, data };
+            } catch (err) {
+                return { city, data: null };
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Extract data
+        let totalCape = 0, capeCount = 0;
+        let totalTempMax = 0, tempMaxCount = 0;
+        let totalHumidity = 0, humidityCount = 0;
+        let totalWindDry = 0, windCount = 0;
+        let stormCount = 0;
+
+        const dailyData = [];
+
+        // Daily data from first city as baseline (7 days)
+        const firstValid = results.find(r => r.data);
+        if (firstValid && firstValid.data.daily) {
+            const daily = firstValid.data.daily;
+            for (let i = 0; i < daily.time.length; i++) {
+                dailyData.push({
+                    date: daily.time[i],
+                    temp_max: daily.temperature_2m_max[i],
+                    precip: daily.precipitation_sum[i],
+                    wind_max: daily.wind_speed_10m_max[i],
+                    cape_values: [],
+                    humidity_avg: 0,
+                    humidity_count: 0,
+                });
+            }
+        }
+
+        results.forEach(({ city, data }) => {
+            if (!data || !data.current) return;
+
+            const current = data.current;
+            const cape = current.cape;
+            const temp = current.temperature_2m;
+            const humidity = current.relative_humidity_2m;
+            const wind = current.wind_speed_10m;
+
+            if (cape != null && cape >= 0) {
+                totalCape += cape;
+                capeCount++;
+            }
+            if (temp != null) {
+                totalTempMax += temp;
+                tempMaxCount++;
+            }
+            if (humidity != null) {
+                totalHumidity += humidity;
+                humidityCount++;
+            }
+            // Viento seco: viento cuando humedad es baja
+            if (wind != null && humidity != null && humidity < 40) {
+                totalWindDry += wind;
+                windCount++;
+            }
+            // Prob. tormenta basada en CAPE
+            if (cape != null && cape > 500) {
+                stormCount++;
+            }
+
+            // Populate daily data
+            if (data.hourly && data.hourly.cape) {
+                for (let i = 0; i < data.hourly.cape.length && i < 7 * 24; i++) {
+                    const hourIdx = i;
+                    const dayIdx = Math.floor(hourIdx / 24);
+                    if (dailyData[dayIdx]) {
+                        dailyData[dayIdx].cape_values.push(data.hourly.cape[i]);
+                        if (data.hourly.relative_humidity_2m && data.hourly.relative_humidity_2m[i] != null) {
+                            dailyData[dayIdx].humidity_avg += data.hourly.relative_humidity_2m[i];
+                            dailyData[dayIdx].humidity_count++;
+                        }
+                    }
+                }
+            }
+        });
+
+        // Compute averages
+        const avgCape = capeCount > 0 ? Math.round(totalCape / capeCount) : 0;
+        const avgTempMax = tempMaxCount > 0 ? (totalTempMax / tempMaxCount).toFixed(1) : '—';
+        const avgHumidity = humidityCount > 0 ? Math.round(totalHumidity / humidityCount) : 0;
+        const avgWindDry = windCount > 0 ? (totalWindDry / windCount).toFixed(1) : '0';
+        const stormProb = Math.round((stormCount / results.filter(r => r.data).length) * 100);
+
+        // Update KPIs
+        const fuegoCape = document.getElementById('fuego-cape');
+        const fuegoTormenta = document.getElementById('fuego-tormenta');
+        const fuegoTempMax = document.getElementById('fuego-temp-max');
+        const fuegoVientoSeco = document.getElementById('fuego-viento-seco');
+
+        if (fuegoCape) fuegoCape.textContent = avgCape > 0 ? `${avgCape} J/kg` : '—';
+        if (fuegoTormenta) fuegoTormenta.textContent = avgHumidity > 0 && stormProb > 0 ? `${stormProb}%` : '—';
+        if (fuegoTempMax) fuegoTempMax.textContent = avgTempMax !== '—' ? `${avgTempMax} °C` : '—';
+        if (fuegoVientoSeco) fuegoVientoSeco.textContent = avgWindDry !== '0' ? `${avgWindDry} km/h` : '—';
+
+        // Chart: riesgo por día (semáforo)
+        const ctxFuego = document.getElementById('chart-fuego')?.getContext('2d');
+        if (ctxFuego && dailyData.length > 0) {
+            // Clean up existing chart
+            if (charts._chartFuego) { charts._chartFuego.destroy(); charts._chartFuego = null; }
+
+            const labels = dailyData.map(d => {
+                const dt = new Date(d.date + 'T00:00:00');
+                return dt.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+            });
+
+            const riskColors = dailyData.map(d => getDayRiesgo(d));
+            const riskValues = dailyData.map(d => {
+                const capeAvg = d.cape_values.filter(v => v != null).length > 0
+                    ? d.cape_values.filter(v => v != null).reduce((a, b) => a + b, 0) / d.cape_values.filter(v => v != null).length
+                    : 0;
+                return Math.round(capeAvg);
+            });
+            const tempData = dailyData.map(d => d.temp_max != null ? d.temp_max : null);
+            const precipData = dailyData.map(d => d.precip != null ? d.precip : null);
+
+            charts._chartFuego = new Chart(ctxFuego, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'CAPE promedio (J/kg)',
+                            data: riskValues,
+                            backgroundColor: riskColors,
+                            borderRadius: 4,
+                            barPercentage: 0.7,
+                            order: 2,
+                        },
+                        {
+                            label: 'Temp. máx (°C)',
+                            data: tempData,
+                            type: 'line',
+                            borderColor: '#f97316',
+                            backgroundColor: '#f9731644',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#f97316',
+                            tension: 0.3,
+                            yAxisID: 'y1',
+                            order: 1,
+                        },
+                        {
+                            label: 'Precipitación (mm)',
+                            data: precipData,
+                            type: 'line',
+                            borderColor: '#2563eb',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            pointRadius: 2,
+                            pointBackgroundColor: '#2563eb',
+                            tension: 0.3,
+                            yAxisID: 'y1',
+                            order: 0,
+                            fill: false,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => {
+                                    if (ctx.dataset.label.includes('CAPE')) return `CAPE: ${ctx.parsed.y} J/kg`;
+                                    if (ctx.dataset.label.includes('Temp')) return `Temp. máx: ${ctx.parsed.y} °C`;
+                                    if (ctx.dataset.label.includes('Precip')) return `Precip: ${ctx.parsed.y} mm`;
+                                    return ctx.dataset.label + ': ' + ctx.parsed.y;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: { ticks: { font: { size: 9 } } },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => v + ' J/kg' },
+                            title: { display: true, text: 'CAPE (J/kg)', font: { size: 10 } },
+                        },
+                        y1: {
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 9 } },
+                            title: { display: true, text: '°C / mm', font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Zonas de riesgo por comunidad
+        const zonasEl = document.getElementById('fuego-zonas-list');
+        if (zonasEl) {
+            const cityRisks = results
+                .filter(r => r.data && r.data.current)
+                .map(({ city, data }) => {
+                    const current = data.current;
+                    const cape = current.cape != null && current.cape >= 0 ? current.cape : 0;
+                    const temp = current.temperature_2m != null ? current.temperature_2m : 15;
+                    const humidity = current.relative_humidity_2m != null ? current.relative_humidity_2m : 60;
+                    const wind = current.wind_speed_10m != null ? current.wind_speed_10m : 5;
+                    return {
+                        name: city.name,
+                        cc: city.cc,
+                        cape,
+                        temp,
+                        humidity,
+                        wind,
+                        riesgo: getRiesgoColor(cape, temp, humidity, wind),
+                    };
+                })
+                .sort((a, b) => b.cape - a.cape);
+
+            let html = '';
+            cityRisks.forEach(cr => {
+                html += `<div class="list-item" style="border-left:4px solid ${cr.riesgo.color};">
+                    <div class="list-item-header">${cr.name} <span class="badge ${cr.riesgo.badge}">${cr.riesgo.label}</span></div>
+                    <div class="list-item-sub">
+                        CAPE: <strong>${cr.cape} J/kg</strong> · Temp: <strong>${cr.temp} °C</strong> · Humedad: <strong>${cr.humidity}%</strong> · Viento: <strong>${cr.wind} km/h</strong>
+                        <br><span style="color:#64748b;">📍 ${cr.cc}</span>
+                    </div>
+                </div>`;
+            });
+            zonasEl.innerHTML = html || '<div style="color:#64748b;font-size:12px;">Sin datos disponibles</div>';
+        }
+    }
+
     // ===== MAIN INIT =====
     async function init() {
         initMap();
@@ -3675,6 +4008,7 @@
         fetchRafagas();
         fetchLluvia();
         fetchPresion();
+        fetchFuego();
     }
 
     // ===== RESIZE HANDLER =====
