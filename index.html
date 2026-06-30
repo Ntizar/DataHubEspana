@@ -647,6 +647,7 @@
                 <button class="tab-btn" data-tab="sol">☀️ Horas de Sol</button>
                 <button class="tab-btn" data-tab="rocio">🌡️ Rocío</button>
                 <button class="tab-btn" data-tab="radiacion">🔆 Radiación</button>
+                <button class="tab-btn" data-tab="termica">🤒 Sensación Térmica</button>
             </div>
         </div>
 
@@ -1839,6 +1840,40 @@
                         <div class="section-title">Potencial solar por ciudad (radiación diaria)</div>
                         <div id="rad-ranking" style="font-size:13px;"></div>
                         <div class="section-title">Fuente: Open-Meteo API (shortwave_radiation, direct_normal_irradiance, diffuse_radiation)</div>
+                    </div>
+
+                    <!-- TERMICA TAB -->
+                    <div class="tab-panel" id="tab-termica">
+                        <div class="section-title">🤒 Sensación Térmica y Riesgo de Golpe de Calor — España</div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="term-real">—</div>
+                                <div class="kpi-label">Temp. Real Promedio (°C)</div>
+                            </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="term-sensacion">—</div>
+                                <div class="kpi-label">Sensación Térmica Promedio (°C)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="term-diferencia">—</div>
+                                <div class="kpi-label">Diferencia Promedio (°C)</div>
+                            </div>
+                            <div class="kpi green" id="term-riesgo-box">
+                                <div class="kpi-value" id="term-riesgo">—</div>
+                                <div class="kpi-label">Riesgo Golpe de Calor</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Temp. Real vs Sensación Térmica — Próximas 24h (Madrid)</div>
+                            <div class="chart-container" style="height:250px;">
+                                <canvas id="chart-termica"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Mapa de confort térmico por ciudades</div>
+                        <div id="term-ranking" style="font-size:13px;"></div>
+                        <div class="section-title">Fuente: Open-Meteo API (temperature_2m, apparent_temperature)</div>
                     </div>
                 </div>
             </div>
@@ -5261,6 +5296,200 @@
         }
     }
 
+    // ===== SENSACIÓN TÉRMICA =====
+    const TERMICA_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Alicante', lat: 38.34, lon: -0.48 },
+    ];
+
+    async function fetchTermica() {
+        // Fetch all cities in parallel
+        const promises = TERMICA_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m&hourly=temperature_2m,apparent_temperature&timezone=Europe/Madrid&forecast_days=1`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // Collect current data for KPIs
+        let currentReal = [];
+        let currentSensacion = [];
+        let cityTermData = [];
+
+        // Collect hourly data for chart (Madrid)
+        let madridData = null;
+        let hourlyLabels = [];
+        let hourlyReal = [];
+        let hourlySensacion = [];
+
+        results.forEach((data, idx) => {
+            const city = TERMICA_CITIES[idx];
+            if (!data) return;
+
+            // Current data
+            if (data.current) {
+                const real = data.current.temperature_2m;
+                const sensacion = data.current.apparent_temperature;
+                if (real != null && sensacion != null) {
+                    currentReal.push(real);
+                    currentSensacion.push(sensacion);
+                    const diff = real - sensacion;
+                    const riesgo = getRiesgoCalor(real, sensacion);
+                    cityTermData.push({ name: city.name, real, sensacion, diff, riesgo, humidity: data.current.relative_humidity_2m, wind: data.current.wind_speed_10m });
+                }
+            }
+
+            // Hourly data for Madrid (index 0 = Madrid)
+            if (idx === 0 && data.hourly && data.hourly.time) {
+                data.hourly.time.forEach((time, i) => {
+                    hourlyLabels.push(time);
+                    hourlyReal.push(data.hourly.temperature_2m?.[i] ?? null);
+                    hourlySensacion.push(data.hourly.apparent_temperature?.[i] ?? null);
+                });
+            }
+        });
+
+        // KPIs
+        const avgReal = currentReal.length > 0 ? currentReal.reduce((a, b) => a + b, 0) / currentReal.length : 0;
+        const avgSensacion = currentSensacion.length > 0 ? currentSensacion.reduce((a, b) => a + b, 0) / currentSensacion.length : 0;
+        const avgDiff = currentReal.length > 0 ? currentReal.reduce((a, b, i) => a + (b - currentSensacion[i]), 0) / currentReal.length : 0;
+
+        // Max sensación for heat risk
+        const maxSensacion = Math.max(...currentSensacion);
+        const maxSensacionCity = cityTermData.find(c => c.sensacion === maxSensacion)?.name || '';
+        const riesgoGlobal = getRiesgoCalor(avgSensacion, avgSensacion);
+
+        // Update KPIs
+        document.getElementById('term-real').textContent = avgReal.toFixed(1);
+        document.getElementById('term-sensacion').textContent = avgSensacion.toFixed(1);
+        document.getElementById('term-diferencia').textContent = avgDiff.toFixed(1);
+
+        const riesgoEl = document.getElementById('term-riesgo');
+        const riesgoBox = document.getElementById('term-riesgo-box');
+        riesgoEl.textContent = riesgoGlobal;
+
+        // Color code risk
+        riesgoBox.className = 'kpi';
+        if (riesgoGlobal === 'Alto' || riesgoGlobal === 'Muy alto') {
+            riesgoBox.classList.add('red');
+        } else if (riesgoGlobal === 'Medio') {
+            riesgoBox.classList.add('orange');
+        } else {
+            riesgoBox.classList.add('green');
+        }
+
+        // Chart: Madrid real vs sensación 24h
+        const ctxTerm = document.getElementById('chart-termica');
+        if (ctxTerm) {
+            if (charts._chartTermica) charts._chartTermica.destroy();
+
+            // Filter out null values for chart
+            const validIndices = hourlyReal.map((v, i) => (v != null && hourlySensacion[i] != null) ? i : -1).filter(i => i >= 0);
+            const chartLabels = validIndices.map(i => {
+                const d = new Date(hourlyLabels[i]);
+                return `${d.getHours().toString().padStart(2, '0')}:00`;
+            });
+            const chartReal = validIndices.map(i => hourlyReal[i]);
+            const chartSens = validIndices.map(i => hourlySensacion[i]);
+
+            charts._chartTermica = new Chart(ctxTerm, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Temp. Real (°C)',
+                            data: chartReal,
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 3,
+                            pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                            tension: 0.4,
+                            fill: true,
+                        },
+                        {
+                            label: 'Sensación Térmica (°C)',
+                            data: chartSens,
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 3,
+                            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                            tension: 0.4,
+                            fill: true,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} °C`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: '°C' },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 }, maxRotation: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Ranking ciudades por sensación térmica
+        const rankingEl = document.getElementById('term-ranking');
+        if (rankingEl) {
+            cityTermData.sort((a, b) => b.sensacion - a.sensacion);
+            const medals = ['🥇', '🥈', '🥉'];
+            let html = '';
+            cityTermData.forEach((c, i) => {
+                const medal = i < 3 ? medals[i] : `${i + 1}.`;
+                const riesgoBadge = c.riesgo === 'Alto' || c.riesgo === 'Muy alto' ? 'badge-red' : c.riesgo === 'Medio' ? 'badge-orange' : 'badge-green';
+                html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #f1f5f9;align-items:center;">
+                    <span style="font-weight:600;">${medal} ${c.name}</span>
+                    <span style="color:#ef4444;font-weight:700;">${c.sensacion.toFixed(1)}°C sensación</span>
+                    <span style="color:#64748b;font-size:11px;">diferencia: ${c.diff > 0 ? '+' : ''}${c.diff.toFixed(1)}°C</span>
+                    <span class="badge ${riesgoBadge}">${c.riesgo}</span>
+                </div>`;
+            });
+            rankingEl.innerHTML = html;
+        }
+    }
+
+    function getRiesgoCalor(temp, sensacion) {
+        if (sensacion >= 54) return 'Muy alto';
+        if (sensacion >= 46) return 'Alto';
+        if (sensacion >= 40) return 'Medio';
+        return 'Bajo';
+    }
+
     // ===== MAIN INIT =====
     async function init() {
         initMap();
@@ -5319,6 +5548,7 @@ fetchPollen();
         fetchSol();
         fetchRocio();
         fetchRadiacion();
+        fetchTermica();
     }
 
     // ===== RESIZE HANDLER =====
