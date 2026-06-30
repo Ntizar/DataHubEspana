@@ -732,6 +732,7 @@
                 <button class="tab-btn" data-tab="rocio">🌡️ Rocío</button>
                 <button class="tab-btn" data-tab="radiacion">🔆 Radiación</button>
                 <button class="tab-btn" data-tab="termica">🤒 Sensación Térmica</button>
+                <button class="tab-btn" data-tab="mareas">🌊 Mareas</button>
             </div>
         </div>
 
@@ -2014,6 +2015,40 @@
                         <div class="section-title">Mapa de confort térmico por ciudades</div>
                         <div id="term-ranking" style="font-size:13px;"></div>
                         <div class="section-title">Fuente: Open-Meteo API (temperature_2m, apparent_temperature)</div>
+                    </div>
+
+                    <!-- MAREAS TAB -->
+                    <div class="tab-panel" id="tab-mareas">
+                        <div class="section-title">🌊 Mareas y Corrientes Marinas — Puertos de España</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="marea-nivel">—</div>
+                                <div class="kpi-label">Nivel agua medio (m)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="marea-corriente-max">—</div>
+                                <div class="kpi-label">Corriente máxima (m/s)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="marea-oleaje-prom">—</div>
+                                <div class="kpi-label">Oleaje promedio (m)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="marea-direccion">—</div>
+                                <div class="kpi-label">Dir. corriente media (°)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Oleaje y corriente por puerto (48h)</div>
+                            <div class="chart-container" style="height:240px;">
+                                <canvas id="chart-mareas"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-title">Puertos con datos de marea</div>
+                        <div id="marea-puertos"></div>
+                        <div class="section-title">Fuente: Open-Meteo Marine API</div>
                     </div>
                 </div>
             </div>
@@ -5874,6 +5909,7 @@ fetchPollen();
         fetchRocio();
         fetchRadiacion();
         fetchTermica();
+        fetchMareas();
     }
 
     // ===== RESIZE HANDLER =====
@@ -6204,6 +6240,219 @@ fetchPollen();
                 </div>`;
             });
             coastsEl.innerHTML = html;
+        }
+    }
+
+    // ===== MAREAS Y CORRIENTES MARINAS =====
+    const MAREAS_PORTS = [
+        { name: 'Algeciras', lat: 36.13, lon: -5.45 },
+        { name: 'Valencia', lat: 39.45, lon: -0.32 },
+        { name: 'Barcelona', lat: 41.34, lon: 2.18 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Las Palmas', lat: 28.10, lon: -15.41 },
+    ];
+
+    async function fetchMareas() {
+        const promises = MAREAS_PORTS.map(async (port) => {
+            try {
+                const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${port.lat}&longitude=${port.lon}&current=ocean_current_velocity,ocean_current_direction,wave_height,wave_period&hourly=wave_height,wave_period,ocean_current_velocity&timezone=auto&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // KPIs
+        let currentVelocities = [];
+        let currentDirections = [];
+        let waveHeights = [];
+        let maxCurrent = 0;
+        let avgWave = 0;
+
+        results.forEach((data) => {
+            if (!data || !data.current) return;
+            const cv = data.current.ocean_current_velocity ?? 0;
+            const cd = data.current.ocean_current_direction ?? 0;
+            const wh = data.current.wave_height ?? 0;
+
+            currentVelocities.push(cv);
+            currentDirections.push(cd);
+            waveHeights.push(wh);
+
+            if (cv > maxCurrent) maxCurrent = cv;
+        });
+
+        if (waveHeights.length > 0) {
+            avgWave = waveHeights.reduce((a, b) => a + b, 0) / waveHeights.length;
+        }
+
+        const avgDir = currentDirections.length > 0
+            ? Math.round(currentDirections.reduce((a, b) => a + b, 0) / currentDirections.length)
+            : '—';
+
+        // Actualizar KPIs
+        document.getElementById('marea-nivel').textContent = avgWave.toFixed(2);
+        document.getElementById('marea-corriente-max').textContent = maxCurrent.toFixed(2);
+        document.getElementById('marea-oleaje-prom').textContent = avgWave.toFixed(2);
+        document.getElementById('marea-direccion').textContent = avgDir !== '—' ? `${avgDir}°` : '—';
+
+        // Chart: oleaje + corriente por puerto (48h)
+        const ctxMareas = document.getElementById('chart-mareas');
+        if (ctxMareas) {
+            if (window._chartMareas) window._chartMareas.destroy();
+
+            const colors = ['#2563eb', '#f97316', '#16a34a', '#7c3aed', '#0891b2'];
+            const datasets = [];
+
+            results.forEach((data, idx) => {
+                if (!data || !data.hourly) return;
+                const labels = data.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+                const wh = data.hourly.wave_height.slice(0, 48);
+                const cv = data.hourly.ocean_current_velocity.slice(0, 48);
+
+                // Dataset oleaje
+                datasets.push({
+                    label: `${MAREAS_PORTS[idx].name} oleaje (m)`,
+                    data: wh,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '33',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                    yAxisID: 'y',
+                });
+
+                // Dataset corriente
+                datasets.push({
+                    label: `${MAREAS_PORTS[idx].name} corriente (m/s)`,
+                    data: cv,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '11',
+                    borderWidth: 1.5,
+                    borderDash: [4, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                    yAxisID: 'y1',
+                });
+            });
+
+            const firstData = results.find(d => d && d.hourly);
+            let chartLabels = [];
+            if (firstData) {
+                chartLabels = firstData.hourly.time.slice(0, 48).map(t => {
+                    const d = new Date(t);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+            }
+
+            window._chartMareas = new Chart(ctxMareas, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 9 }, boxWidth: 10 },
+                            filter: function(item) {
+                                return !item.text.includes('corriente');
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    if (ctx.dataset.label.includes('oleaje')) {
+                                        return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} m`;
+                                    }
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)} m/s`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Tiempo' },
+                            ticks: { maxTicksLimit: 8, font: { size: 10 } },
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Oleaje (m)' },
+                            ticks: { font: { size: 10 } },
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Corriente (m/s)' },
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 10 } },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Lista de puertos
+        const puertosEl = document.getElementById('marea-puertos');
+        if (puertosEl) {
+            let html = '';
+            results.forEach((data, idx) => {
+                const port = MAREAS_PORTS[idx];
+                if (!data || !data.current) {
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${port.name}</div>
+                        <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                    </div>`;
+                    return;
+                }
+                const wh = data.current.wave_height ?? 0;
+                const wp = data.current.wave_period ?? '—';
+                const cv = data.current.ocean_current_velocity ?? 0;
+                const cd = data.current.ocean_current_direction ?? '—';
+
+                // Determinar estado de marea
+                let tideText = '🌊 Calmada';
+                let tideBadge = 'badge-blue';
+                if (cv >= 0.8) { tideText = '🌊 Corriente fuerte'; tideBadge = 'badge-red'; }
+                else if (cv >= 0.4) { tideText = '🌊 Corriente moderada'; tideBadge = 'badge-orange'; }
+                else if (cv >= 0.1) { tideText = '🌊 Corriente suave'; tideBadge = 'badge-green'; }
+
+                // Dirección en texto
+                let dirText = '—';
+                if (cd !== '—' && cd !== null) {
+                    const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNW'];
+                    dirText = dirs[Math.round(cd / 22.5) % 16];
+                }
+
+                html += `<div class="list-item">
+                    <div class="list-item-header">${port.name} <span class="badge ${tideBadge}">${tideText}</span></div>
+                    <div class="list-item-sub">
+                        🌊 Oleaje: ${wh.toFixed(2)} m · ⏱️ Período: ${wp} s
+                        <br>💨 Corriente: ${cv.toFixed(2)} m/s · 🧭 Dirección: ${cd}° (${dirText})
+                    </div>
+                </div>`;
+            });
+            puertosEl.innerHTML = html;
         }
     }
 
