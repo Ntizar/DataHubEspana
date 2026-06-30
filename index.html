@@ -2124,27 +2124,51 @@
 
                     <!-- 🌡️ Punto de Rocío y Confort Térmico -->
                     <div class="tab-panel" id="tab-rocio">
-                        <div class="section-title">🌡️ Punto de Rocío y Confort Térmico — España</div>
+                        <div class="section-title">
+                            🌡️ Punto de Rocío y Confort Térmico — España
+                            <select id="rocio-city-select" style="margin-left:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;background:#f8fafc;color:#1e293b;cursor:pointer;">
+                                <option value="all">🇪🇸 España completa</option>
+                                <option value="Madrid">Madrid</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Bilbao">Bilbao</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                                <option value="Málaga">Málaga</option>
+                                <option value="A Coruña">A Coruña</option>
+                            </select>
+                        </div>
                         <div class="kpi-row">
                             <div class="kpi blue">
                                 <div class="kpi-value" id="rocio-promedio">—</div>
                                 <div class="kpi-label">Punto de rocío promedio (°C)</div>
                             </div>
+                            <div class="kpi red">
+                                <div class="kpi-value" id="bochorno-kpi">—</div>
+                                <div class="kpi-label">🥵 Bochorno</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi green">
+                                <div class="kpi-value" id="confort-kpi-value">—</div>
+                                <div class="kpi-label">😊 Confort</div>
+                            </div>
                             <div class="kpi orange">
+                                <div class="kpi-value" id="humedad-promedio">—</div>
+                                <div class="kpi-label">Humedad relativa promedio (%)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi purple">
+                                <div class="kpi-value" id="diferencia-t-rocio">—</div>
+                                <div class="kpi-label">Diferencia T - Rocío (°C)</div>
+                            </div>
+                            <div class="kpi">
                                 <div class="kpi-value" id="sensacion-promedio">—</div>
                                 <div class="kpi-label">Sensación térmica promedio (°C)</div>
                             </div>
                         </div>
-                        <div class="kpi-row">
-                            <div class="kpi">
-                                <div class="kpi-value" id="diferencia-t-rocio">—</div>
-                                <div class="kpi-label">Diferencia T - Rocío promedio (°C)</div>
-                            </div>
-                            <div class="kpi" id="confort-kpi">
-                                <div class="kpi-value" id="confort-text">—</div>
-                                <div class="kpi-label">Confort general</div>
-                            </div>
-                        </div>
+                        <div id="rocio-alerts" style="margin-bottom:8px;"></div>
                         <div class="card">
                             <div class="card-title">Temperatura vs Punto de Rocío (próximas 24h)</div>
                             <div class="chart-container" style="height:250px;">
@@ -2153,7 +2177,7 @@
                         </div>
                         <div class="section-title">Mapa de confort térmico por ciudad</div>
                         <div id="rocio-cities-list" style="font-size:13px;"></div>
-                        <div class="section-title">Fuente: Open-Meteo Forecast API (dew_point_2m, apparent_temperature)</div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API (dew_point_2m, apparent_temperature, relative_humidity_2m)</div>
                     </div>
 
                     <!-- RADIACIÓN SOLAR TAB -->
@@ -6640,6 +6664,13 @@ fetchPollen();
         if (solSelector) {
             solSelector.addEventListener('change', () => fetchSol());
         }
+        // Rocío selector event
+        const rocioCitySelect = document.getElementById('rocio-city-select');
+        if (rocioCitySelect) {
+            rocioCitySelect.addEventListener('change', (e) => {
+                fetchRocio(e.target.value);
+            });
+        }
         fetchRocio();
         fetchRadiacion();
         fetchTermica();
@@ -9427,9 +9458,14 @@ fetchPollen();
         { name: 'A Coruña', lat: 43.37, lon: -8.42 },
     ];
 
-    async function fetchRocio() {
+    async function fetchRocio(selectedCity) {
+        // Filtrar ciudades si hay selección
+        const cities = (selectedCity && selectedCity !== 'all')
+            ? ROCIO_CITIES.filter(c => c.name === selectedCity)
+            : ROCIO_CITIES;
+
         // Fetch for all cities in parallel
-        const promises = ROCIO_CITIES.map(async (city) => {
+        const promises = cities.map(async (city) => {
             try {
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m&hourly=temperature_2m,dew_point_2m,apparent_temperature&timezone=Europe/Madrid&forecast_days=1`;
                 const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
@@ -9445,63 +9481,132 @@ fetchPollen();
         let rocios = [];
         let sensaciones = [];
         let diferencias = [];
+        let humedades = [];
+        let bochornoCount = 0;
+        let confortLabels = [];
         let ciudadData = [];
 
         results.forEach((data, i) => {
-            const city = ROCIO_CITIES[i];
+            const city = cities[i];
             if (!data || !data.current) {
-                ciudadData.push({ name: city.name, rocío: '—', sensacion: '—', diff: '—', confort: '—', color: '#94a3b8' });
+                ciudadData.push({ name: city.name, rocío: '—', sensacion: '—', diff: '—', confort: '—', comfortClass: '', color: '#94a3b8', humedad: '—', bochorno: '—' });
                 return;
             }
             const temp = data.current.temperature_2m ?? null;
             const rocío = data.current.dew_point_2m ?? null;
             const sensacion = data.current.apparent_temperature ?? null;
+            const humedad = data.current.relative_humidity_2m ?? null;
 
             if (rocío != null) rocios.push(rocío);
             if (sensacion != null) sensaciones.push(sensacion);
+            if (humedad != null) humedades.push(humedad);
+
             if (temp != null && rocío != null) {
                 const diff = temp - rocío;
                 diferencias.push(diff);
+
+                // DETECCIÓN DE BOCHORNO: temp - rocío < 3°C
+                const bochorno = diff < 3;
+                if (bochorno) bochornoCount++;
+
+                // DETECCIÓN DE CONFORT POR ROCÍO
+                let confortLabel, confortEmoji, comfortClass, kpiColor;
+                if (rocío < 5) {
+                    confortLabel = 'Aire muy seco';
+                    confortEmoji = '💧';
+                    comfortClass = 'badge-red';
+                    kpiColor = '#dc2626';
+                } else if (rocío >= 5 && rocío < 10) {
+                    confortLabel = 'Seco';
+                    confortEmoji = '🌵';
+                    comfortClass = 'badge-orange';
+                    kpiColor = '#f97316';
+                } else if (rocío >= 10 && rocío <= 16) {
+                    confortLabel = 'Confortable';
+                    confortEmoji = '😊';
+                    comfortClass = 'badge-green';
+                    kpiColor = '#16a34a';
+                } else if (rocío > 16 && rocío <= 21) {
+                    confortLabel = 'Húmedo';
+                    confortEmoji = '💦';
+                    comfortClass = 'badge-yellow';
+                    kpiColor = '#ca8a04';
+                } else {
+                    confortLabel = 'Bochornoso';
+                    confortEmoji = '🥵';
+                    comfortClass = 'badge-red';
+                    kpiColor = '#dc2626';
+                }
+
+                confortLabels.push(confortLabel);
+
                 ciudadData.push({
                     name: city.name,
                     temp: temp.toFixed(1),
                     rocío: rocío.toFixed(1),
                     sensacion: sensacion != null ? sensacion.toFixed(1) : '—',
                     diff: diff.toFixed(1),
-                    comfort: diff < 3 ? 'Bochorno' : diff < 6 ? 'Húmedo' : diff < 10 ? 'Agradable' : 'Seco',
-                    comfortClass: diff < 3 ? 'badge-red' : diff < 6 ? 'badge-orange' : diff < 10 ? 'badge-green' : 'badge-blue',
-                    color: diff < 3 ? '#dc2626' : diff < 6 ? '#f97316' : diff < 10 ? '#16a34a' : '#2563eb'
+                    confort: confortLabel,
+                    confortEmoji: confortEmoji,
+                    comfortClass: comfortClass,
+                    color: bochorno ? '#dc2626' : kpiColor,
+                    humedad: humedad != null ? humedad.toFixed(0) + '%' : '—',
+                    bochorno: bochorno ? 'Sí 🥵' : 'No',
+                    bochornoClass: bochorno ? 'badge-red' : 'badge-green'
                 });
             } else {
-                ciudadData.push({ name: city.name, rocío: rocío != null ? rocío.toFixed(1) : '—', sensacion: sensacion != null ? sensacion.toFixed(1) : '—', diff: '—', comfort: '—', color: '#94a3b8' });
+                ciudadData.push({ name: city.name, rocío: rocío != null ? rocío.toFixed(1) : '—', sensacion: sensacion != null ? sensacion.toFixed(1) : '—', diff: '—', confort: '—', comfortClass: '', color: '#94a3b8', humedad: humedad != null ? humedad.toFixed(0) + '%' : '—', bochorno: '—', bochornoClass: '' });
             }
         });
 
         const avgRocio = rocios.length > 0 ? (rocios.reduce((a, b) => a + b, 0) / rocios.length).toFixed(1) : '—';
         const avgSensacion = sensaciones.length > 0 ? (sensaciones.reduce((a, b) => a + b, 0) / sensaciones.length).toFixed(1) : '—';
         const avgDiff = diferencias.length > 0 ? (diferencias.reduce((a, b) => a + b, 0) / diferencias.length).toFixed(1) : '—';
+        const avgHumedad = humedades.length > 0 ? (humedades.reduce((a, b) => a + b, 0) / humedades.length).toFixed(0) : '—';
 
-        // Confort general basado en T-rocío promedio
-        let confortTexto = '—';
-        let confortColor = '#94a3b8';
-        if (avgRocio !== '—') {
-            const r = parseFloat(avgRocio);
-            if (r >= 24) { confortTexto = 'Bochornoso 🔥'; confortColor = '#dc2626'; }
-            else if (r >= 21) { confortTexto = 'Húmedo'; confortColor = '#f97316'; }
-            else if (r >= 18) { confortTexto = 'Agradable'; confortColor = '#2563eb'; }
-            else if (r >= 13) { confortTexto = 'Cómodo'; confortColor = '#16a34a'; }
-            else { confortTexto = 'Seco y fresco'; confortColor = '#94a3b8'; }
+        // Bochorno general: sí si alguna ciudad tiene bochorno
+        const bochornoTexto = bochornoCount > 0 ? `${bochornoCount} ciudad${bochornoCount > 1 ? 'es' : ''} 🥵` : 'Ninguna ✅';
+        const bochornoKpi = document.getElementById('bochorno-kpi');
+        bochornoKpi.textContent = bochornoTexto;
+        bochornoKpi.parentElement.className = bochornoCount > 0 ? 'kpi red' : 'kpi green';
+
+        // Confort general basado en el modo de confortLabels (el más frecuente)
+        let confortGeneral = '—';
+        if (confortLabels.length > 0) {
+            const counts = {};
+            confortLabels.forEach(l => counts[l] = (counts[l] || 0) + 1);
+            let maxCount = 0, maxLabel = '—';
+            for (const [label, count] of Object.entries(counts)) {
+                if (count > maxCount) { maxCount = count; maxLabel = label; }
+            }
+            confortGeneral = maxLabel;
         }
+        document.getElementById('confort-kpi-value').textContent = confortGeneral;
 
         document.getElementById('rocio-promedio').textContent = avgRocio;
-        document.getElementById('sensacion-promedio').textContent = avgSensacion;
+        document.getElementById('humedad-promedio').textContent = avgHumedad;
         document.getElementById('diferencia-t-rocio').textContent = avgDiff;
-        document.getElementById('confort-text').textContent = confortTexto;
-        document.getElementById('confort-text').style.color = confortColor;
-        const confortKpi = document.getElementById('confort-kpi');
-        confortKpi.className = `kpi ${confortColor === '#dc2626' ? 'red' : confortColor === '#f97316' ? 'orange' : confortColor === '#16a34a' ? 'green' : confortColor === '#2563eb' ? 'blue' : ''}`;
+        document.getElementById('sensacion-promedio').textContent = avgSensacion;
 
-        // Chart: doble línea temperatura vs rocío (primer ciudad = Madrid como referencia)
+        // ALERTAS
+        const alertsEl = document.getElementById('rocio-alerts');
+        let alertsHtml = '';
+        const hasBochorno = ciudadData.some(c => c.bochorno === 'Sí 🥵');
+        const hasSeco = ciudadData.some(c => c.confort === 'Aire muy seco' || c.confort === 'Seco');
+        if (hasBochorno) {
+            const bochornoCities = ciudadData.filter(c => c.bochorno === 'Sí 🥵').map(c => c.name).join(', ');
+            alertsHtml += `<div class="alert-banner alert-critical">🥵 <strong>Bochorno detectado</strong> en: ${bochornoCities} (diferencia T-rocío < 3°C)</div>`;
+        }
+        if (hasSeco) {
+            const secoCities = ciudadData.filter(c => c.confort === 'Aire muy seco' || c.confort === 'Seco').map(c => c.name).join(', ');
+            alertsHtml += `<div class="alert-banner alert-warning">💧 <strong>Aire seco</strong> en: ${secoCities}</div>`;
+        }
+        if (!hasBochorno && !hasSeco) {
+            alertsHtml += `<div class="alert-banner" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border:1px solid #16a34a;color:#15803d;">😊 Condiciones de confort general en España</div>`;
+        }
+        alertsEl.innerHTML = alertsHtml;
+
+        // Chart: doble línea temperatura vs rocío con sombra entre ambas = bochorno
         const ctxRocio = document.getElementById('chart-rocio');
         if (ctxRocio) {
             if (window._chartRocio) window._chartRocio.destroy();
@@ -9521,6 +9626,13 @@ fetchPollen();
                     sensacionSeries.push(mainData.hourly.apparent_temperature[h] ?? null);
                 }
             }
+
+            // Dataset de sombra entre temp y rocío (bochorno zone)
+            const fillData = tempSeries.map((t, i) => {
+                const r = rocíoSeries[i];
+                if (t != null && r != null) return Math.min(t, r);
+                return null;
+            });
 
             window._chartRocio = new Chart(ctxRocio, {
                 type: 'line',
@@ -9557,6 +9669,16 @@ fetchPollen();
                             pointRadius: 1,
                             tension: 0.3,
                             fill: false,
+                        },
+                        {
+                            label: 'Zona bochorno (T-rocío < 3°C)',
+                            data: fillData,
+                            borderColor: 'transparent',
+                            backgroundColor: 'rgba(220, 38, 38, 0.12)',
+                            borderWidth: 0,
+                            pointRadius: 0,
+                            fill: '-1', // fill to previous dataset (rocío)
+                            stepped: false,
                         }
                     ]
                 },
@@ -9566,6 +9688,21 @@ fetchPollen();
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+                        tooltip: {
+                            callbacks: {
+                                afterBody: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    const t = tempSeries[idx];
+                                    const r = rocíoSeries[idx];
+                                    if (t != null && r != null) {
+                                        const diff = (t - r).toFixed(1);
+                                        const msg = diff < 3 ? `\n🥵 ¡Bochorno! (Δ=${diff}°C)` : diff < 6 ? `\n💦 Húmedo (Δ=${diff}°C)` : `\n😊 Confortable (Δ=${diff}°C)`;
+                                        return msg;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
                     },
                     scales: {
                         x: { display: true, ticks: { maxTicksLimit: 12, font: { size: 9 } } },
@@ -9583,7 +9720,7 @@ fetchPollen();
                 if (c.diff === '—') {
                     html += `<div class="list-item"><div class="list-item-header">${c.name}</div><div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div></div>`;
                 } else {
-                    html += `<div class="list-item"><div class="list-item-header">${c.name} <span style="color:${c.color};font-weight:700;">${c.temp}°C</span></div><div class="list-item-sub">Rocío: ${c.rocío}°C · Sensación: ${c.sensacion}°C · Diferencia: ${c.diff}°C · <span class="badge ${c.comfortClass}">${c.comfort}</span></div></div>`;
+                    html += `<div class="list-item"><div class="list-item-header">${c.name} <span style="color:${c.color};font-weight:700;">${c.temp}°C</span></div><div class="list-item-sub">Rocío: ${c.rocío}°C · Humedad: ${c.humedad} · Sensación: ${c.sensacion}°C · Δ: ${c.diff}°C · <span class="badge ${c.bochornoClass}">${c.bochorno}</span> <span class="badge ${c.comfortClass}">${c.confortEmoji} ${c.confort}</span></div></div>`;
                 }
             });
             html += '</div>';
