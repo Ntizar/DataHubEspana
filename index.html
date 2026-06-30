@@ -637,6 +637,7 @@
                 <button class="tab-btn" data-tab="visibilidad">👁️ Visibilidad</button>
                 <button class="tab-btn" data-tab="rafagas">💨 Ráfagas</button>
                 <button class="tab-btn" data-tab="lluvia">🌧️ Prob. Lluvia</button>
+                <button class="tab-btn" data-tab="presion">📊 Presión</button>
             </div>
         </div>
 
@@ -1512,6 +1513,42 @@
                         </div>
                         <div class="section-title">Ciudades con datos</div>
                         <div id="lluvia-cities"></div>
+                        <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- PRESIÓN TAB -->
+                    <div class="tab-panel" id="tab-presion">
+                        <div class="section-title">📊 Presión Atmosférica — España</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue">
+                                <div class="kpi-value" id="presion-media">—</div>
+                                <div class="kpi-label">Presión media mar (hPa)</div>
+                            </div>
+                            <div class="kpi green">
+                                <div class="kpi-value" id="presion-superficie">—</div>
+                                <div class="kpi-label">Presión superficie (hPa)</div>
+                            </div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange">
+                                <div class="kpi-value" id="presion-tendencia">—</div>
+                                <div class="kpi-label">Tendencia (últimas 6h)</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="presion-altitud">—</div>
+                                <div class="kpi-label">Altitud media (m)</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Presión atmosférica 48h — Tendencia</div>
+                            <div class="chart-container" style="height:200px;">
+                                <canvas id="chart-presion"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Mapa de isobaras simplificado</div>
+                            <div id="presion-map-cities" style="font-size:12px;"></div>
+                        </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
                     </div>
                 </div>
@@ -3637,6 +3674,7 @@
         fetchVisibilidad();
         fetchRafagas();
         fetchLluvia();
+        fetchPresion();
     }
 
     // ===== RESIZE HANDLER =====
@@ -4989,6 +5027,215 @@
                 </div>`;
             });
             citiesEl.innerHTML = html;
+        }
+    }
+
+    // ===== PRESIÓN ATMOSFÉRICA =====
+    const PRESION_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Sevilla', lat: 37.39, lon: -5.98 },
+        { name: 'Valencia', lat: 39.47, lon: -0.38 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.41 },
+    ];
+
+    async function fetchPresion() {
+        const promises = PRESION_CITIES.map(async (city) => {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=pressure_msl,surface_pressure&hourly=pressure_msl,surface_pressure&timezone=Europe/Madrid&forecast_days=2`;
+                const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+                return await resp.json();
+            } catch (err) {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        // KPIs globales
+        let pressureSum = 0;
+        let surfaceSum = 0;
+        let validCount = 0;
+        let altSum = 0;
+        let validAlt = 0;
+        let latestPressures = [];
+        let earlierPressures = [];
+        const altitudes = [667, 12, 9, 15, 34, 199, 10, 37];
+
+        results.forEach((data, idx) => {
+            const city = PRESION_CITIES[idx];
+            if (!data || !data.current) return;
+
+            const pmsl = data.current.pressure_msl;
+            const psurf = data.current.surface_pressure;
+
+            if (pmsl != null) {
+                pressureSum += pmsl;
+                validCount++;
+            }
+            if (psurf != null) {
+                surfaceSum += psurf;
+            }
+
+            // Altitud media aproximada por ciudad
+            if (altitudes[idx] != null) {
+                altSum += altitudes[idx];
+                validAlt++;
+            }
+
+            // Últimas 12h de presión MSL para tendencia
+            if (data.hourly && data.hourly.pressure_msl) {
+                const hours = data.hourly.pressure_msl;
+                const nowHour = new Date().getHours();
+                // Últimas 6h
+                let latestSlice = [];
+                let earlierSlice = [];
+                for (let h = 0; h < 12 && h < hours.length; h++) {
+                    if (hours[h] != null) {
+                        if (h < 6) earlierSlice.push(hours[h]);
+                        else latestSlice.push(hours[h]);
+                    }
+                }
+                if (latestSlice.length >= 2) {
+                    latestPressures.push({ city: city.name, latest: latestSlice.slice(-3), earlier: earlierSlice.slice(-3) });
+                }
+            }
+        });
+
+        // KPI: presión media MSL
+        const avgPressure = validCount > 0 ? (pressureSum / validCount).toFixed(1) : '—';
+        const avgSurface = validCount > 0 ? (surfaceSum / validCount).toFixed(1) : '—';
+        const avgAlt = validAlt > 0 ? Math.round(altSum / validAlt) : '—';
+
+        document.getElementById('presion-media').textContent = avgPressure !== '—' ? `${avgPressure} hPa` : '—';
+        document.getElementById('presion-superficie').textContent = avgSurface !== '—' ? `${avgSurface} hPa` : '—';
+        document.getElementById('presion-altitud').textContent = avgAlt !== '—' ? `${avgAlt} m` : '—';
+
+        // Tendencia global: comparar media últimos 3h vs media anteriores 3h
+        let globalTrend = '→';
+        let trendLabel = 'Estable';
+        let globalAvgLatest = [];
+        let globalAvgEarlier = [];
+        latestPressures.forEach(lp => {
+            globalAvgLatest.push(...lp.latest);
+            globalAvgEarlier.push(...lp.earlier);
+        });
+        if (globalAvgLatest.length >= 2 && globalAvgEarlier.length >= 2) {
+            const avgLatest = globalAvgLatest.reduce((a, b) => a + b, 0) / globalAvgLatest.length;
+            const avgEarlier = globalAvgEarlier.reduce((a, b) => a + b, 0) / globalAvgEarlier.length;
+            const diff = avgLatest - avgEarlier;
+            if (diff > 1.5) { globalTrend = '↑'; trendLabel = 'Sube'; }
+            else if (diff < -1.5) { globalTrend = '↓'; trendLabel = 'Baja'; }
+            else { globalTrend = '→'; trendLabel = 'Estable'; }
+        }
+
+        const trendEl = document.getElementById('presion-tendencia');
+        trendEl.innerHTML = `<span style="font-size:22px;">${globalTrend}</span> ${trendLabel}`;
+        if (globalTrend === '↑') trendEl.style.color = '#16a34a';
+        else if (globalTrend === '↓') trendEl.style.color = '#dc2626';
+        else trendEl.style.color = '#64748b';
+
+        // Chart: presión 48h con banda 1013 hPa
+        const ctxPresion = document.getElementById('chart-presion');
+        if (ctxPresion) {
+            if (charts._chartPresion) charts._chartPresion.destroy();
+
+            // Construir series horarias para las 3 ciudades principales
+            const mainCities = [0, 1, 2]; // Madrid, Barcelona, Sevilla
+            const labels = [];
+            const datasets = [];
+            const cityColors = ['#2563eb', '#f97316', '#16a34a'];
+            const cityLabels = ['Madrid', 'Barcelona', 'Sevilla'];
+
+            // Aplanar todos los datos horarios MSL para el rango 0-47h
+            for (let h = 0; h < 48; h++) {
+                if (results[0] && results[0].hourly && results[0].hourly.time && results[0].hourly.time[h]) {
+                    const t = new Date(results[0].hourly.time[h]);
+                    labels.push(`${t.getDate()}/${t.getMonth() + 1} ${t.getHours().toString().padStart(2, '0')}h`);
+                } else {
+                    labels.push(`h${h}`);
+                }
+            }
+
+            mainCities.forEach((cityIdx, dsIdx) => {
+                const data = results[cityIdx];
+                if (!data || !data.hourly || !data.hourly.pressure_msl) return;
+
+                const values = data.hourly.pressure_msl.map(v => v != null ? v : null);
+
+                datasets.push({
+                    label: cityLabels[dsIdx],
+                    data: values,
+                    borderColor: cityColors[dsIdx],
+                    backgroundColor: cityColors[dsIdx] + '22',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    fill: false,
+                });
+            });
+
+            // Banda 1013 hPa ± 5
+            const baselineData = labels.map(() => 1013);
+            const upperData = labels.map(() => 1018);
+            const lowerData = labels.map(() => 1008);
+
+            datasets.push({
+                label: 'Referencia 1013 hPa',
+                data: baselineData,
+                borderColor: '#64748b',
+                borderWidth: 1,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false,
+            });
+
+            charts._chartPresion = new Chart(ctxPresion, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+                    },
+                    scales: {
+                        x: { display: true, ticks: { maxTicksLimit: 12, font: { size: 9 } } },
+                        y: { display: true, min: 990, max: 1040, ticks: { callback: v => v + ' hPa' } },
+                    },
+                },
+            });
+        }
+
+        // Mapa isobaras simplificado: tabla de ciudades
+        const mapEl = document.getElementById('presion-map-cities');
+        if (mapEl) {
+            let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+            results.forEach((data, idx) => {
+                const city = PRESION_CITIES[idx];
+                if (!data || !data.current) {
+                    html += `<div class="list-item"><div class="list-item-header">${city.name}</div><div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div></div>`;
+                    return;
+                }
+                const pmsl = data.current.pressure_msl != null ? data.current.pressure_msl.toFixed(1) : '—';
+                const psurf = data.current.surface_pressure != null ? data.current.surface_pressure.toFixed(1) : '—';
+                const alt = altitudes ? [667, 12, 9, 15, 34, 199, 10, 37][idx] : '—';
+
+                let statusColor = '#64748b';
+                let statusText = 'Normal';
+                if (parseFloat(pmsl) > 1020) { statusColor = '#16a34a'; statusText = 'Anticiclónica'; }
+                else if (parseFloat(pmsl) < 1005) { statusColor = '#dc2626'; statusText = 'Depresión'; }
+                else if (parseFloat(pmsl) > 1010) { statusColor = '#2563eb'; statusText = 'Alta'; }
+                else if (parseFloat(pmsl) < 1010) { statusColor = '#f97316'; statusText = 'Baja'; }
+
+                html += `<div class="list-item"><div class="list-item-header">${city.name} <span style="color:${statusColor};font-weight:700;">${pmsl} hPa</span></div><div class="list-item-sub">Superficie: ${psurf} hPa · Alt: ${alt} m · <strong>${statusText}</strong></div></div>`;
+            });
+            html += '</div>';
+            mapEl.innerHTML = html;
         }
     }
 
