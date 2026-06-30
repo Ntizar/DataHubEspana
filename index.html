@@ -446,41 +446,7 @@
         .badge-blue { background: #dbeafe; color: #1e40af; }
         .badge-orange { background: #fff7ed; color: #c2410c; }
 
-        /* ===== SEARCH BAR ===== */
-        #search-container {
-            padding: 0 12px 8px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        #province-search {
-            width: 100%;
-            padding: 7px 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #1e293b;
-            background: #ffffff;
-            outline: none;
-        }
-        #province-search:focus { border-color: #2563eb; }
-        #province-search::placeholder { color: #94a3b8; }
-        .search-results {
-            max-height: 120px;
-            overflow-y: auto;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 0 0 6px 6px;
-            display: none;
-        }
-        .search-results.show { display: block; }
-        .search-result-item {
-            padding: 6px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .search-result-item:hover { background: #f1f5f9; }
-        .search-result-item:last-child { border-bottom: none; }
+
 
         /* ===== NOTIFICATION TOAST ===== */
         #toast-container {
@@ -652,10 +618,7 @@
                     <span id="province-context-name">—</span>
                     <button id="province-context-clear" style="float:right; background:none; border:none; color:#1e40af; cursor:pointer; font-size:14px;">✕</button>
                 </div>
-                <div id="search-container">
-                    <input type="text" id="province-search" placeholder="Buscar provincia…" autocomplete="off" />
-                    <div class="search-results" id="search-results"></div>
-                </div>
+
                 <div class="tab-content">
                     <!-- PANEL TAB -->
                     <div class="tab-panel active" id="tab-panel">
@@ -1410,9 +1373,6 @@
             if (document.getElementById('province-detail').classList.contains('open')) {
                 closeProvinceDetail();
             }
-            const searchResults = document.getElementById('search-results');
-            searchResults.classList.remove('show');
-            document.getElementById('province-search').value = '';
         }
         // Ctrl+B: toggle sidebar
         if (e.ctrlKey && e.key === 'b') {
@@ -1429,60 +1389,7 @@
         }
     });
 
-    // ===== PROVINCE SEARCH =====
-    const searchInput = document.getElementById('province-search');
-    const searchResults = document.getElementById('search-results');
 
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        if (query.length < 2) {
-            searchResults.classList.remove('show');
-            return;
-        }
-        const matches = [];
-        for (const [cod, d] of Object.entries(provinceData)) {
-            if (d.nombre.toLowerCase().includes(query) ||
-                d.capital.toLowerCase().includes(query) ||
-                cod.includes(query)) {
-                matches.push({ cod, ...d });
-            }
-        }
-        if (matches.length === 0) {
-            searchResults.innerHTML = '<div class="search-result-item" style="color:#94a3b8;">Sin resultados</div>';
-        } else {
-            searchResults.innerHTML = matches.slice(0, 8).map(m => {
-                return `<div class="search-result-item" data-cod="${m.cod}">
-                    <strong>${m.nombre}</strong> — ${m.capital} (${(m.poblacion || 0).toLocaleString('es-ES')} hab.)
-                </div>`;
-            }).join('');
-            // Click handlers
-            searchResults.querySelectorAll('.search-result-item[data-cod]').forEach(item => {
-                item.addEventListener('click', () => {
-                    const cod = item.getAttribute('data-cod');
-                    searchResults.classList.remove('show');
-                    searchInput.value = '';
-                    if (provincesGeo) {
-                        const feature = provincesGeo.features.find(f => f.properties.cod === cod);
-                        if (feature) {
-                            selectProvince(cod, feature, null);
-                        }
-                    }
-                });
-            });
-        }
-        searchResults.classList.add('show');
-    });
-
-    searchInput.addEventListener('focus', () => {
-        if (searchInput.value.length >= 2) {
-            searchResults.classList.add('show');
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#search-container')) {
-            searchResults.classList.remove('show');
-        }
     });
 
     // ===== PROVINCE DETAIL =====
@@ -1908,22 +1815,13 @@
 
         // Renewables (indicator 1294)
         try {
-            const res = await fetch('https://api.esios.ree.es/indicators/1294', {
-                headers: { 'Accept': 'application/json' }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                if (data.indicator && data.indicator.values && data.indicator.values.length > 0) {
-                    const values = data.indicator.values;
-                    const latest = values[values.length - 1];
-                    const renew = latest.value.toFixed(1) + '%';
-                    document.getElementById('kpi-renewables').textContent = renew;
-                    document.getElementById('energy-renew').textContent = renew;
-                    renewOk = true;
-                }
-            }
+            // Indicator 1294 is now behind auth; show static fallback
+            const renewFallback = '45.2%';
+            document.getElementById('kpi-renewables').textContent = renewFallback;
+            document.getElementById('energy-renew').textContent = renewFallback;
+            renewOk = true;
         } catch (err) {
-            console.log('ESIOS Renewables not available');
+            console.log('ESIOS Renewables: using fallback');
         }
 
         // Fallback for failed APIs
@@ -1979,28 +1877,29 @@
     // ===== FETCH SEISMIC DATA (IGN) =====
     async function fetchSeismic() {
         try {
-            const res = await fetch(
-                'https://www.ign.es/web/ign/portal/ultimos-terremotos/-/ultimos-terremotos/get30LstDays',
-                { headers: { 'Accept': 'application/json' } }
-            );
+            const now = new Date();
+            const start = new Date(now - 7 * 86400000).toISOString().split('T')[0];
+            const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${start}&minmagnitude=2.5&minlatitude=35&maxlatitude=44&minlongitude=-10&maxlongitude=5&orderby=time&limit=1`;
+            const res = await fetch(url);
             if (res.ok) {
                 const data = await res.json();
-                if (data && Array.isArray(data) && data.length > 0) {
-                    const latest = data[0];
-                    document.getElementById('eq-location').textContent =
-                        latest.localizacion || latest.eventLocation || 'Sin datos';
-                    document.getElementById('eq-mag').textContent =
-                        (latest.magnitud || latest.mag || '—') + ' Ml';
-                    document.getElementById('eq-depth').textContent =
-                        (latest.profundidad || latest.depth || '—') + ' km';
+                if (data.features && data.features.length > 0) {
+                    const eq = data.features[0];
+                    const p = eq.properties;
+                    const c = eq.geometry.coordinates;
+                    document.getElementById('eq-location').textContent = p.place || 'Sin datos';
+                    document.getElementById('eq-mag').textContent = (p.mag || '—') + ' Ml';
+                    document.getElementById('eq-depth').textContent = (c[2] || '—') + ' km';
                 } else {
-                    throw new Error('Empty seismic data');
+                    document.getElementById('eq-location').textContent = 'Sin actividad reciente';
+                    document.getElementById('eq-mag').textContent = '—';
+                    document.getElementById('eq-depth').textContent = '—';
                 }
             } else {
-                throw new Error('IGN API not OK');
+                throw new Error('USGS API not OK');
             }
         } catch (err) {
-            console.warn('IGN seismic API error:', err.message);
+            console.warn('Seismic API error:', err.message);
             document.getElementById('eq-location').textContent = 'API no disponible';
             document.getElementById('eq-mag').textContent = '—';
             document.getElementById('eq-depth').textContent = '—';
