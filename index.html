@@ -505,6 +505,57 @@
         .progress-fill.orange { background: #f97316; }
         .progress-fill.red { background: #dc2626; }
 
+        /* ===== PROVINCE FILTER BAR ===== */
+        #province-filter-bar {
+            display: none;
+            padding: 0 12px 8px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        #province-filter-bar.visible { display: block; }
+        #province-filter-bar label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        #province-filter {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e293b;
+            background: #ffffff;
+            outline: none;
+            cursor: pointer;
+        }
+        #province-filter:focus { border-color: #2563eb; }
+
+        /* ===== MOBILE SIDEBAR TOGGLE FAB ===== */
+        #mobile-map-toggle {
+            display: none;
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 950;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        #mobile-map-toggle:active { transform: translateX(-50%) scale(0.95); }
+
         /* ===== MOBILE ===== */
         @media (max-width: 768px) {
             #sidebar {
@@ -515,38 +566,82 @@
                 top: auto;
                 width: 100% !important;
                 min-width: 100% !important;
-                height: 45vh;
+                height: 42vh;
                 border-right: none;
                 border-top: 1px solid #e2e8f0;
                 border-radius: 16px 16px 0 0;
                 z-index: 900;
+                transition: height 0.3s ease;
             }
             #sidebar.collapsed {
                 height: 0;
                 min-height: 0;
                 border-top: none;
             }
+            /* MAP: altura explícita en móvil */
+            #map-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+            #map {
+                width: 100%;
+                height: 100%;
+            }
             #province-detail {
                 width: 100%;
                 border-left: none;
                 border-top: 1px solid #e2e8f0;
+                border-radius: 16px 16px 0 0;
+                overflow-y: auto;
             }
-            .tabs-row { overflow-x: auto; flex-wrap: nowrap; padding: 8px; }
+            .tabs-row { overflow-x: auto; flex-wrap: nowrap; padding: 8px; gap: 3px; }
+            .tab-btn { flex-shrink: 0; }
             .kpi-row { grid-template-columns: 1fr; }
-            #map-legend { bottom: 12px; right: 8px; }
+            #map-legend {
+                bottom: 8px;
+                right: 8px;
+                padding: 6px 10px;
+                font-size: 10px;
+                z-index: 700;
+            }
+            .legend-row { margin-bottom: 2px; }
+            .legend-color { width: 12px; height: 10px; }
             #topbar .clock { display: none; }
-            .section-title { font-size: 13px; }
+            #topbar { padding: 0 12px; gap: 10px; }
+            #topbar .logo { font-size: 16px; }
+            .section-title { font-size: 13px; margin: 12px 0 6px; }
             .kpi-value { font-size: 18px; }
-            .footer-text { font-size: 10px; }
+            .kpi { padding: 10px; }
+            .card { padding: 12px; margin-bottom: 10px; }
+            .tab-content { padding: 12px; }
+            /* Footer oculto en móvil — el mapa es prioridad */
+            #footer { display: none; }
+            /* FAB para volver al mapa */
+            #mobile-map-toggle { display: none; }
+            #mobile-map-toggle.visible { display: block; }
+            /* Province filter más compacto */
+            #province-filter-bar { padding: 0 10px 6px; }
+            /* Search más táctil */
+            #province-search { padding: 10px 12px; font-size: 14px; }
+            /* Zoom controls más grandes */
+            .leaflet-control-zoom a {
+                width: 36px !important;
+                height: 36px !important;
+                line-height: 36px !important;
+                font-size: 18px !important;
+            }
         }
 
         @media (max-width: 480px) {
             .kpi-row { gap: 6px; }
             .kpi { padding: 8px 10px; }
             .kpi-value { font-size: 16px; }
-            #topbar { padding: 0 10px; }
-            #topbar .logo { font-size: 15px; }
+            #topbar .logo { font-size: 14px; }
             .tab-btn { font-size: 11px; padding: 4px 8px; }
+            #sidebar { height: 38vh; }
         }
     </style>
 </head>
@@ -588,6 +683,12 @@
                     <input type="text" id="province-search" placeholder="Buscar provincia…" autocomplete="off" />
                     <div class="search-results" id="search-results"></div>
                 </div>
+                <div id="province-filter-bar">
+                    <label for="province-filter">📍 Filtrar por provincia</label>
+                    <select id="province-filter">
+                        <option value="">— Todas las provincias —</option>
+                    </select>
+                </div>
                 <div class="tab-content">
                     <!-- PANEL TAB -->
                     <div class="tab-panel active" id="tab-panel">
@@ -619,7 +720,7 @@
                             </div>
                             <div class="kpi">
                                 <div class="kpi-value" id="kpi-temp">—</div>
-                                <div class="kpi-label">Madrid °C</div>
+                                <div class="kpi-label" id="kpi-temp-label">Madrid °C</div>
                             </div>
                         </div>
                         <div class="section-title">Último terremoto</div>
@@ -940,6 +1041,9 @@
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
+    <!-- Mobile: FAB to show map -->
+    <button id="mobile-map-toggle" onclick="toggleSidebar()">🗺️ Ver mapa</button>
+
     <script>
     /* ==========================================================================
        DataHub España — Dashboard Principal
@@ -1054,9 +1158,217 @@
     let provinceData = {};
     let geoLayer = null;
     let selectedProvince = null;
+    let filteredProvince = null; // For province filter across tabs
     let charts = {};
     let provinceCentroids = {};
     let loadStartTime = Date.now();
+
+    // ===== TOGGLE SIDEBAR (exported for FAB) =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const wasCollapsed = sidebar.classList.contains('collapsed');
+        sidebar.classList.toggle('collapsed');
+        const fab = document.getElementById('mobile-map-toggle');
+        if (wasCollapsed) {
+            // Was collapsed, now opening sidebar
+            if (fab) fab.classList.remove('visible');
+        } else {
+            // Was open, now closing sidebar
+            if (fab && window.innerWidth <= 768) fab.classList.add('visible');
+        }
+        setTimeout(() => {
+            map && map.invalidateSize();
+            if (wasCollapsed && window.innerWidth <= 768) {
+                showToast('Panel lateral abierto', 'info', 1500);
+            }
+        }, 300);
+    }
+
+    // ===== PROVINCE FILTER =====
+    function populateProvinceFilter() {
+        const select = document.getElementById('province-filter');
+        if (!select || !provinceData) return;
+        const sorted = Object.entries(provinceData)
+            .sort((a, b) => (a[1].nombre || '').localeCompare(b[1].nombre || ''));
+        sorted.forEach(([cod, d]) => {
+            const opt = document.createElement('option');
+            opt.value = cod;
+            opt.textContent = `${d.nombre} (${d.capital || cod})`;
+            select.appendChild(opt);
+        });
+        document.getElementById('province-filter-bar').classList.add('visible');
+    }
+
+    function onProvinceFilterChange(cod) {
+        filteredProvince = cod || null;
+        if (filteredProvince) {
+            // Select on map
+            if (provincesGeo) {
+                const feature = provincesGeo.features.find(f => f.properties.cod === cod);
+                if (feature) selectProvince(cod, feature, null);
+            }
+            // Update filtered tab content
+            updateFilteredData();
+            showToast(`Filtrando: ${provinceData[cod]?.nombre || cod}`, 'info', 2000);
+        } else {
+            // Clear filter
+            closeProvinceDetail();
+            resetFilteredData();
+            showToast('Mostrando datos nacionales', 'info', 1500);
+        }
+    }
+
+    function updateFilteredData() {
+        if (!filteredProvince || !provinceData[filteredProvince]) return;
+        const d = provinceData[filteredProvince];
+        const ccaaName = CCAA_NAMES[d.ccaa] || d.ccaa || '';
+
+        // === PANEL TAB: update KPIs with province data ===
+        document.getElementById('kpi-total-pop').textContent =
+            d.poblacion ? d.poblacion.toLocaleString('es-ES') : '—';
+        document.getElementById('kpi-provinces').textContent = '1';
+        document.querySelector('#tab-panel .section-title').textContent =
+            `Resumen — ${d.nombre}`;
+
+        // === CLIMA TAB: fetch weather for this province ===
+        fetchProvinceWeatherFiltered(filteredProvince);
+
+        // === AMBIENTE TAB: filter parks by CCAA ===
+        renderParksFiltered(ccaaName);
+
+        // === CATASTRO TAB: auto-fill ===
+        document.getElementById('catastro-province').textContent = d.nombre;
+        document.getElementById('catastro-cod').textContent = filteredProvince;
+        document.getElementById('catastro-capital').textContent = d.capital || '—';
+        document.getElementById('catastro-ccaa').textContent = ccaaName;
+
+        // === AGUA TAB: show province-specific note ===
+        const aguaSection = document.querySelector('#tab-agua .section-title');
+        if (aguaSection) aguaSection.textContent = `Embalses — ${d.nombre}`;
+    }
+
+    function resetFilteredData() {
+        // Restore national KPIs
+        document.querySelector('#tab-panel .section-title').textContent = 'Resumen Nacional';
+        // Re-fetch national data
+        updateKPIs();
+        renderParks();
+        document.getElementById('catastro-province').textContent = 'Ninguna';
+        document.getElementById('catastro-cod').textContent = '—';
+        document.getElementById('catastro-capital').textContent = '—';
+        document.getElementById('catastro-ccaa').textContent = '—';
+        const aguaSection = document.querySelector('#tab-agua .section-title');
+        if (aguaSection) aguaSection.textContent = 'Niveles de Embalses por Cuenca';
+        // Restore temperature label
+        const tempLabel = document.getElementById('kpi-temp-label');
+        if (tempLabel) tempLabel.textContent = 'Madrid °C';
+        // Restore clima title
+        const climaTitle = document.querySelector('#tab-clima .section-title');
+        if (climaTitle) climaTitle.textContent = 'Clima Actual — Madrid';
+    }
+
+    async function fetchProvinceWeatherFiltered(cod) {
+        const centroid = provinceCentroids[cod] || [40.0, -3.5];
+        const sectionTitle = document.querySelector('#tab-clima .section-title');
+        const d = provinceData[cod];
+        if (sectionTitle && d) sectionTitle.textContent = `Clima Actual — ${d.nombre || d.capital}`;
+        try {
+            const res = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${centroid[0].toFixed(4)}&longitude=${centroid[1].toFixed(4)}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code`
+            );
+            if (!res.ok) throw new Error('Weather API failed');
+            const data = await res.json();
+            const curr = data.current;
+            if (!curr) throw new Error('No current data');
+            document.getElementById('weather-temp').textContent = curr.temperature_2m + ' °C';
+            document.getElementById('weather-humidity').textContent = curr.relative_humidity_2m + ' %';
+            document.getElementById('weather-wind').textContent = curr.wind_speed_10m + ' km/h';
+            const desc = WMO_CODES[curr.weather_code] || `Código OMM ${curr.weather_code}`;
+            document.getElementById('weather-desc').textContent = desc;
+            document.getElementById('weather-detail').textContent =
+                `Código OMM: ${curr.weather_code} — ${desc}. ` +
+                `Datos de Open-Meteo para ${d?.capital || 'capital de provincia'}.`;
+            // Update panel KPI: temperature for selected province
+            document.getElementById('kpi-temp').textContent = curr.temperature_2m + '°';
+            const labelEl = document.getElementById('kpi-temp-label');
+            if (labelEl && d) labelEl.textContent = `${d.capital || d.nombre} °C`;
+        } catch (err) {
+            console.warn('Filtered weather fetch failed:', err);
+            document.getElementById('weather-temp').textContent = 'No disponible';
+        }
+    }
+
+    function renderParksFiltered(ccaaName) {
+        const filtered = NATIONAL_PARKS.filter(p =>
+            p.comunidad.toLowerCase().includes(ccaaName.toLowerCase())
+        );
+        let html = '';
+        if (filtered.length === 0) {
+            html = `<div style="font-size:13px;color:#64748b;padding:8px 0;">No hay parques nacionales en ${ccaaName}.</div>`;
+        } else {
+            filtered.forEach(p => {
+                html += `
+                    <div class="park-item">
+                        <div class="park-name">🌲 ${p.nombre}</div>
+                        <div class="park-info">${p.comunidad} · ${p.superficie} · Declarado: ${p.anio}</div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('parks-list').innerHTML = html;
+        const sectionTitle = document.querySelectorAll('#tab-ambiente .section-title')[0];
+        if (sectionTitle) sectionTitle.textContent = `Parques Nacionales — ${ccaaName || 'España'}`;
+    }
+
+    // ===== MOBILE INIT =====
+    function initMobile() {
+        if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.add('collapsed');
+            const fab = document.getElementById('mobile-map-toggle');
+            if (fab) fab.classList.add('visible');
+        }
+        // Show FAB when sidebar is collapsed on mobile
+        const observer = new MutationObserver(() => {
+            const sidebar = document.getElementById('sidebar');
+            const fab = document.getElementById('mobile-map-toggle');
+            if (!sidebar || !fab) return;
+            if (window.innerWidth <= 768) {
+                if (sidebar.classList.contains('collapsed')) {
+                    fab.classList.add('visible');
+                } else {
+                    fab.classList.remove('visible');
+                }
+            } else {
+                fab.classList.remove('visible');
+            }
+        });
+        const sidebarEl = document.getElementById('sidebar');
+        if (sidebarEl) observer.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
+
+        // Touch swipe: swipe up on sidebar handle area to close, swipe down on map to open
+        let touchStartY = 0;
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const deltaY = e.changedTouches[0].clientY - touchStartY;
+            const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+            if (Math.abs(deltaY) < 50 || deltaX > Math.abs(deltaY)) return; // Ignore small or horizontal swipes
+            if (window.innerWidth > 768) return;
+            const sb = document.getElementById('sidebar');
+            if (!sb) return;
+            if (deltaY < -60 && !sb.classList.contains('collapsed')) {
+                // Swipe up → close sidebar
+                toggleSidebar();
+            } else if (deltaY > 60 && sb.classList.contains('collapsed')) {
+                // Swipe down → open sidebar
+                toggleSidebar();
+            }
+        }, { passive: true });
+    }
 
     // ===== TOAST NOTIFICATIONS =====
     function showToast(message, type = 'info', duration = 4000) {
@@ -1103,17 +1415,7 @@
     });
 
     // ===== SIDEBAR TOGGLE =====
-    document.getElementById('toggle-sidebar').addEventListener('click', () => {
-        const sidebar = document.getElementById('sidebar');
-        const wasCollapsed = sidebar.classList.contains('collapsed');
-        sidebar.classList.toggle('collapsed');
-        setTimeout(() => {
-            map && map.invalidateSize();
-            if (!wasCollapsed) {
-                showToast('Barra lateral ocultada', 'info', 2000);
-            }
-        }, 300);
-    });
+    document.getElementById('toggle-sidebar').addEventListener('click', toggleSidebar);
 
     // ===== KEYBOARD SHORTCUTS =====
     document.addEventListener('keydown', (e) => {
@@ -1197,6 +1499,11 @@
         }
     });
 
+    // ===== PROVINCE FILTER HANDLER =====
+    document.getElementById('province-filter').addEventListener('change', (e) => {
+        onProvinceFilterChange(e.target.value);
+    });
+
     // ===== PROVINCE DETAIL =====
     document.getElementById('detail-close').addEventListener('click', closeProvinceDetail);
     document.getElementById('btn-back').addEventListener('click', closeProvinceDetail);
@@ -1204,10 +1511,13 @@
     function closeProvinceDetail() {
         document.getElementById('province-detail').classList.remove('open');
         selectedProvince = null;
+        filteredProvince = null;
+        document.getElementById('province-filter').value = '';
         if (geoLayer) geoLayer.resetStyle();
         if (map) {
             map.fitBounds([[36.0, -9.5], [44.0, 4.0]], { padding: [20, 20] });
         }
+        resetFilteredData();
     }
 
     // ===== POPULATION COLOR SCALE =====
@@ -1903,6 +2213,7 @@
         renderWater();
         renderEconomy();
         renderParks();
+        populateProvinceFilter();
     }
 
     // ===== RESIZE HANDLER =====
@@ -1915,11 +2226,22 @@
         }, 200);
     });
 
+    // ===== ORIENTATION CHANGE (mobile) =====
+    if (screen.orientation) {
+        screen.orientation.addEventListener('change', () => {
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+                Object.values(charts).forEach(c => { if (c && c.resize) c.resize(); });
+            }, 400);
+        });
+    }
+
     // ===== SERVICE WORKER / PWA STUB =====
     // Future: register service worker for offline support
 
     // ===== START =====
     init();
+    initMobile();
     </script>
 </body>
 </html>
