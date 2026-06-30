@@ -630,6 +630,7 @@
                 <button class="tab-btn" data-tab="polen">🌾 Polen</button>
                 <button class="tab-btn" data-tab="inundaciones">🌊 Inundaciones</button>
                 <button class="tab-btn" data-tab="suelo">🌡️ Suelo</button>
+                <button class="tab-btn" data-tab="gbfs">🚲 Bicicletas</button>
             </div>
         </div>
 
@@ -1269,6 +1270,23 @@
                             </div>
                         </div>
                         <div class="section-title">Fuente: Open-Meteo Forecast API</div>
+                    </div>
+
+                    <!-- BICICLETAS GBFS TAB -->
+                    <div class="tab-panel" id="tab-gbfs">
+                        <div class="section-title">🚲 Bicicletas Compartidas (GBFS)</div>
+                        <div class="kpi-row">
+                            <div class="kpi blue"><div class="kpi-value" id="gbfs-systems">—</div><div class="kpi-label">Sistemas</div></div>
+                            <div class="kpi green"><div class="kpi-value" id="gbfs-stations">—</div><div class="kpi-label">Estaciones</div></div>
+                        </div>
+                        <div class="kpi-row">
+                            <div class="kpi orange"><div class="kpi-value" id="gbfs-bikes">—</div><div class="kpi-label">Bicis disponibles</div></div>
+                            <div class="kpi"><div class="kpi-value" id="gbfs-docking">—</div><div class="kpi-label">Anclajes libres</div></div>
+                        </div>
+                        <div class="card"><div class="card-title">Sistemas GBFS por ciudad</div>
+                            <div id="gbfs-list"></div>
+                        </div>
+                        <div class="section-title">Fuente: Open GBFS feeds</div>
                     </div>
                 </div>
             </div>
@@ -3386,6 +3404,7 @@
         fetchFlood();
         fetchSoil();
         fetchForecast();
+        fetchGBFS();
     }
 
     // ===== RESIZE HANDLER =====
@@ -3400,6 +3419,75 @@
 
     // ===== SERVICE WORKER / PWA STUB =====
     // Future: register service worker for offline support
+
+    // ===== GBFS BICYCLES =====
+    const GBFS_FEEDS = [
+        { name: 'Madrid (BiciMAD)', url: 'https://gbfs.madrid.es/gbfs/en/station_information.json' },
+        { name: 'Barcelona (Bicing)', url: 'https://gbfs.bicing.cat/gbfs/en/station_information.json' },
+        { name: 'Valencia (Valenbisi)', url: 'https://gbfs.valenbisi.es/public/station_information.json' },
+        { name: 'Sevilla (Sevici)', url: 'https://sevici.es/gbfs/en/station_information.json' },
+        { name: 'Bilbao (BiciBilbao)', url: 'https://bici.bilboba.net/gbfs/en/station_information.json' },
+        { name: 'Málaga (BiciMálaga)', url: 'https://gbfs.malaga.eu/gbfs/en/station_information.json' },
+        { name: 'Zaragoza (BiciZaragoza)', url: 'https://gbfs.zaragoza.es/gbfs/en/station_information.json' },
+        { name: 'Valladolid (Emibi)', url: 'https://gbfs.es.emibici.com/gbfs/en/station_information.json' },
+        { name: 'Vigo (Bivio)', url: 'https://bivio.vigo.gal/gbfs/en/station_information.json' },
+        { name: 'Alicante (BiciMAD)', url: 'https://bici-alicante.es/gbfs/en/station_information.json' },
+        { name: 'Pamplona (BiciPNA)', url: 'https://bicipna.es/gbfs/en/station_information.json' },
+        { name: 'San Sebastián (Dubi)', url: 'https://dubi.eus/gbfs/en/station_information.json' },
+    ];
+
+    async function fetchGBFS() {
+        const listEl = document.getElementById('gbfs-list');
+        if (!listEl) return;
+
+        let totalSystems = 0;
+        let totalStations = 0;
+        let totalBikes = 0;
+        let totalDocking = 0;
+        let html = '';
+
+        for (const feed of GBFS_FEEDS) {
+            try {
+                const resp = await fetch(feed.url, { signal: AbortSignal.timeout(8000) });
+                const data = await resp.json();
+
+                if (data && data.data && data.data.stations) {
+                    const stations = data.data.stations;
+                    const numStations = stations.length;
+                    let bikes = 0;
+                    let docking = 0;
+
+                    for (const s of stations) {
+                        bikes += s.num_bikes_available ?? 0;
+                        docking += s.num_docks_available ?? 0;
+                    }
+
+                    totalSystems++;
+                    totalStations += numStations;
+                    totalBikes += bikes;
+                    totalDocking += docking;
+
+                    html += `<div class="list-item">
+                        <div class="list-item-header">${feed.name}</div>
+                        <div class="list-item-sub">
+                            ${numStations} estaciones · 🚲 ${bikes} bicis · 🔌 ${docking} anclajes
+                        </div>
+                    </div>`;
+                }
+            } catch (err) {
+                html += `<div class="list-item">
+                    <div class="list-item-header">${feed.name}</div>
+                    <div class="list-item-sub" style="color:#dc2626;">⚠️ No disponible</div>
+                </div>`;
+            }
+        }
+
+        document.getElementById('gbfs-systems').textContent = totalSystems;
+        document.getElementById('gbfs-stations').textContent = totalStations.toLocaleString('es-ES');
+        document.getElementById('gbfs-bikes').textContent = totalBikes.toLocaleString('es-ES');
+        document.getElementById('gbfs-docking').textContent = totalDocking.toLocaleString('es-ES');
+        listEl.innerHTML = html || '<div style="font-size:12px;color:#64748b;">No se encontraron sistemas GBFS.</div>';
+    }
 
     // ===== START =====
     init();
