@@ -8,7 +8,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from datetime import date
+from datetime import date, timedelta
 
 # Añadir directorio padre al path para imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -158,7 +158,7 @@ def run_all_scrapers(max_per_source: int = 100):
     # BOE
     try:
         print("📋 BOE Completo...")
-        boe_result = boe.scrape_boe_range(date.today() - __import__("datetime").timedelta(days=5), date.today())
+        boe_result = boe.scrape_boe_range(date.today() - timedelta(days=5), date.today())
         resultados["boe"] = {"status": "ok"}
         print(f"   ✅")
     except Exception as e:
@@ -251,7 +251,7 @@ def run_single(scraper_name: str):
         "dgt": lambda: dgt.scrape_dgt_completo(),
         "aemet": lambda: aemet.scrape_aemet(),
         "embalses": lambda: embalses.scrape_embalses(),
-        "boe": lambda: boe.scrape_boe_range(date.today() - __import__("datetime").timedelta(days=3), date.today()),
+        "boe": lambda: boe.scrape_boe_range(date.today() - timedelta(days=3), date.today()),
         "puertos": lambda: puertos.scrape_puertos(),
         "subvenciones": lambda: subvenciones.scrape_subvenciones(),
         "contratacion": lambda: contratacion.scrape_contratacion(),

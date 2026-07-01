@@ -1,0 +1,51 @@
+name: Actualizar datos (scrapers)
+
+on:
+  schedule:
+    # Cada hora a :30
+    - cron: '30 * * * *'
+  workflow_dispatch: # Permitir ejecución manual
+
+permissions:
+  contents: write # Para commitear los datos actualizados
+
+jobs:
+  scrapers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install requests aiohttp
+
+      - name: Ejecutar scrapers
+        run: |
+          cd scrapers
+          python orchestrator_v2.py --all --max 50 2>&1 || true
+        env:
+          ESIOS_API: ${{ secrets.ESIOS_API }}
+          NAP_API: ${{ secrets.NAP_API }}
+
+      - name: Commit datos actualizados
+        run: |
+          git config user.name "DataHub Bot"
+          git config user.email "actions@github.com"
+          git add data/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Sin cambios en los datos"
+          else
+            git commit -m "🔄 Datos actualizados $(date -u '+%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
+
+      - name: Resumen
+        run: |
+          echo "=== RESUMEN ==="
+          cat data/resumen_recoleccion.json 2>/dev/null || echo "No hay resumen"

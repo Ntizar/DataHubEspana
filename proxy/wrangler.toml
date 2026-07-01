@@ -1,0 +1,6 @@
+name = "esios-proxy"
+main = "esios-proxy.js"
+compatibility_date = "2024-01-01"
+
+# Variable de entorno: configurar ESIOS_TOKEN en el dashboard de Cloudflare
+# Settings → Variables → ESIOS_TOKEN = tu_token_de_esios
