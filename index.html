@@ -98,8 +98,8 @@
 
         /* ===== SIDEBAR ===== */
         #sidebar {
-            width: 380px;
-            min-width: 380px;
+            width: 50%;
+            min-width: 320px;
             background: #ffffff;
             border-right: 1px solid #e2e8f0;
             display: flex;
@@ -3870,7 +3870,8 @@
             </div>`;
         });
         html += `<div style="text-align:center;margin-top:8px;color:#94a3b8;font-size:10px;">${summaries.length} pestañas activas</div>`;
-        setTxt('tab-summary', html);
+        const tabSumEl = document.getElementById('tab-summary');
+        if (tabSumEl) tabSumEl.innerHTML = html;
     }
 
     // ===== FETCH ENERGY DATA (ESIOS/REE) =====
@@ -7880,6 +7881,8 @@
         fetchSoil();
         fetchTempSuelo();
         fetchForecast();
+        // Fetch AQI for Madrid (default panel KPI)
+        fetchAirQuality(40.4168, -3.7038);
         
         // Aire Ext. city selector event
         const aireextCitySelect = document.getElementById('aireext-city-select');
