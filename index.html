@@ -289,7 +289,9 @@
 
         /* ===== MAP ===== */
         #map-container {
-            flex: 1;
+            flex: 1 1 0%;
+            min-width: 0;
+            overflow: hidden;
             position: relative;
         }
         #map {
@@ -3428,6 +3430,10 @@
             attributionControl: true
         });
 
+        // Force Leaflet to recalculate size after layout
+        setTimeout(() => map && map.invalidateSize(), 300);
+        setTimeout(() => map && map.invalidateSize(), 1000);
+
         // Base layers
         const baseOSM = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
@@ -3875,13 +3881,16 @@
     }
 
     // ===== FETCH ENERGY DATA (ESIOS/REE) =====
+    const ESIOS_TOKEN = '02bb2f4f305473d0dd1ba8768d8e8d90969fcaa78839312ff6ad0d29811360d3';
+    const esiosHeaders = { 'Accept': 'application/json', 'x-api-key': ESIOS_TOKEN };
+    
     async function fetchEnergyData() {
         let pvpcOk = false, demandOk = false, renewOk = false;
 
-        // PVPC (indicator 1001)
+        // PVPC (indicator 1001) — works without auth but include token anyway
         try {
             const res = await fetch('https://api.esios.ree.es/indicators/1001', {
-                headers: { 'Accept': 'application/json' }
+                headers: esiosHeaders
             });
             if (res.status === 403) {
                 console.log('ESIOS PVPC: 403 Forbidden — auth required');
@@ -3904,10 +3913,10 @@
             console.log('ESIOS PVPC not available:', err.message);
         }
 
-        // Demand (indicator 1293)
+        // Demand (indicator 1293) — requires auth
         try {
             const res = await fetch('https://api.esios.ree.es/indicators/1293', {
-                headers: { 'Accept': 'application/json' }
+                headers: esiosHeaders
             });
             if (res.status === 403) {
                 console.log('ESIOS Demanda: 403 Forbidden — auth required');
@@ -3926,10 +3935,10 @@
             console.log('ESIOS Demand not available:', err.message);
         }
 
-        // Renewables (indicator 1294)
+        // Renewables (indicator 1294) — requires auth
         try {
             const res = await fetch('https://api.esios.ree.es/indicators/1294', {
-                headers: { 'Accept': 'application/json' }
+                headers: esiosHeaders
             });
             if (res.status === 403) {
                 console.log('ESIOS Renovables: 403 Forbidden — using fallback');
