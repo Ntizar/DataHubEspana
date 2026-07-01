@@ -25,15 +25,10 @@
             background: #ffffff;
             border-bottom: 1px solid #e2e8f0;
             z-index: 999;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
         }
-        #tab-navbar::-webkit-scrollbar { height: 3px; }
-        #tab-navbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
         #tab-navbar .tabs-row {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 4px;
             padding: 6px 12px;
         }
@@ -137,7 +132,6 @@
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.15s;
-            flex-shrink: 0;
         }
         .tab-btn:hover { border-color: #2563eb; color: #2563eb; }
         .tab-btn.active {
@@ -660,8 +654,48 @@
         #mobile-map-toggle.visible { display: flex; align-items: center; gap: 6px; }
 
         /* ===== MOBILE ===== */
-        /* ===== TABLET (max-width: 768px) ===== */
+        /* ===== TABLET (max-width: 1024px) ===== */
+        @media (max-width: 1024px) {
+            #sidebar {
+                width: 45% !important;
+                min-width: 45% !important;
+            }
+            #sidebar.collapsed {
+                width: 0 !important;
+                min-width: 0 !important;
+            }
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .kpi {
+                padding: 6px 8px;
+                min-width: 0;
+            }
+            .kpi-label { font-size: 9px; }
+            .kpi-value { font-size: 14px; }
+            #map-legend { bottom: 8px; right: 6px; font-size: 10px; }
+            #topbar .clock { font-size: 11px; }
+            #topbar .logo { font-size: 15px; }
+            #topbar { padding: 6px 10px; }
+            .section-title { font-size: 11px; margin-bottom: 4px; }
+            .footer-text { font-size: 9px; }
+            #province-context { font-size: 11px; padding: 6px 10px; }
+            .card-title { font-size: 11px; }
+            .info-label { font-size: 9px; }
+            .info-value { font-size: 11px; }
+            canvas { max-width: 100% !important; height: auto !important; }
+            #ccaa-clima-container, #ccaa-aire-container, #ccaa-nieve-container, #ccaa-mar-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .ccaa-card { font-size: 10px !important; padding: 6px !important; }
+        }
+
+        /* ===== MÓVIL (max-width: 768px) ===== */
         @media (max-width: 768px) {
+            #main-area {
+                flex-direction: column;
+            }
             #sidebar {
                 position: fixed;
                 bottom: 0;
@@ -684,7 +718,6 @@
                 border-top: none;
                 padding: 0;
             }
-            /* MAP: altura explícita en móvil */
             #map-container {
                 position: absolute;
                 top: 0;
@@ -704,56 +737,8 @@
                 overflow-y: auto;
             }
             .tabs-row {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                padding: 6px 8px;
+                padding: 4px 8px;
                 gap: 3px;
-                -webkit-overflow-scrolling: touch;
-                scroll-snap-type: x proximity;
-            }
-            .tab-btn {
-                flex-shrink: 0;
-                scroll-snap-align: start;
-                font-size: 10px;
-                padding: 3px 7px;
-            }
-            .kpi-row {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-            }
-            .kpi {
-                padding: 6px 8px;
-                min-width: 0;
-            }
-            .kpi-label { font-size: 9px; }
-            .kpi-value { font-size: 14px; }
-            #map-legend { bottom: 8px; right: 6px; font-size: 10px; }
-            #topbar .clock { display: none; }
-            #topbar .logo { font-size: 14px; }
-            #topbar { padding: 6px 10px; }
-            .section-title { font-size: 11px; margin-bottom: 4px; }
-            .footer-text { font-size: 9px; }
-            #province-context { font-size: 11px; padding: 6px 10px; }
-            .card-title { font-size: 11px; }
-            .info-label { font-size: 9px; }
-            .info-value { font-size: 11px; }
-            canvas { max-width: 100% !important; height: auto !important; }
-            #ccaa-clima-container, #ccaa-aire-container, #ccaa-nieve-container, #ccaa-mar-container {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-            .ccaa-card { font-size: 10px !important; padding: 6px !important; }
-            #tab-navbar { overflow: visible; }
-        }
-
-        /* ===== MÓVIL (max-width: 480px) ===== */
-        @media (max-width: 480px) {
-            #sidebar {
-                height: 55vh;
-                border-radius: 10px 10px 0 0;
-            }
-            .tabs-row {
-                padding: 4px 6px;
-                gap: 2px;
             }
             .tab-btn {
                 font-size: 9px;
@@ -761,7 +746,7 @@
                 border-radius: 12px;
             }
             .kpi-row {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 4px;
             }
             .kpi {
@@ -770,19 +755,21 @@
             }
             .kpi-label { font-size: 8px; }
             .kpi-value { font-size: 13px; }
-            #map { height: 30vh; min-height: 180px; }
-            #topbar { padding: 4px 8px; }
-            #topbar .logo { font-size: 13px; }
+            #map-legend { bottom: 8px; right: 6px; font-size: 10px; }
+            #topbar .clock { display: none; }
+            #topbar .logo { font-size: 14px; }
+            #topbar { padding: 6px 10px; }
+            .section-title { font-size: 11px; }
+            .footer-text { font-size: 9px; }
             #province-context { font-size: 10px; padding: 5px 8px; }
             .info-grid { grid-template-columns: 1fr !important; gap: 4px !important; }
             .info-label { font-size: 8px; }
             .info-value { font-size: 10px; }
-            .section-title { font-size: 10px; }
+            .card-title { font-size: 10px; }
             #ccaa-clima-container, #ccaa-aire-container, #ccaa-nieve-container, #ccaa-mar-container {
                 grid-template-columns: 1fr !important;
             }
             .ccaa-card { font-size: 9px !important; }
-            .card-title { font-size: 10px; }
         }
 
         /* ===== LANDSCAPE MÓVIL ===== */
