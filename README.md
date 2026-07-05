@@ -22,6 +22,11 @@ Automático vía GitHub Pages en cada push a `main`.
 | 🏗️ **Catastro** | DGC | On-demand | REST API |
 | 🚲 **Bicicletas** | GBFS | Tiempo real | REST API |
 | 🚢 **Puertos** | Puertos del Estado | Tiempo real | REST API |
+| 🌋 **Terremotos** | USGS FDSNWS | Tiempo real | REST API |
+| 🚗 **Tráfico DGT** | NAP DGT | Datos locales | JSON |
+| 📋 **BOE** | BOE API | Diario | REST API |
+| 📊 **INE** | INE wstempus | Bajo demanda | REST API |
+| 🌍 **EEA Aire** | EEA / Open-Meteo AQ | Tiempo real | REST API |
 
 ## 🗺️ Mapa Base
 
