@@ -2736,6 +2736,14 @@
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             const tab = btn.getAttribute('data-tab');
             document.getElementById('tab-' + tab).classList.add('active');
+            // Mostrar mapa solo en pestañas que lo necesitan
+            const mapContainer = document.getElementById('map-container');
+            const mapTabs = ['panel', 'poblacion', 'gbfs', 'puertos', 'calidad-aire', 'aireext', 'polen', 'suelo', 'tempsuelo', 'presion', 'visibilidad', 'nubosidad', 'rocio', 'termica', 'lluvia', 'inundaciones', 'nieve', 'evapo', 'rafagas', 'eolica', 'sol', 'uv', 'radiacion', 'fuego', 'cape', 'mar', 'mareas'];
+            if (mapTabs.includes(tab)) {
+                if (mapContainer) mapContainer.style.display = 'block';
+            } else {
+                if (mapContainer) mapContainer.style.display = 'none';
+            }
             // Lazy-render charts only when tab is shown
             if (tab === 'ambiente' && !window.__ambienteRendered) { window.__ambienteRendered = true; renderParks(); }
             if (tab === 'catastro' && !window.__catastroRendered) { window.__catastroRendered = true; renderCatastro(); }
