@@ -188,6 +188,32 @@
     let charts = {};
     let provinceCentroids = {};
     let loadStartTime = Date.now();
+    let resizeTimeout;
+    let selectedStationIdx = 0;
+
+    // ===== LLUVIA CITIES (selector de ciudades para pestaña Lluvia) =====
+    const LLUVIA_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70 },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17 },
+        { name: 'Valencia', lat: 39.47, lon: -0.38 },
+        { name: 'Sevilla', lat: 37.39, lon: -5.98 },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93 },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88 },
+        { name: 'Málaga', lat: 36.72, lon: -4.42 },
+        { name: 'A Coruña', lat: 43.37, lon: -8.41 },
+    ];
+
+    // ===== EVAPO CITIES (selector de ciudades para pestaña Evapotranspiración) =====
+    const EVAPO_CITIES = [
+        { name: 'Madrid', lat: 40.42, lon: -3.70, cc: 'Castilla-La Mancha' },
+        { name: 'Sevilla', lat: 37.39, lon: -6.00, cc: 'Andalucía' },
+        { name: 'Barcelona', lat: 41.39, lon: 2.17, cc: 'Cataluña' },
+        { name: 'Valencia', lat: 39.45, lon: -0.32, cc: 'Comunidad Valenciana' },
+        { name: 'Bilbao', lat: 43.26, lon: -2.93, cc: 'País Vasco' },
+        { name: 'Málaga', lat: 36.72, lon: -4.42, cc: 'Andalucía' },
+        { name: 'Zaragoza', lat: 41.65, lon: -0.88, cc: 'Aragón' },
+        { name: 'Palma', lat: 39.57, lon: 2.65, cc: 'Islas Baleares' },
+    ];
 
     // ===== GLOBAL HELPER: safe DOM text updates =====
     const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; else console.warn('Element not found:', id); };
