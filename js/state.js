@@ -234,5 +234,6 @@
 
     // ===== GLOBAL HELPER: safe DOM text updates =====
     const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; else console.warn('Element not found:', id); };
+    window.setTxt = setTxt;
 
     // ===== TOGGLE SIDEBAR (exported for FAB) =====
