@@ -5171,3 +5171,7 @@
             }
         } catch {}
     }
+
+    // Expose inner functions to window (defer scripts have separate scope)
+    window.renderCityView = renderCityView;
+    window.updateCityView = updateCityView;

@@ -191,6 +191,23 @@
     let resizeTimeout;
     let selectedStationIdx = 0;
 
+    // Expose state to window (defer scripts have separate scope)
+    window.map = map;
+    window.provincesGeo = provincesGeo;
+    window.provinceData = provinceData;
+    window.geoLayer = geoLayer;
+    window.provincesOverlay = provincesOverlay;
+    window.parksOverlay = parksOverlay;
+    window.selectedProvince = selectedProvince;
+    window.filteredProvince = filteredProvince;
+    window.charts = charts;
+    window.provinceCentroids = provinceCentroids;
+    window.loadStartTime = loadStartTime;
+    window.resizeTimeout = resizeTimeout;
+    window.selectedStationIdx = selectedStationIdx;
+    window.LLUVIA_CITIES = LLUVIA_CITIES;
+    window.EVAPO_CITIES = EVAPO_CITIES;
+
     // ===== LLUVIA CITIES (selector de ciudades para pestaña Lluvia) =====
     const LLUVIA_CITIES = [
         { name: 'Madrid', lat: 40.42, lon: -3.70 },
