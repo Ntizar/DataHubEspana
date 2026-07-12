@@ -5,46 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataHub España — Panel de Datos Nacional</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
     <link rel="stylesheet" href="css/styles.css">
-    <script defer src="js/datahub.js"></script>
     <!-- === MÓDULOS REFACTORIZADOS (orden de carga importa) === -->
-    <script defer src="js/state.js"></script>
-    <script defer src="js/api.js"></script>
-    <script defer src="js/charts.js"></script>
-    <script defer src="js/map.js"></script>
-    <script defer src="js/tabs.js"></script>
-    <script defer src="js/ui.js"></script>
     <!-- Panels (uno por pestaña) -->
-    <script defer src="js/panels/agua.js"></script>
-    <script defer src="js/panels/economia.js"></script>
-    <script defer src="js/panels/catastro.js"></script>
-    <script defer src="js/panels/ambiente.js"></script>
-    <script defer src="js/panels/poblacion.js"></script>
-    <script defer src="js/panels/economia-det.js"></script>
-    <script defer src="js/panels/puertos.js"></script>
-    <script defer src="js/panels/gbfs.js"></script>
-    <script defer src="js/panels/fuego.js"></script>
-    <script defer src="js/panels/cape.js"></script>
-    <script defer src="js/panels/ccaa-shared.js"></script>
-    <script defer src="js/panels/sol.js"></script>
-    <script defer src="js/panels/termica.js"></script>
-    <script defer src="js/panels/nieve.js"></script>
-    <script defer src="js/panels/mar.js"></script>
-    <script defer src="js/panels/eolica.js"></script>
-    <script defer src="js/panels/mareas.js"></script>
-    <script defer src="js/panels/uv.js"></script>
-    <script defer src="js/panels/visibilidad.js"></script>
-    <script defer src="js/panels/rafagas.js"></script>
-    <script defer src="js/panels/lluvia.js"></script>
-    <script defer src="js/panels/nubosidad.js"></script>
-    <script defer src="js/panels/soil-helpers.js"></script>
-    <script defer src="js/panels/oms-air.js"></script>
     <!-- Orquestador (debe ir último) -->
-    <script defer src="js/main.js"></script>
-</head>
+    </head>
 <body>
 <!-- LOADING OVERLAY -->
     <div id="loading-overlay">
@@ -2335,5 +2300,41 @@
 
     <!-- Mobile: FAB to show map -->
     <button id="mobile-map-toggle" onclick="toggleSidebar()">🗺️ Ver mapa</button>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+    <script src="js/datahub.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/tabs.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/panels/agua.js"></script>
+    <script src="js/panels/economia.js"></script>
+    <script src="js/panels/catastro.js"></script>
+    <script src="js/panels/ambiente.js"></script>
+    <script src="js/panels/poblacion.js"></script>
+    <script src="js/panels/economia-det.js"></script>
+    <script src="js/panels/puertos.js"></script>
+    <script src="js/panels/gbfs.js"></script>
+    <script src="js/panels/fuego.js"></script>
+    <script src="js/panels/cape.js"></script>
+    <script src="js/panels/ccaa-shared.js"></script>
+    <script src="js/panels/sol.js"></script>
+    <script src="js/panels/termica.js"></script>
+    <script src="js/panels/nieve.js"></script>
+    <script src="js/panels/mar.js"></script>
+    <script src="js/panels/eolica.js"></script>
+    <script src="js/panels/mareas.js"></script>
+    <script src="js/panels/uv.js"></script>
+    <script src="js/panels/visibilidad.js"></script>
+    <script src="js/panels/rafagas.js"></script>
+    <script src="js/panels/lluvia.js"></script>
+    <script src="js/panels/nubosidad.js"></script>
+    <script src="js/panels/soil-helpers.js"></script>
+    <script src="js/panels/oms-air.js"></script>
+    <script src="js/main.js"></script>
+
 </body>
 </html>
