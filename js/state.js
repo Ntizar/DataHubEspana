@@ -258,9 +258,6 @@ Object.defineProperty(window, 'selectedStationIdx', {
   set(v) { selectedStationIdx = v; },
   configurable: true
 });
-window.LLUVIA_CITIES = LLUVIA_CITIES;
-window.EVAPO_CITIES = EVAPO_CITIES;
-
 // ===== LLUVIA CITIES (selector de ciudades para pestaña Lluvia) =====
 const LLUVIA_CITIES = [
     { name: 'Madrid', lat: 40.42, lon: -3.70 },
@@ -284,6 +281,10 @@ const EVAPO_CITIES = [
     { name: 'Zaragoza', lat: 41.65, lon: -0.88, cc: 'Aragón' },
     { name: 'Palma', lat: 39.57, lon: 2.65, cc: 'Islas Baleares' },
 ];
+
+// Assign to window AFTER const declarations (temporal dead zone fix)
+window.LLUVIA_CITIES = LLUVIA_CITIES;
+window.EVAPO_CITIES = EVAPO_CITIES;
 
 // ===== GLOBAL HELPER: safe DOM text updates =====
 const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; else console.warn('Element not found:', id); };
